@@ -51,8 +51,6 @@ const InvoiceTable = ({ invoice, setInvoice }) => {
         }
     };
 
-
-
     // fetch invoice
     useEffect(() => {
         const fetchInvoices = async () => {

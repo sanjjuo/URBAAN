@@ -24,30 +24,29 @@ export function FilterOrderStatus({ setFilters, resetFilter }) {
         const updatedStatuses = selectedStatuses.includes(status)
             ? selectedStatuses.filter((s) => s !== status) // Remove status
             : [...selectedStatuses, status]; // Add status
-
+    
         setSelectedStatuses(updatedStatuses);
-
-        // If no status is selected, show all products
-        if (updatedStatuses.length === 0) {
-            setFilters((prevFilters) => ({
-                ...prevFilters,
-                status: undefined, // Reset status filter
-            }));
-        }
-    };
-
-    // Handle Apply now click
-    const handleApplyFilters = () => {
+    
+        // Update filters immediately
         setFilters((prevFilters) => ({
             ...prevFilters,
-            status: selectedStatuses.length > 0 ? selectedStatuses : undefined, // Update status field with selected statuses
+            status: updatedStatuses.length > 0 ? updatedStatuses : undefined, 
         }));
     };
+    
 
-    // Prevent the click event from propagating to the Menu component
-    const handleClickInside = (event) => {
-        event.stopPropagation();
-    };
+    // // Handle Apply now click
+    // const handleApplyFilters = () => {
+    //     setFilters((prevFilters) => ({
+    //         ...prevFilters,
+    //         status: selectedStatuses.length > 0 ? selectedStatuses : undefined, // Update status field with selected statuses
+    //     }));
+    // };
+
+    // // Prevent the click event from propagating to the Menu component
+    // const handleClickInside = (event) => {
+    //     event.stopPropagation();
+    // };
 
     return (
         <Menu>
@@ -87,7 +86,7 @@ export function FilterOrderStatus({ setFilters, resetFilter }) {
                         ))}
                     </ul>
                 </div>
-                <div className='p-5 flex flex-col justify-center items-center gap-5 hover:outline-none focus:outline-none'>
+                {/* <div className='p-5 flex flex-col justify-center items-center gap-5 hover:outline-none focus:outline-none'>
                     <p className="text-sm">*You can choose multiple order statuses</p>
                     <Button
                         onClick={handleApplyFilters}
@@ -95,7 +94,7 @@ export function FilterOrderStatus({ setFilters, resetFilter }) {
                     >
                         Apply now
                     </Button>
-                </div>
+                </div> */}
             </MenuList>
         </Menu>
     );

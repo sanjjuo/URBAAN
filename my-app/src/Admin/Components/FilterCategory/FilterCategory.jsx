@@ -28,7 +28,7 @@ export default function FilterCategory({ setFilters, resetFilter }) {
             setSelectedCategories([]);
             setFilters((prevFilters) => ({
                 ...prevFilters,
-                category: undefined, // Reset category filter
+                categoryIds: '', // Reset categoryIds filter
             }));
         }
     }, [resetFilter, setFilters]);
@@ -40,37 +40,19 @@ export default function FilterCategory({ setFilters, resetFilter }) {
                 ? prev.filter(item => item !== category.id) // Deselect category
                 : [...prev, category.id]; // Select category
 
-            // If no categories are selected, reset the filter to show all products
-            if (newSelectedCategories.length === 0) {
-                setFilters((prevFilters) => ({
-                    ...prevFilters,
-                    category: undefined, // Reset category filter
-                }));
-            } else {
-                setFilters((prevFilters) => ({
-                    ...prevFilters,
-                    category: newSelectedCategories, // Update category filter with selected categories
-                }));
-            }
+            setFilters((prevFilters) => ({
+                ...prevFilters,
+                categoryIds: newSelectedCategories.length ? newSelectedCategories.join(",") : '', // Convert to comma-separated string
+            }));
 
             return newSelectedCategories; // Return updated selected category IDs
         });
     };
 
-
-    // Handle Apply now button click
-    const handleApplyFilters = () => {
-        // Update the filter state with the selected category IDs when the user clicks Apply now
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            category: selectedCategories.join(",") // Join the selected category IDs into a comma-separated string
-        }));
-    };
-
     // Prevent the click event from propagating to the Menu component
-    const handleClickInside = (event) => {
-        event.stopPropagation();
-    };
+    // const handleClickInside = (event) => {
+    //     event.stopPropagation();
+    // };
 
     return (
         <Menu>
@@ -97,24 +79,15 @@ export default function FilterCategory({ setFilters, resetFilter }) {
                                 key={category.id}
                                 onClick={(e) => {
                                     handleCategorySelect(category);
-                                    handleClickInside(e);
+                                    // handleClickInside(e);
                                 }}
-                                className={`cursor-pointer border-[1px] border-gray-400 text-sm w-[30%] p-2 flex justify-center items-center rounded-full 
+                                className={`cursor-pointer capitalize border-[1px] border-gray-400 text-sm w-[30%] p-2 flex justify-center items-center rounded-full 
                                 ${selectedCategories.includes(category.id) ? "bg-primary text-white" : ""}`}
                             >
                                 {category.name}
                             </li>
                         ))}
                     </ul>
-                </div>
-                <div className="p-5 flex flex-col justify-center items-center gap-5 focus:outline-none">
-                    <p className="text-sm">*You can choose multiple categories</p>
-                    <Button
-                        onClick={handleApplyFilters} // Apply filters on click
-                        className="bg-primary font-custom text-sm tracking-wider font-normal capitalize py-2 px-4"
-                    >
-                        Apply now
-                    </Button>
                 </div>
             </MenuList>
         </Menu>

@@ -44,37 +44,38 @@ const OrderTable = ({ orderList, setOrderList }) => {
           }
         });
         setOrderList(response.data);
+        console.log(response.data);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching order list:", error);
       }
     };
     fetchOrderList();
-  }, [BASE_URL, orderList]);
+  }, [BASE_URL]);
 
 
-  const handleStatusChange = async (statusId, newStatus) => {
-    if (!allowedStatuses.includes(newStatus)) {
-      alert(`Invalid status: ${newStatus}`);
-      return;
-    }
+  // const handleStatusChange = async (statusId, newStatus) => {
+  //   if (!allowedStatuses.includes(newStatus)) {
+  //     alert(`Invalid status: ${newStatus}`);
+  //     return;
+  //   }
 
-    try {
-      const response = await axios.patch(`${BASE_URL}/admin/orderlist/${statusId}/status`, { status: newStatus });
-      console.log("Status updated successfully:", response.data);
-      toast.success("Status updated!")
+  //   try {
+  //     const response = await axios.patch(`${BASE_URL}/admin/orderlist/${statusId}/status`, { status: newStatus });
+  //     console.log("Status updated successfully:", response.data);
+  //     toast.success("Status updated!")
 
-      // Optimistically update the UI
-      setOrderList((prevList) =>
-        prevList.map((order) =>
-          order._id === statusId ? { ...order, status: newStatus } : order
-        )
-      );
-    } catch (error) {
-      console.error("Error updating status:", error.response?.data?.message || error.message);
-      alert(`Failed to update status: ${error.response?.data?.message || error.message}`);
-    }
-  };
+  //     // Optimistically update the UI
+  //     setOrderList((prevList) =>
+  //       prevList.map((order) =>
+  //         order._id === statusId ? { ...order, status: newStatus } : order
+  //       )
+  //     );
+  //   } catch (error) {
+  //     console.error("Error updating status:", error.response?.data?.message || error.message);
+  //     alert(`Failed to update status: ${error.response?.data?.message || error.message}`);
+  //   }
+  // };
 
   // Handle individual checkbox click
   const handleCheckboxClick = (orderId) => {
@@ -127,6 +128,11 @@ const OrderTable = ({ orderList, setOrderList }) => {
   const tableHead = editStatusBtn ? ["", ...TABLE_HEAD] : TABLE_HEAD;
 
 
+  useEffect(() => {
+    console.log("Current state of orderList:", orderList);
+  }, [orderList]);
+
+  
   return (
     <>
       {isLoading || orderList.length === 0 ? (
@@ -173,7 +179,7 @@ const OrderTable = ({ orderList, setOrderList }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {Array.isArray(currentOrderList) && currentOrderList.map((order, index) => {
+                  {currentOrderList.map((order, index) => {
                     const isLast = index === currentOrderList.length - 1;
                     const classes = isLast
                       ? "p-4 text-center"

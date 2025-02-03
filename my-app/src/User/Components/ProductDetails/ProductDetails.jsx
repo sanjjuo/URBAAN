@@ -426,12 +426,12 @@ const ProductDetails = () => {
                     <SimilarProducts similarProducts={similarProducts} />
                 </div>
 
-                {/* <div className="bg-white shadow-md fixed bottom-0 inset-x-0 z-50 w-full p-4 xl:hidden lg:hidden">
+                <div className="bg-white shadow-md fixed bottom-0 inset-x-0 z-50 w-full p-4 xl:hidden lg:hidden">
                     <Button onClick={addToCart} className='flex items-center justify-center gap-2 font-normal capitalize font-custom tracking-wide text-sm
                         w-full bg-primary'>
                         <FiShoppingCart />Add to cart
                     </Button>
-                </div> */}
+                </div>
             </div>
 
             {/* size chart drawer */}

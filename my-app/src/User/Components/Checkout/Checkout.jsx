@@ -154,7 +154,7 @@ const Checkout = () => {
             })
             console.log(response.data);
             if (orderPayload.paymentMethod === 'UPI' && response.data.razorpayOrderId) {
-                handleRazorpayPayment(response)
+                handleRazorpayPayment(response.data)
             } else {
                 // alert(response.message);
                 navigate('/order')

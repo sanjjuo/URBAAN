@@ -103,7 +103,7 @@ const AddedSubCategories = ({ createEditSub, handleEditCategory, subCategory, se
                                                 <td className={classes}>
                                                     <div className="flex flex-col items-center gap-3">
                                                         <div className='w-[60px] h-[60px] rounded-md'>
-                                                            <img src={subCat.SubImageUrl} alt={subCat.title} className='w-full h-full object-cover rounded-md' />
+                                                            <img src={subCat.image} alt={subCat.title} className='w-full h-full object-cover rounded-md' />
                                                         </div>
                                                         <Typography variant="small" className="font-normal capitalize font-custom text-sm">
                                                             {subCat.title}
@@ -112,7 +112,7 @@ const AddedSubCategories = ({ createEditSub, handleEditCategory, subCategory, se
                                                 </td>
                                                 <td className={classes}>
                                                     <Typography variant="small" className="font-normal capitalize font-custom text-sm">
-                                                        {subCat.MainCategory.name}
+                                                        {subCat.category?.name}
                                                     </Typography>
                                                 </td>
                                                 <td className={classes}>

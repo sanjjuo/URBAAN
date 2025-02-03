@@ -25,9 +25,7 @@ const OrderFilter = ({ setOrderList }) => {
             try {
                 const queryParams = new URLSearchParams();
                 Object.keys(filters).forEach(key => {
-                    if (filters[key] && filters[key].length) {
-                        queryParams.append(key, Array.isArray(filters[key]) ? filters[key].join(',') : filters[key]);
-                    }
+                    if (filters[key]) queryParams.append(key, filters[key]);
                 });
 
                 const response = await axios.get(`${BASE_URL}/admin/orderlist/filter?${queryParams.toString()}`, {
@@ -35,14 +33,16 @@ const OrderFilter = ({ setOrderList }) => {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                setOrderList(response.data?.filteredOrders || []);
+                setOrderList(response.data?.filteredOrders);
+                console.log(response.data.filteredOrders);
+
             } catch (error) {
                 console.error('Error fetching filtered orders:', error);
             }
         };
 
         fetchFilteredOrders();
-    }, [filters, BASE_URL]);
+    }, [filters, BASE_URL, setOrderList, resetFilter]);
 
     // Reset filters
     const resetFilters = () => {
@@ -53,7 +53,6 @@ const OrderFilter = ({ setOrderList }) => {
             categoryIds: []
         });
         setResetFilter(prev => !prev);
-        setOrderList([])
     };
 
     return (

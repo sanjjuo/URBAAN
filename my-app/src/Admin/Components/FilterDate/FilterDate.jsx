@@ -15,16 +15,16 @@ const FilterDate = ({ setFilters, resetFilter, filterKeys = { start: 'startDate'
         }));
     }, [setFilters, filterKeys]);
 
-    useEffect(() => {
-        if (resetFilter) {
-            setSelectedDates([]);
-            setFilters((prev) => ({
-                ...prev,
-                [filterKeys.start]: '',
-                [filterKeys.end]: '',
-            }));
-        }
-    }, [resetFilter, setFilters, filterKeys]);
+    // useEffect(() => {
+    //     if (resetFilter) {
+    //         setSelectedDates([]);
+    //         setFilters((prev) => ({
+    //             ...prev,
+    //             [filterKeys.start]: '',
+    //             [filterKeys.end]: '',
+    //         }));
+    //     }
+    // }, [resetFilter, setFilters, filterKeys]);
 
     return (
         <div

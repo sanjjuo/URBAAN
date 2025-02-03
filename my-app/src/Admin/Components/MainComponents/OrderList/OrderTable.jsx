@@ -126,12 +126,6 @@ const OrderTable = ({ orderList, setOrderList }) => {
 
   // Add the new title conditionally when `editStatusBtn` is true
   const tableHead = editStatusBtn ? ["", ...TABLE_HEAD] : TABLE_HEAD;
-
-
-  useEffect(() => {
-    console.log("Current state of orderList:", orderList);
-  }, [orderList]);
-
   
   return (
     <>

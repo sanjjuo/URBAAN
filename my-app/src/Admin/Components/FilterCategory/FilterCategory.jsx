@@ -49,11 +49,6 @@ export default function FilterCategory({ setFilters, resetFilter }) {
         });
     };
 
-    // Prevent the click event from propagating to the Menu component
-    // const handleClickInside = (event) => {
-    //     event.stopPropagation();
-    // };
-
     return (
         <Menu>
             <MenuHandler>

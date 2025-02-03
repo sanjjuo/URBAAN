@@ -110,7 +110,7 @@ const FavouriteProduct = () => {
                 </div>
             ) : (
                 <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 xl:grid-cols-5 lg:grid-cols-5 gap-x-5 gap-y-10 !mt-16'>
-                    {wishlist.map((product) => (
+                    {wishlist?.map((product) => (
                         product.productId ? (
                             <div key={product._id} className='relative'>
                                 <RiDeleteBin5Line

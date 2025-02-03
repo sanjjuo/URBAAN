@@ -76,7 +76,6 @@ export function FilterOrderStatus({ setFilters, resetFilter }) {
                                 key={index}
                                 onClick={(e) => {
                                     handleOrderStatusSelect(status);
-                                    handleClickInside(e); // Prevent Menu from closing
                                 }}
                                 className={`cursor-pointer border-[1px] border-gray-400 text-sm w-[30%] p-2 flex justify-center items-center 
                                     rounded-full ${selectedStatuses.includes(status) ? 'bg-primary text-white' : ''}`}

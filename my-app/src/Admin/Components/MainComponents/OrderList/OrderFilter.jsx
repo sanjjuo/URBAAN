@@ -69,9 +69,9 @@ const OrderFilter = ({ setOrderList }) => {
                         filterKeys={{ start: 'startDate', end: 'endDate' }}
                     />
                 </li>
-                <li>
+                {/* <li>
                     <FilterCategory setFilters={setFilters} resetFilter={resetFilter} />
-                </li>
+                </li> */}
                 <li>
                     <FilterOrderStatus setFilters={setFilters} resetFilter={resetFilter} />
                 </li>

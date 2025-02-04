@@ -17,7 +17,7 @@ const InvoiceSearchBar = ({ setInvoice }) => {
     const timeout = setTimeout(() => {
       const searchInvoiceItems = async () => {
         try {
-          const response = await axios.get(`${BASE_URL}/admin/invoice/search?customerMobile=${searchInvoice}`)
+          const response = await axios.get(`${BASE_URL}/admin/invoice/search?search=${searchInvoice}`)
           setInvoice(response.data.invoices)
           console.log(response.data.invoices)
         } catch (error) {

@@ -32,10 +32,11 @@ const ProductDetails = () => {
     const [showMore, setShowMore] = useState(false);
     const [reviews, setReviews] = useState([]);
     const [similarProducts, setSimilarProducts] = useState([])
+    const [reviewEligible, setReviewEligible] = useState(false);
 
 
     console.log("categry", categoryId);
-    
+
     useEffect(() => {
         const fetchReviews = async () => {
             try {
@@ -241,6 +242,41 @@ const ProductDetails = () => {
     const features = productDetails.features || []
 
 
+    useEffect(() => {
+        const fetchUserOrders = async () => {
+            try {
+                const response = await axios.get(`${BASE_URL}/user/order/view/${userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${userToken}`,
+                    },
+                });
+
+                const orders = response.data.orders;
+                const hasPurchased = orders.some(order =>
+                    order.products.some(product =>
+                        product.productId._id === productId && order.status === "Delivered"
+                    )
+                );
+
+                setReviewEligible(hasPurchased);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        if (userToken && userId) {
+            fetchUserOrders();
+        }
+    }, [userToken, userId, productId]);
+
+    const handleReviewClick = (e) => {
+        if (!reviewEligible) {
+            e.preventDefault();
+            toast.error("You can only review products you have purchased and received.");
+        }
+    };
+
+
 
     return (
         <>
@@ -397,17 +433,28 @@ const ProductDetails = () => {
                             {/* Customer Reviews */}
                             {totalReviews === 0 ? (
                                 <>
-                                    <div className='mt-10'>
+                                    <div className="mt-10">
                                         <h4 className="font-medium mb-3 text-sm xl:text-base lg:text-base pb-3 border-b-2 border-gray-300">
                                             Customer Reviews ({totalReviews})
                                         </h4>
-                                        <p className='text-gray-600 flex justify-center items-center py-5 text-sm'>No reviews for this product</p>
-                                        <Link to={!userToken && !userId ? '/login-user' : '/write-review'}
+                                        {totalReviews === 0 ? (
+                                            <p className="text-gray-600 flex justify-center items-center py-5 text-sm">
+                                                No reviews for this product
+                                            </p>
+                                        ) : null}
+
+                                        <Link
+                                            to={reviewEligible ? "/write-review" : "#"}
                                             state={{ productId }}
-                                            className='flex items-center justify-center cursor-pointer'>
-                                            <Button className='bg-primary font-normal capitalize font-custom py-2 px-4'>Add Review</Button>
+                                            onClick={handleReviewClick}
+                                            className="flex items-center justify-center cursor-pointer"
+                                        >
+                                            <Button className="bg-primary font-normal capitalize font-custom py-2 px-4">
+                                                Add Review
+                                            </Button>
                                         </Link>
                                     </div>
+
 
                                 </>
                             ) : (

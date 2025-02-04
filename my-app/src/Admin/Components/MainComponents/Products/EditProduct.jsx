@@ -139,7 +139,7 @@ const EditProduct = () => {
     useEffect(() => {
         if (editProdCategory) {
             const filtered = subCategories.filter(
-                (subcategory) => subcategory.MainCategory.id === editProdCategory
+                (subcategory) => subcategory.category._id === editProdCategory
             );
             setFilteredSubCategories(filtered);
         } else {
@@ -415,7 +415,7 @@ const EditProduct = () => {
                                     name="selectField"
                                     value={editProdCategory}
                                     onChange={(e) => setEditProdCategory(e.target.value)}
-                                    className="w-full text-sm text-secondary font-light bg-gray-100/50 border p-2 rounded focus:outline-none focus:cursor-pointer"
+                                    className="w-full capitalize text-sm text-secondary font-light bg-gray-100/50 border p-2 rounded focus:outline-none focus:cursor-pointer"
                                 >
                                     <option value="Option 1" >Select Category</option>
                                     {
@@ -438,7 +438,7 @@ const EditProduct = () => {
                                     <option value="Option 1">Select SubCategory</option>
                                     {
                                         filteredSubCategories.map((subcategory) => (
-                                            <option className='text-gray-500 capitalize' key={subcategory.id} value={subcategory.id}>{subcategory.title}</option>
+                                            <option className='text-gray-500 capitalize' key={subcategory._id} value={subcategory._id}>{subcategory.title}</option>
                                         ))
                                     }
 

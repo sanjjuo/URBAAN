@@ -25,8 +25,8 @@ const EditSubCategories = ({ initialSubCategory }) => {
     useEffect(() => {
         if (initialSubCategory) {
             setEditSubCategoryTitle(initialSubCategory.title);
-            setEditSubCategorySelect(initialSubCategory.MainCategory);
-            setEditSubCategoryImage(initialSubCategory.SubImageUrl);
+            setEditSubCategorySelect(initialSubCategory.category?._id);
+            setEditSubCategoryImage(initialSubCategory.image);
             console.log(initialSubCategory);
         }
     }, [initialSubCategory]);
@@ -87,7 +87,7 @@ const EditSubCategories = ({ initialSubCategory }) => {
                 'Content-type': 'multipart/form-data',
             };
 
-            const response = await axios.patch(`${BASE_URL}/admin/Subcategory/update/${initialSubCategory.id}`,
+            const response = await axios.patch(`${BASE_URL}/admin/Subcategory/update/${initialSubCategory._id}`,
                 editSubCategoryFormData, { headers });
 
             console.log('Subcategory updated:', response.data);
@@ -119,7 +119,7 @@ const EditSubCategories = ({ initialSubCategory }) => {
                             value={editSubCategoryTitle}
                             onChange={(e) => setEditSubCategoryTitle(e.target.value)}
                             placeholder="Subcategory Title"
-                            className="border-[1px] text-secondary bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500 focus:outline-none"
+                            className="border-[1px] capitalize text-secondary bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500 focus:outline-none"
                         />
                     </div>
 
@@ -127,7 +127,7 @@ const EditSubCategories = ({ initialSubCategory }) => {
                     <div className="flex flex-col gap-1">
                         <label className="font-normal text-base">Category</label>
                         <select
-                            value={editSubCategorySelect.id}
+                            value={editSubCategorySelect}
                             onChange={(e) => setEditSubCategorySelect(e.target.value)}
                             className="w-full text-sm text-secondary font-light bg-gray-100/50 border p-2 rounded focus:outline-none"
                         >

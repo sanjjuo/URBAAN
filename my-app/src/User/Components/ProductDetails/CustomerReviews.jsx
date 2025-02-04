@@ -88,7 +88,7 @@ const CustomerReviews = () => {
                     </div>
                 </div>
 
-                <ul className="flex items-center gap-2 mt-5 overflow-x-scroll hide-scrollbar">
+                {/* <ul className="flex items-center gap-2 mt-5 overflow-x-scroll hide-scrollbar">
                     {['Most Helpful', 'Latest', 'Positive', 'Negative'].map((label) => (
                         <li
                             key={label}
@@ -98,7 +98,7 @@ const CustomerReviews = () => {
                             {label}
                         </li>
                     ))}
-                </ul>
+                </ul> */}
 
                 {/* reviews */}
                 <div className='mt-5'>

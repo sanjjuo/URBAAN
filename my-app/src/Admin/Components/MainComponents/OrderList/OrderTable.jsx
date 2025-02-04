@@ -105,7 +105,7 @@ const OrderTable = ({ orderList, setOrderList }) => {
   // Get current items to display
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentOrderList = orderList.slice(indexOfFirstItem, indexOfLastItem);
+  const currentOrderList = (orderList || []).slice(indexOfFirstItem, indexOfLastItem);
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);

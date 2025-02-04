@@ -68,7 +68,7 @@ export function ResetOtp() {
                     </Typography>
                     <Typography color="gray" className="mt-3 xl:mt-1 lg:mt-1 font-normal font-custom text-secondary text-center 
           xl:text-lg lg:text-lg text-sm">
-                        We have sent a verification code to <span className='font-bold'> +91 </span>
+                        We have sent a verification code to <span className='font-bold'> +91 {phone}</span>
                     </Typography>
                     <div className="w-full max-w-sm mt-10 xl:mt-14 lg:mt-14 flex flex-col">
                         <div className="my-4 flex items-center justify-center gap-2">
@@ -100,7 +100,7 @@ export function ResetOtp() {
                             Check text messages for your OTP
                         </Typography>
 
-                        <div className='flex items-center justify-center gap-2'>
+                        {/* <div className='flex items-center justify-center gap-2'>
                             <Typography
                                 variant="small"
                                 className="text-center font-normal text-blue-gray-500 font-custom"
@@ -120,7 +120,7 @@ export function ResetOtp() {
                                 // onComplete={handleComplete}
                                 />
                             </div>
-                        </div>
+                        </div> */}
                         <Button
                             onClick={verifyOtp}
                             className='mt-8 bg-primary text-sm font-normal capitalize font-custom w-full'>Confirm

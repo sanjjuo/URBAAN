@@ -21,13 +21,42 @@ export function Otp() {
 
   const handleChange = (index, value) => {
     const newOtp = [...otp];
-    newOtp[index] = value.replace(/[^0-9]/g, "");
-    setOtp(newOtp);
+    const digits = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
 
-    if (value && index < inputRefs.current.length - 1) {
-      inputRefs.current[index + 1].focus();
+    if (digits.length === 6) {
+      // If user pastes a full 6-digit OTP, distribute it
+      setOtp(digits.split(""));
+      digits.split("").forEach((digit, i) => {
+        if (inputRefs.current[i]) {
+          inputRefs.current[i].value = digit;
+        }
+      });
+    } else {
+      // If user types a single digit
+      newOtp[index] = digits.charAt(0) || ""; // Ensure only one digit per field
+      setOtp(newOtp);
+
+      if (digits && index < inputRefs.current.length - 1) {
+        inputRefs.current[index + 1].focus();
+      }
     }
   };
+
+  const handlePaste = (event) => {
+    event.preventDefault(); // Prevent default paste behavior
+    const pastedText = event.clipboardData.getData("text").trim();
+    const digits = pastedText.replace(/[^0-9]/g, "").slice(0, 6); // Extract up to 6 digits
+
+    if (digits.length === 6) {
+      setOtp(digits.split(""));
+      digits.split("").forEach((digit, i) => {
+        if (inputRefs.current[i]) {
+          inputRefs.current[i].value = digit;
+        }
+      });
+    }
+  };
+
 
   function handleBackspace(event, index) {
     if (event.key === "Backspace" && !event.target.value && index > 0) {
@@ -95,6 +124,7 @@ export function Otp() {
                     value={digit}
                     onChange={(e) => handleChange(index, e.target.value)}
                     onKeyDown={(e) => handleBackspace(e, index)}
+                    onPaste={handlePaste}
                     inputRef={(el) => (inputRefs.current[index] = el)}
                   />
                 </React.Fragment>
@@ -108,7 +138,7 @@ export function Otp() {
               Check text messages for your OTP
             </Typography>
 
-            <div className='flex items-center justify-center gap-2'>
+            {/* <div className='flex items-center justify-center gap-2'>
               <Typography
                 variant="small"
                 className="text-center font-normal text-blue-gray-500 font-custom"
@@ -128,7 +158,7 @@ export function Otp() {
                 // onComplete={handleComplete}
                 />
               </div>
-            </div>
+            </div> */}
 
             <Button onClick={verifyOtp} className='mt-8 bg-primary text-sm font-normal capitalize font-custom w-full'>Confirm</Button>
           </div>

@@ -18,7 +18,7 @@ const App = () => {
           duration: 2000,
           style: {
             textTransform: 'capitalize',
-            maxWidth: '450px',
+            maxWidth: '650px',
             width: 'auto',
             padding: '20px',
             height: 'auto',

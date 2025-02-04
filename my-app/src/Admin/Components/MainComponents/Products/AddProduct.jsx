@@ -105,7 +105,7 @@ const AddProduct = () => {
     useEffect(() => {
         if (productCategory) {
             const filtered = subCategories.filter(
-                (subcategory) => subcategory.MainCategory.id === productCategory
+                (subcategory) => subcategory.category._id === productCategory
             );
             setFilteredSubCategories(filtered);
         } else {
@@ -313,7 +313,7 @@ const AddProduct = () => {
                                 id=""
                                 placeholder='Enter Product title'
                                 className='border-[1px] 
-                                    bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500
+                                    bg-gray-100/50 p-2 capitalize rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500
                                      focus:outline-none'/>
                         </div>
 
@@ -325,7 +325,7 @@ const AddProduct = () => {
                                     name="selectField"
                                     value={productCategory}
                                     onChange={(e) => setProductCategory(e.target.value)}
-                                    className="w-full text-sm text-secondary font-light bg-gray-100/50 border p-2 rounded focus:outline-none focus:cursor-pointer"
+                                    className="w-full capitalize text-sm text-secondary font-light bg-gray-100/50 border p-2 rounded focus:outline-none focus:cursor-pointer"
                                 >
                                     <option value="Option 1">Select Category</option>
                                     {
@@ -343,12 +343,12 @@ const AddProduct = () => {
                                     name="selectField"
                                     value={productSubCategory}
                                     onChange={(e) => setProductSubCategory(e.target.value)}
-                                    className="w-full text-sm text-secondary font-light bg-gray-100/50 border p-2 rounded focus:outline-none focus:cursor-pointer"
+                                    className="w-full capitalize text-sm text-secondary font-light bg-gray-100/50 border p-2 rounded focus:outline-none focus:cursor-pointer"
                                 >
                                     <option value="Option 1">Select SubCategory</option>
                                     {
                                         filteredSubCategories.map((subcategory) => (
-                                            <option key={subcategory.id} value={subcategory.id} className='capitalize'>{subcategory.title}</option>
+                                            <option key={subcategory._id} value={subcategory._id} className='capitalize'>{subcategory.title}</option>
                                         ))
                                     }
 
@@ -596,7 +596,7 @@ const AddProduct = () => {
                             onChange={(e) => setProductManuName(e.target.value)}
                             id=""
                             placeholder='Enter Name'
-                            className='border-[1px] 
+                            className='border-[1px] capitalize
                         bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500
                             focus:outline-none'/>
                     </div>
@@ -611,7 +611,7 @@ const AddProduct = () => {
                             onChange={(e) => setProductManuBrand(e.target.value)}
                             id=""
                             placeholder='Enter Brand'
-                            className='border-[1px] 
+                            className='border-[1px] capitalize
                         bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500
                             focus:outline-none'/>
                     </div>
@@ -626,7 +626,7 @@ const AddProduct = () => {
                             onChange={(e) => setProductManuAddress(e.target.value)}
                             id=""
                             placeholder='Enter Address'
-                            className='border-[1px] 
+                            className='border-[1px] capitalize
                         bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500
                             focus:outline-none'/>
                     </div>

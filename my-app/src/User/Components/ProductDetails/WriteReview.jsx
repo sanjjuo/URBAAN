@@ -54,7 +54,7 @@ const WriteReview = () => {
     // handle add review
     const handleAddReview = async () => {
         if (!userId || !token) {
-            setOpenUserNotLogin(true)
+            setOpenUserNotLogin(true);
             return;
         }
 
@@ -62,6 +62,7 @@ const WriteReview = () => {
             toast.error("Product ID is missing. Please try again.");
             return;
         }
+
         try {
             const reviewFormData = new FormData();
             reviewFormData.append('folder', 'Reviews');
@@ -71,48 +72,29 @@ const WriteReview = () => {
             reviewFormData.append('message', reviewText);
             reviewFormData.append('image', selectedImage || []);
 
-            console.log("Type of selectedImage:", selectedImage, typeof selectedImage);
-
-            if (!(selectedImage instanceof File)) {
-                console.error("Invalid file:", selectedImage);
-            } else {
-                console.log("Valid file:", selectedImage);
-            }
-
-            console.log(selectedImage);
-
-
-            for (let pair of reviewFormData.entries()) {
-                console.log(pair[0] + ': ' + pair[1]);
-            }
-
-            for (let pair of reviewFormData.entries()) {
-                console.log(pair[0] + ': ' + (pair[1] instanceof File ? pair[1].name : pair[1]));
-            }
-
-
             if (!productId || !userId || !reviewRating || !reviewText) {
-                console.error("Missing required fields.");
+                toast.error("Please provide all required fields.");
                 return;
             }
-
 
             const response = await axios.post(`${BASE_URL}/user/review/add`, reviewFormData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
                 }
-            })
-            console.log(response.data);
+            });
+
             if (response.status === 200 || response.status === 201) {
                 toast.success('Review added successfully!');
-            } else {
-                toast.error('Failed to add review. Please try again.');
+                setSelectedImage(null)
+                setReviewRating(null)
+                setReviewText('')
             }
         } catch (error) {
-            console.error("Error adding review:", error);
+            console.warn("Error adding review:", error.response?.data || error.message);
         }
-    }
+    };
+
 
     return (
         <>

@@ -33,8 +33,8 @@ const OrderFilter = ({ setOrderList }) => {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                setOrderList(response.data?.filteredOrders);
-                console.log(response.data.filteredOrders);
+                setOrderList(response.data);
+                console.log(response.data);
 
             } catch (error) {
                 console.error('Error fetching filtered orders:', error);

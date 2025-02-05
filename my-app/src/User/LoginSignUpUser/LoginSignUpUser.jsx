@@ -70,7 +70,7 @@ export function LoginSignUpUser() {
             // Handle sign-up response
             if (!isLogin) {
                 navigate('/otp', { state: { phone: loginFormData.phone } });
-                toast.success("Please verify OTP via the OTP call.");
+                toast.success("Please verify OTP via the OTP message.");
             }
         } catch (error) {
             const errorMessage = error.response?.data?.message ||

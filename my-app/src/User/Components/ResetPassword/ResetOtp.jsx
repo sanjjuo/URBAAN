@@ -71,14 +71,14 @@ export function ResetOtp() {
                 phone: phone,
                 otp: otpValue
             }
-            await axios.post(`${BASE_URL}/user/auth/forgot-password/verify-otp`, otpPayload, {
+            const response = await axios.post(`${BASE_URL}/user/auth/forgot-password/verify-otp`, otpPayload, {
                 headers: { 'Content-Type': 'application/json' },
             });
 
             console.log(response.data);
-            if (response.data.status === 200 || response.data.status === 201) {
+            if (response.data.tempToken && response.status === 200) {
                 localStorage.setItem('newToken', response.data.tempToken)
-                toast.success("Otp is verified")
+                toast.success("OTP verified successfully. Use the token to reset password.")
                 navigate('/new-password')
             }
         } catch (error) {

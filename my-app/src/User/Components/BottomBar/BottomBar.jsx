@@ -10,9 +10,10 @@ import { Chip } from '@material-tailwind/react';
 import { useContext } from 'react';
 import { AppContext } from '../../../StoreContext/StoreContext';
 import axios from 'axios';
+import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
 
 const BottomBar = ({ cartView, favView, setCart, setFav }) => {
-    const { BASE_URL } = useContext(AppContext)
+    const { BASE_URL, setOpenUserNotLogin } = useContext(AppContext)
     const location = useLocation();
     const [iconActive, setIconActive] = useState(() => {
         const path = location.pathname;
@@ -47,6 +48,9 @@ const BottomBar = ({ cartView, favView, setCart, setFav }) => {
                 setCart(response.data.items);
             } catch (error) {
                 console.error(error);
+                if (error.response.status === 401) {
+                    setOpenUserNotLogin(true);
+                }
             }
         };
 
@@ -88,97 +92,104 @@ const BottomBar = ({ cartView, favView, setCart, setFav }) => {
     }
 
     return (
-        <div className="xl:hidden lg:hidden sm:hidden md:hidden bg-white fixed bottom-0 shadow-xl w-full pt-3 pb-2 px-10 z-50">
-            <ul className="flex justify-between items-center">
-                <Link to='/'><li onClick={() => setIconActive("home")} className={`text-gray-500 hover:text-primary flex flex-col items-center
+        <>
+            <div className="xl:hidden lg:hidden sm:hidden md:hidden bg-white fixed bottom-0 shadow-xl w-full pt-3 pb-2 px-10 z-50">
+                <ul className="flex justify-between items-center">
+                    <Link to='/'><li onClick={() => setIconActive("home")} className={`text-gray-500 hover:text-primary flex flex-col items-center
                         ${iconActive === "home" ? "text-primary" : ""}`}>
-                    {
-                        iconActive === "home" ? (
-                            <>
-                                <span><RiHome5Fill className="text-2xl" /></span>
-                            </>
-                        ) : (
-                            <>
-                                <span><RiHome5Line className="text-2xl" /></span>
-                            </>
-                        )
-                    }
-                    <span className="text-[11px] h-5">Home</span>
-                </li></Link>
+                        {
+                            iconActive === "home" ? (
+                                <>
+                                    <span><RiHome5Fill className="text-2xl" /></span>
+                                </>
+                            ) : (
+                                <>
+                                    <span><RiHome5Line className="text-2xl" /></span>
+                                </>
+                            )
+                        }
+                        <span className="text-[11px] h-5">Home</span>
+                    </li></Link>
 
-                <Link to='/favourite'><li onClick={() => setIconActive("favourite")} className={`text-gray-500 hover:text-primary flex flex-col items-center
+                    <Link to='/favourite'><li onClick={() => setIconActive("favourite")} className={`text-gray-500 hover:text-primary flex flex-col items-center
                         ${iconActive === "favourite" ? "text-primary" : ""}`}>
-                    {
-                        iconActive === "favourite" ? (
-                            <>
-                                <span className='relative'>
-                                    <RiHeart3Fill className="text-2xl" />
-                                    {favView > 0 && (
-                                        <Chip value={favView || 0} size="sm" className="rounded-full bg-gray-500 text-xs text-white absolute -top-1 -right-2 p-1 w-4 h-4 flex 
+                        {
+                            iconActive === "favourite" ? (
+                                <>
+                                    <span className='relative'>
+                                        <RiHeart3Fill className="text-2xl" />
+                                        {favView > 0 && (
+                                            <Chip value={favView || 0} size="sm" className="rounded-full bg-gray-500 text-xs text-white absolute -top-1 -right-2 p-1 w-4 h-4 flex 
                                         justify-center items-center" />
-                                    )}
-                                </span>
-                            </>
-                        ) : (
-                            <>
-                                <span className='relative'>
-                                    <RiHeart3Line className="text-2xl" />
-                                    {favView > 0 && (
-                                        <Chip value={favView || 0} size="sm" className="rounded-full text-xs bg-primary absolute -top-1 -right-2 p-1 w-4 h-4 flex 
+                                        )}
+                                    </span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className='relative'>
+                                        <RiHeart3Line className="text-2xl" />
+                                        {favView > 0 && (
+                                            <Chip value={favView || 0} size="sm" className="rounded-full text-xs bg-primary absolute -top-1 -right-2 p-1 w-4 h-4 flex 
                                         justify-center items-center" />
-                                    )}
-                                </span>
-                            </>
-                        )
-                    }
-                    <span className="text-[11px] h-5">Wishlist</span>
-                </li></Link>
+                                        )}
+                                    </span>
+                                </>
+                            )
+                        }
+                        <span className="text-[11px] h-5">Wishlist</span>
+                    </li></Link>
 
-                <Link to='/user-cart'><li onClick={() => setIconActive("cart")} className={`text-gray-500 hover:text-primary flex flex-col items-center
+                    <Link to='/user-cart'><li onClick={() => setIconActive("cart")} className={`text-gray-500 hover:text-primary flex flex-col items-center
                         ${iconActive === "cart" ? "text-primary" : ""}`}>
-                    {
-                        iconActive === "cart" ? (
-                            <>
-                                <span className='relative'>
-                                    <RiShoppingCartFill className="text-2xl" />
-                                    {cartView > 0 && (
-                                        <Chip value={cartView || 0} size="sm" className="rounded-full bg-gray-500 text-xs text-white absolute -top-1 -right-2 p-1 w-4 h-4 flex 
+                        {
+                            iconActive === "cart" ? (
+                                <>
+                                    <span className='relative'>
+                                        <RiShoppingCartFill className="text-2xl" />
+                                        {cartView > 0 && (
+                                            <Chip value={cartView || 0} size="sm" className="rounded-full bg-gray-500 text-xs text-white absolute -top-1 -right-2 p-1 w-4 h-4 flex 
                                         justify-center items-center" />
-                                    )}
-                                </span>
-                            </>
-                        ) : (
-                            <>
-                                <span className='relative'>
-                                    <RiShoppingCartLine className="text-2xl" />
-                                    {cartView > 0 && (
-                                        <Chip value={cartView || 0} size="sm" className="rounded-full text-xs bg-primary absolute -top-1 -right-2 p-1 w-4 h-4 flex 
+                                        )}
+                                    </span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className='relative'>
+                                        <RiShoppingCartLine className="text-2xl" />
+                                        {cartView > 0 && (
+                                            <Chip value={cartView || 0} size="sm" className="rounded-full text-xs bg-primary absolute -top-1 -right-2 p-1 w-4 h-4 flex 
                                         justify-center items-center" />
-                                    )}
-                                </span>
-                            </>
-                        )
-                    }
-                    <span className="text-[11px] h-5">Cart</span>
-                </li></Link>
+                                        )}
+                                    </span>
+                                </>
+                            )
+                        }
+                        <span className="text-[11px] h-5">Cart</span>
+                    </li></Link>
 
-                <Link to='/user-profile'><li onClick={() => setIconActive("profile")} className={`text-gray-500 hover:text-primary flex flex-col items-center
+                    <Link to='/user-profile'><li onClick={() => setIconActive("profile")} className={`text-gray-500 hover:text-primary flex flex-col items-center
                         ${iconActive === "profile" ? "text-primary" : ""}`}>
-                    {
-                        iconActive === "profile" ? (
-                            <>
-                                <span><RiUser3Fill className="text-2xl" /></span>
-                            </>
-                        ) : (
-                            <>
-                                <span><RiUser3Line className="text-2xl" /></span>
-                            </>
-                        )
-                    }
-                    <span className="text-[11px] h-5">Profile</span>
-                </li></Link>
-            </ul>
-        </div>
+                        {
+                            iconActive === "profile" ? (
+                                <>
+                                    <span><RiUser3Fill className="text-2xl" /></span>
+                                </>
+                            ) : (
+                                <>
+                                    <span><RiUser3Line className="text-2xl" /></span>
+                                </>
+                            )
+                        }
+                        <span className="text-[11px] h-5">Profile</span>
+                    </li></Link>
+                </ul>
+            </div>
+
+            <UserNotLoginPopup
+                title='You are not logged in'
+                description='Please click to login here'
+            />
+        </>
     );
 };
 

@@ -19,7 +19,7 @@ const Checkout = () => {
     const [deliveryCharge, setDeliveryCharge] = useState([]);
     const [paymentMethod, setPaymentMethod] = useState('')
 
-    const checkoutDetails = checkoutData.checkout;
+    const checkoutDetails = checkoutData?.checkout;
     console.log(checkoutDetails);
 
     // token and userId
@@ -51,7 +51,7 @@ const Checkout = () => {
                 setIsLoading(false);
             } catch (error) {
                 console.error('Error fetching checkout details:', error);
-            } finally{
+            } finally {
                 setIsLoading(false)
             }
         };
@@ -98,7 +98,7 @@ const Checkout = () => {
             amount: orderResponse.amount,
             currency: orderResponse.currency,
             name: "URBAAN COLLECTIONS",
-            description: "Welcome to URBAAN COLLECTIONS, a fashion and lifestyle e-commerce platform located at 3rd Floor, Oberon Mall, Edappally, Ernakulam, Kerala - 682024. By accessing or using our website and/or purchasing from us, you agree to abide by the following Terms and Conditions.",
+            description: "Welcome to URBAAN COLLECTIONS, a fashion and lifestyle e-commerce platform located at 3rd Floor, Oberon Mall, Edappally, Ernakulam, Kerala - 682024.",
             image: "/logo.png",
             order_id: orderResponse.razorpayOrderId,
             handler: async function (response) {
@@ -107,21 +107,35 @@ const Checkout = () => {
 
                 // Call backend API to update payment status
                 try {
-                    await axios.post(`${BASE_URL}/webhook/razorpay`, {
-                        orderId: orderResponse.razorpayOrderId,
-                        paymentId: response.razorpay_payment_id,
-                        signature: response.razorpay_signature,
+                    const confirmPayload = {
+                        userId: orderResponse.userId,  // Ensure userId is passed correctly
+                        addressId: orderResponse.addressId,
+                        paymentMethod: orderResponse.paymentMethod,
+                        deliveryCharge: orderResponse.deliveryCharge,
+                        checkoutId: orderResponse.checkoutId,
+                        razorpayPaymentId: response.razorpay_payment_id,
+                        razorpayOrderId: response.razorpay_order_id,
+                        razorpaySignature: response.razorpay_signature,
+                    };
+
+                    console.log("Confirm Order Payload:", confirmPayload);
+
+                    await axios.post(`${BASE_URL}/api/user/order/confirm`, confirmPayload, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
                     });
 
                     toast.success("Order confirmed!");
+                    navigate("/order"); // Redirect user to order confirmation page
                 } catch (error) {
-                    console.error("Payment update failed:", error);
-                    alert("Payment success, but order update failed.");
+                    console.error("Order confirmation failed:", error);
+                    alert("Payment success, but order confirmation failed.");
                 }
             },
             prefill: {
-                name: checkoutDetails?.addressId?.name, // Replace with actual user data
-                email: checkoutDetails?.addressId?.name,
+                name: checkoutDetails?.addressId?.name,
+                email: checkoutDetails?.addressId?.email,
                 contact: checkoutDetails?.addressId?.number,
             },
             theme: {
@@ -132,6 +146,7 @@ const Checkout = () => {
         const razorpay = new window.Razorpay(options);
         razorpay.open();
     };
+
 
 
     // handleSubmitOrder

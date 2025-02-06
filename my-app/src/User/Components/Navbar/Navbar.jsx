@@ -15,6 +15,7 @@ import { UserProfile } from './UserProfile';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { SearchDesktopDrawer } from './SearchDesktopDrawer';
+import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
 
 
 const NavList = () => {
@@ -93,7 +94,7 @@ const NavList = () => {
 }
 
 const UserNavbar = () => {
-    const { BASE_URL, openDrawer, handleOpenDrawer, handleCloseDrawer, cart, setCart, fav, setFav } = useContext(AppContext)
+    const { BASE_URL, openDrawer, handleOpenDrawer, handleCloseDrawer, cart, setCart, fav, setFav, setOpenUserNotLogin } = useContext(AppContext)
     const location = useLocation();
     const isFavouritePage = location.pathname === "/favourite";
     const isCartPage = location.pathname === "/user-cart";
@@ -155,6 +156,9 @@ const UserNavbar = () => {
                 setCart(response.data?.items || []);
             } catch (error) {
                 console.error(error);
+                if (error.response.status === 401) {
+                    setOpenUserNotLogin(true);
+                }
             }
         };
 
@@ -262,6 +266,11 @@ const UserNavbar = () => {
             <SearchDesktopDrawer
                 open={openSearchDrawer}
                 closeSearchDrawer={closeSearchDrawer}
+            />
+
+            <UserNotLoginPopup
+                title='You are not logged in'
+                description='Please click to login here'
             />
         </>
     )

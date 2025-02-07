@@ -34,32 +34,43 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* contact */}
+          {/* Contact */}
           <div>
             <h1 className='text-lg xl:text-2xl lg:text-2xl font-semibold'>Contact</h1>
             <ul className='mt-5 space-y-5'>
               <li>
-                <Link className='flex items-center gap-2 font-light text-xs xl:text-sm lg:text-sm md:text-sm hover:text-primary'>
+                <a
+                  href="https://www.google.com/maps?q=Oberon+Mall,+Edappally,+Ernakulam,+Kerala+-+682024"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className='flex items-center gap-2 font-light text-xs xl:text-sm lg:text-sm md:text-sm hover:text-primary'
+                >
                   <GrLocation className='text-xl xl:text-4xl lg:text-4xl md:text-lg' />
-                  3rd Floor, Oberon Mall, Edappally,Ernakulam, Kerala - 682024
-                </Link>
+                  3rd Floor, Oberon Mall, Edappally, Ernakulam, Kerala - 682024
+                </a>
               </li>
               <li>
-                <Link className='flex items-center gap-2 font-light text-xs xl:text-sm lg:text-sm md:text-sm hover:text-primary'>
+                <a
+                  href="tel:+919847820705"
+                  className='flex items-center gap-2 font-light text-xs xl:text-sm lg:text-sm md:text-sm hover:text-primary'
+                >
                   <FiPhone className='text-sm xl:text-lg lg:text-lg md:text-lg' />
                   +91 9847820705
-                </Link>
+                </a>
               </li>
               <li>
-                <Link className='flex items-center gap-2 font-light text-xs xl:text-sm lg:text-sm md:text-sm hover:text-primary'>
+                <a
+                  href="mailto:chimsuc@gmail.com"
+                  className='flex items-center gap-2 font-light text-xs xl:text-sm lg:text-sm md:text-sm hover:text-primary'
+                >
                   <FaRegEnvelope className='text-sm xl:text-lg lg:text-lg md:text-lg' />
                   chimsuc@gmail.com
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
-
         </div>
+
 
         {/* privacy policy */}
         <div className='space-y-10'>

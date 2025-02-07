@@ -146,6 +146,12 @@ export function ViewCategoryDrawer({ setFilteredProducts, allProducts, setNoProd
         setNoProductsFound(filtered?.length === 0);
     };
 
+    const clearAll = () => {
+        setSelectedFilters({ price: [], category: [], size: [], material: [] });
+        handleCloseBottomDrawer()
+        setFilteredProducts(allProducts);
+    };
+
     return (
         <Drawer
             open={openBottomDrawer}
@@ -231,7 +237,7 @@ export function ViewCategoryDrawer({ setFilteredProducts, allProducts, setNoProd
                 <div className="flex justify-center items-center gap-3">
                     <Button
                         className='bg-secondary w-full font-custom capitalize text-sm font-normal'
-                        onClick={() => setSelectedFilters({ price: [], category: [], size: [], material: [] })}
+                        onClick={clearAll}
                     >
                         Clear All
                     </Button>

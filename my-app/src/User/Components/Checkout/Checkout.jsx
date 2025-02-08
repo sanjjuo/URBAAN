@@ -94,7 +94,7 @@ const Checkout = () => {
     // handle razorpay
     const handleRazorpayPayment = (orderResponse) => {
         const options = {
-            key: "rzp_test_eYaMViHa2ySMIW",
+            key: "rzp_live_MrSkSujB02FR7y",
             amount: orderResponse.amount,
             currency: orderResponse.currency,
             name: "URBAAN COLLECTIONS",

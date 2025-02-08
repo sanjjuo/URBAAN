@@ -108,11 +108,11 @@ const Checkout = () => {
                 // Call backend API to update payment status
                 try {
                     const confirmPayload = {
-                        userId: orderResponse.userId,  // Ensure userId is passed correctly
-                        addressId: orderResponse.addressId,
-                        paymentMethod: orderResponse.paymentMethod,
-                        deliveryCharge: orderResponse.deliveryCharge,
-                        checkoutId: orderResponse.checkoutId,
+                        userId: userId,  // Ensure userId is passed correctly
+                        addressId: checkoutDetails.addressId._id,
+                        paymentMethod: paymentMethod,
+                        deliveryCharge: calculateDeliveryCharge(checkoutDetails?.cartItems),
+                        checkoutId: checkoutDetailsId,
                         razorpayPaymentId: response.razorpay_payment_id,
                         razorpayOrderId: response.razorpay_order_id,
                         razorpaySignature: response.razorpay_signature,
@@ -120,7 +120,7 @@ const Checkout = () => {
 
                     console.log("Confirm Order Payload:", confirmPayload);
 
-                    await axios.post(`${BASE_URL}/api/user/order/confirm`, confirmPayload, {
+                    await axios.post(`${BASE_URL}/user/order/confirm`, confirmPayload, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },

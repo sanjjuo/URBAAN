@@ -19,7 +19,7 @@ const UserCarousel = () => {
         const response = await axios.get(`${BASE_URL}/user/slider/view-sliders`)
         setCarousel(response.data)
         console.log(response.data);
-        
+
         setIsLoading(false)
       } catch (error) {
         console.log(error);
@@ -32,13 +32,14 @@ const UserCarousel = () => {
   const settings = {
     dots: true,
     arrows: false,
-    infinite: true,
+    infinite: carousel.length > 1, // Disable infinite scroll if only one slide
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: true,
+    autoplay: carousel.length > 1, // Disable autoplay if only one slide
     speed: 1000,
     autoplaySpeed: 5000,
   };
+
   return (
     <>
       {

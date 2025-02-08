@@ -40,7 +40,7 @@ const UserProfile = () => {
 
   return (
     <>
-      <div className="p-4 xl:py-16 xl:px-32 lg:py-16 lg:px-32 bg-userBg h-[calc(100vh-4rem)] pb-20 overflow-y-auto hide-scrollbar">
+      <div className="p-4 xl:py-16 xl:px-32 lg:py-16 lg:px-14 bg-userBg h-[calc(100vh-4rem)] pb-20 overflow-y-auto hide-scrollbar">
         {!token ? (
           <>
             <div className='flex justify-center items-center h-[50vh]'>

@@ -185,9 +185,18 @@ const ProductDetails = () => {
         }
     };
 
+    // Set initial color when colors are available
+    useEffect(() => {
+        if (productDetails.colors?.length > 0) {
+            setSelectedColor(productDetails.colors[0].color);
+        }
+    }, [productDetails.colors]);
+
+
 
     const handleColorClick = (color) => {
         setSelectedColor((prevColor) => (prevColor === color ? "" : color));
+        setSelectedSize({});
     };
 
 
@@ -237,8 +246,9 @@ const ProductDetails = () => {
         }
     };
 
+    // Get sizes based on selected color
     const colorSizes = productDetails.colors?.find(item => item.color === selectedColor)?.sizes || [];
-    const colorColor = productDetails.colors || []
+    const colorOptions = productDetails.colors || [];
     const features = productDetails.features || []
 
 
@@ -354,13 +364,13 @@ const ProductDetails = () => {
                             <div className='mt-4'>
                                 <h4 className='font-medium text-sm xl:text-base lg:text-base mb-2'>Select Color</h4>
                                 <ul className='flex items-center gap-3'>
-                                    {colorColor.map((color) => (
+                                    {colorOptions.map((color) => (
                                         <li
                                             key={color._id}
                                             onClick={() => handleColorClick(color.color)}
                                             className={`cursor-pointer text-3xl relative flex items-center justify-center ${selectedColor.includes(color.color) ? 'text-primary' : ''}`}
                                         >
-                                            {selectedColor.includes(color.color) && (
+                                            {selectedColor === color.color && (
                                                 <TiTick className={`absolute text-3xl p-1 rounded-full bg-black/10 ${getContrastYIQ(color.color)}`} />
                                             )}
                                             <FaCircle style={{ color: color.color }} />

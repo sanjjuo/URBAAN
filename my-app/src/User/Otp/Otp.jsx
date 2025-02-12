@@ -112,7 +112,7 @@ export function Otp() {
               {otp.map((digit, index) => (
                 <React.Fragment key={index}>
                   <Input
-                    type="text"
+                    type="number"
                     maxLength={1}
                     className="!w-10 appearance-none !border-t-blue-gray-200 text-center !text-lg placeholder:text-blue-gray-300 placeholder:opacity-100 focus:!border-t-gray-900"
                     labelProps={{

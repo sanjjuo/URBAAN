@@ -6,11 +6,14 @@ import { useEffect } from 'react'
 import { useState } from 'react'
 import { AppContext } from '../../../../StoreContext/StoreContext'
 import toast from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
+import { IoIosArrowBack } from 'react-icons/io'
 
-const EditDelivery = ({ initialDelivery }) => {
+const EditDelivery = ({ initialDelivery, setDeliveryFees }) => {
     const { BASE_URL } = useContext(AppContext)
     const [editQuantity, setEditQuantity] = useState('')
     const [editDeliveryFee, setEditDeliveryFee] = useState('')
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (initialDelivery) {
@@ -18,6 +21,20 @@ const EditDelivery = ({ initialDelivery }) => {
             setEditDeliveryFee(initialDelivery.deliveryFee)
         }
     }, [initialDelivery])
+
+    // fetch delivery fees
+    const fetchDeliveryFees = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/delivery-fee/view`)
+            setDeliveryFees(response.data.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    useEffect(() => {
+        fetchDeliveryFees()
+    }, [])
+
 
     // handle function
     const handleEditDeliverySubmit = async (e) => {
@@ -37,12 +54,17 @@ const EditDelivery = ({ initialDelivery }) => {
             })
             console.log(response.data.data);
             toast.success("Delivery Fees is updated")
+            fetchDeliveryFees();
+            setEditQuantity('')
+            setEditDeliveryFee('')
         } catch (error) {
             console.log(error);
         }
     }
     return (
         <>
+            <p onClick={() => navigate(-1)} className='flex items-center cursor-pointer hover:text-primary mb-2'>
+                <IoIosArrowBack /> Back</p>
             <div className="bg-white rounded-xl shadow-md sticky top-5 transition-all duration-300 ease-in-out">
                 <div className="p-5">
                     <h2 className="text-xl font-medium mb-3 lg:mb-0 text-secondary">Edit Delivery</h2>

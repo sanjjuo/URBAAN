@@ -105,7 +105,8 @@ export function ResetOtp() {
                                     <Input
                                         type="number"
                                         maxLength={1}
-                                        className="!w-10 appearance-none !border-t-blue-gray-200 text-center !text-lg placeholder:text-blue-gray-300 placeholder:opacity-100 focus:!border-t-gray-900"
+                                        className="!w-10 appearance-none !border-t-blue-gray-200 text-center !text-lg placeholder:text-blue-gray-300 placeholder:opacity-100 
+                                        focus:!border-t-gray-900 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                                         labelProps={{
                                             className: "before:content-none after:content-none",
                                         }}

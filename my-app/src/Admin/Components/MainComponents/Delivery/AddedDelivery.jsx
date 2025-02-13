@@ -10,27 +10,27 @@ import AppLoader from "../../../../Loader";
 
 const TABLE_HEAD = ["Quantity", "Delivery Charge", "Action"];
 
-export default function AddedDelivery({ createEditDelivery, handleEditDelivery }) {
+export default function AddedDelivery({ createEditDelivery, handleEditDelivery, deliveryFees, setDeliveryFees, }) {
     const { BASE_URL, open, handleOpen, modalType, } = useContext(AppContext)
     const [selectedDeliveryId, setSelectedDeliveryId] = useState(null);
-    const [deliveryFees, setDeliveryFees] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5);
+    const [itemsPerPage] = useState(10);
 
-    useEffect(() => {
-        const fetchDeliveryFees = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/admin/delivery-fee/view`)
-                setDeliveryFees(response.data.data)
-                setIsLoading(false)
-                console.log(response.data.data);
-            } catch (error) {
-                console.log(error);
-            }
+    // fetch delivery fees
+    const fetchDeliveryFees = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/delivery-fee/view`)
+            setDeliveryFees(response.data.data)
+            setIsLoading(false)
+            console.log(response.data.data);
+        } catch (error) {
+            console.log(error);
         }
+    }
+    useEffect(() => {
         fetchDeliveryFees()
-    },[])
+    }, [])
 
     // handle delete
     const handleDeleteDelivery = async (deliveryId) => {
@@ -44,6 +44,7 @@ export default function AddedDelivery({ createEditDelivery, handleEditDelivery }
             console.log(response.data);
             handleOpen()
             toast.success('Delivery fee is deleted')
+            fetchDeliveryFees();
         } catch (error) {
             console.log(error);
         }

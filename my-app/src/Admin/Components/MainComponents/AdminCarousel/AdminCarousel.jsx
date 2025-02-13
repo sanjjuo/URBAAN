@@ -18,7 +18,7 @@ const AdminCarousel = () => {
   }
 
   // console.log(adminCarousel);
-  
+
 
   return (
     <>
@@ -29,10 +29,12 @@ const AdminCarousel = () => {
           <div className="h-fit overflow-y-auto hide-scrollbar">
             {createEditCarousel === "createcarousel" ? (
               <CreateCarousel
+                setAdminCarousel={setAdminCarousel}
               />
             ) : (
               <EditCarousel
                 initialEditCarouselData={initialEditCarouselData}
+                setAdminCarousel={setAdminCarousel}
               />
             )}
           </div>

@@ -216,7 +216,7 @@ const AddProduct = () => {
 
             console.log(response.data);
             toast.success("Product is created");
-
+            navigate(-1)
             // Reset form
             setProductTitle('');
             setProductCategory('');

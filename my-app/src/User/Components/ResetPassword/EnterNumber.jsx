@@ -42,7 +42,7 @@ const EnterNumber = () => {
                             onChange={(e) => setNumber(e.target.value)}
                             placeholder='Enter your number'
                             className="w-full border border-gray-500 focus:outline-none bg-white py-2 rounded-lg px-5 placeholder:text-blue-gray-300
-                            placeholder:text-sm"
+                            placeholder:text-sm [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                         />
                         <Button onClick={handleSendOtp} className='bg-primary font-custom capitalize font-normal text-sm'>Reset password</Button>
                     </div>

@@ -13,7 +13,7 @@ import { useContext } from "react";
 import { AppContext } from "../../../../StoreContext/StoreContext";
 import toast from 'react-hot-toast';
 
-export function AddCouponModal({ open, handleOpen }) {
+export function AddCouponModal({ open, handleOpen, setAdminCoupon }) {
     const { BASE_URL } = useContext(AppContext)
     const [categories, setCategories] = useState([])
     const [couponTitle, setCouponTitle] = useState('')
@@ -42,6 +42,28 @@ export function AddCouponModal({ open, handleOpen }) {
             setCouponCategory(categories.map((category) => category.id));
         }
     };
+
+    // fetch coupon
+    const fetchCoupons = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert("Authorization is missing");
+                return;
+            }
+
+            const headers = {
+                Authorization: `Bearer ${token}`
+            }
+            const response = await axios.get(`${BASE_URL}/admin/coupon/list`, { headers });
+            setAdminCoupon(response.data);
+        } catch (error) {
+            console.log(error, ": error fetching data");
+        }
+    }
+    useEffect(() => {
+        fetchCoupons();
+    }, [])
 
 
     const handleCouponSubmit = async (e) => {
@@ -99,6 +121,7 @@ export function AddCouponModal({ open, handleOpen }) {
             console.log(response.data);
             handleOpen();
             toast.success('Coupon is created');
+            fetchCoupons();
             setCouponTitle('')
             setCouponStartDate('')
             setCouponEndDate('')

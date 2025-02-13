@@ -113,11 +113,12 @@ export function LoginSignUpUser() {
                             onChange={handleInputChange}
                             placeholder="Phone Number"
                             pattern="\d{10,15}"
-                            className="!border-gray-300 bg-white py-6 placeholder:text-blue-gray-300 !font-custom placeholder:font-custom placeholder:opacity-100 focus:border-gray-300 focus:border-[1px]"
+                            className="!border-gray-300 bg-white py-6 placeholder:text-blue-gray-300 !font-custom placeholder:font-custom placeholder:opacity-100 focus:border-gray-300 focus:border-[1px] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                             labelProps={{
                                 className: "before:content-none after:content-none",
                             }}
                         />
+
                         {loginSignUpUser !== "login" && (
                             <>
                                 <Input

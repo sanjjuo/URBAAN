@@ -47,13 +47,14 @@ const Category = () => {
             {
               createEdit === "create" ? (
                 <>
-                  <CreateCategories />
+                  <CreateCategories setAdminCategory={setAdminCategory}/>
                 </>
               )
                 : (
                   <>
                     <EditCategories
                       initialData={initialData}
+                      setAdminCategory={setAdminCategory}
                     />
                   </>
                 )

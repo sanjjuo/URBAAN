@@ -29,26 +29,27 @@ const CouponsTable = ({ adminCoupon, setAdminCoupon }) => {
         console.log(couponDetails);
     }
 
-    useEffect(() => {
-        const fetchCoupons = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    alert("Authorization is missing");
-                    return;
-                }
-
-                const headers = {
-                    Authorization: `Bearer ${token}`
-                }
-                const response = await axios.get(`${BASE_URL}/admin/coupon/list`, { headers });
-                setAdminCoupon(response.data);
-                console.log(response.data);
-                setIsLoading(false)
-            } catch (error) {
-                console.log(error, ": error fetching data");
+    // fetch coupon
+    const fetchCoupons = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert("Authorization is missing");
+                return;
             }
+
+            const headers = {
+                Authorization: `Bearer ${token}`
+            }
+            const response = await axios.get(`${BASE_URL}/admin/coupon/list`, { headers });
+            setAdminCoupon(response.data);
+            console.log(response.data);
+            setIsLoading(false)
+        } catch (error) {
+            console.log(error, ": error fetching data");
         }
+    }
+    useEffect(() => {
         fetchCoupons();
     }, [])
 
@@ -281,6 +282,7 @@ const CouponsTable = ({ adminCoupon, setAdminCoupon }) => {
                 open={open === "editCouponModal"}
                 handleOpen={handleOpen}
                 initialEditCoupon={initialEditCoupon}
+                setAdminCoupon={setAdminCoupon}
             />
         </>
     )

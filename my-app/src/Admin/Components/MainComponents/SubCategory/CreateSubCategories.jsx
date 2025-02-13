@@ -6,7 +6,7 @@ import { RiDeleteBin5Line } from 'react-icons/ri';
 import { AppContext } from '../../../../StoreContext/StoreContext';
 import toast from 'react-hot-toast';
 
-const CreateSubCategories = () => {
+const CreateSubCategories = ({setSubCategory}) => {
     const { BASE_URL } = useContext(AppContext)
     const [createSubCategoryTitle, setCreateSubCategoryTitle] = useState('');
     const [createSubCategorySelect, setCreateSubCategorySelect] = useState('');
@@ -47,6 +47,21 @@ const CreateSubCategories = () => {
         }
     };
 
+     // fetch sub category
+     const fetchSubCategory = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/Subcategory/get`);
+            setSubCategory(response.data);
+            // console.log(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSubCategory();
+    }, []);
+
     const handleSubCategorySubmit = async (e) => {
         e.preventDefault();
         try {
@@ -71,6 +86,7 @@ const CreateSubCategories = () => {
             const response = await axios.post(`${BASE_URL}/admin/Subcategory/create`, subCategoryFormData, { headers });
             console.log(response.data);
             toast.success("Subcategory is created");
+            fetchSubCategory();
             setCreateSubCategoryTitle('');
             setCreateSubCategorySelect('');
             setCreateSubCategoryImage(null);

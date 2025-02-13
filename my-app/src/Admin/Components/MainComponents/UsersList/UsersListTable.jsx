@@ -44,17 +44,18 @@ const UsersListTable = ({ userList, setUserList }) => {
         }
     };
 
+    // fetch user list
+    const fetchUserList = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/users/view-all/`);
+            setUserList(response.data.users); // Ensure you access the correct field in the API response
+            setIsLoading(false);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            setIsLoading(false);
+        }
+    };
     useEffect(() => {
-        const fetchUserList = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/admin/users/view-all/`);
-                setUserList(response.data.users); // Ensure you access the correct field in the API response
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Error fetching users:", error);
-                setIsLoading(false);
-            }
-        };
         fetchUserList();
     }, [BASE_URL]);
 
@@ -76,6 +77,7 @@ const UsersListTable = ({ userList, setUserList }) => {
             handleOpen();
             setSelectedUserId(null);
             toast.success("User is deleted")
+            fetchUserList();
         } catch (error) {
             console.log(error);
         }

@@ -20,17 +20,18 @@ const AddedCategories = ({ createEdit, handleEditCategory, adminCategory, setAdm
         handleOpen("readMoreModal");
     }
 
-    useEffect(() => {
-        const fetchCategory = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/admin/category/get`);
-                setAdminCategory(response.data);
-                setIsLoading(false)
-            } catch (error) {
-                console.error("Error fetching categories:", error);
-            }
-        };
+    //fetch category
+    const fetchCategory = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/category/get`);
+            setAdminCategory(response.data);
+            setIsLoading(false)
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchCategory();
     }, []);
 
@@ -49,6 +50,7 @@ const AddedCategories = ({ createEdit, handleEditCategory, adminCategory, setAdm
             console.log(response.data);
             handleOpen(); // Close modal after deletion
             toast.success("Category is deleted")
+            fetchCategory();
         } catch (error) {
             console.error("Error deleting category:", error);
             alert("Failed to delete category.");

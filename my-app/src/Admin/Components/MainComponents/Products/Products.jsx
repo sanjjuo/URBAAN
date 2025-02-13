@@ -22,26 +22,27 @@ const Products = () => {
   const [categoryFilter, setCategoryFilter] = useState([]);
 
   // fetch products
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          alert("Authorization is missing")
-          return;
-        }
-
-        const headers = {
-          Authorization: `Bearer ${token}`
-        }
-        const response = await axios.get(`${BASE_URL}/admin/products/view-products`, { headers });
-        setProducts(response.data);
-        setIsLoading(false)
-        console.log(response.data);
-      } catch (error) {
-        console.log(error, ": error fetching products");
+  const fetchProducts = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Authorization is missing")
+        return;
       }
+
+      const headers = {
+        Authorization: `Bearer ${token}`
+      }
+      const response = await axios.get(`${BASE_URL}/admin/products/view-products`, { headers });
+      setProducts(response.data);
+      setIsLoading(false)
+      console.log(response.data);
+    } catch (error) {
+      console.log(error, ": error fetching products");
     }
+  }
+
+  useEffect(() => {
     fetchProducts();
   }, [])
 
@@ -64,6 +65,7 @@ const Products = () => {
       handleOpen()
       toast.success("Product is deleted")
       setProducts(products.filter(product => product.id !== productId));
+      fetchProducts()
     } catch (error) {
       console.log(error);
       alert("Product is not deleted")

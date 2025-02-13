@@ -7,12 +7,15 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { AppContext } from '../../../../StoreContext/StoreContext';
 import { useContext } from 'react';
 import toast from 'react-hot-toast';
+import { IoIosArrowBack } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
 
-const EditCategories = ({ initialData }) => {
+const EditCategories = ({ initialData, setAdminCategory }) => {
     const { BASE_URL } = useContext(AppContext)
     const [categoryName, setCategoryName] = useState('');
     const [categoryImage, setCategoryImage] = useState(null);
     const [categoryDescription, setCategoryDescription] = useState('');
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (initialData) {
@@ -28,6 +31,19 @@ const EditCategories = ({ initialData }) => {
             setCategoryImage({ image: file });
         }
     }
+
+    // fetch categories
+    const fetchCategory = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/category/get`);
+            setAdminCategory(response.data);
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
+    };
+    useEffect(() => {
+        fetchCategory();
+    }, []);
 
     const handleEditCategorySubmit = async (e) => {
         e.preventDefault();
@@ -56,7 +72,7 @@ const EditCategories = ({ initialData }) => {
             const response = await axios.patch(`${BASE_URL}/admin/category/update/${initialData.id}`, editFormData, { headers });
             console.log("Category is updated", response.data);
             toast.success("Category is Updated!")
-
+            fetchCategory();
             setCategoryName('')
             setCategoryImage(null)
             setCategoryDescription('')
@@ -67,6 +83,8 @@ const EditCategories = ({ initialData }) => {
     }
     return (
         <>
+            <p onClick={() => navigate(-1)} className='flex items-center cursor-pointer hover:text-primary mb-2'>
+                <IoIosArrowBack /> Back</p>
             <div className='bg-white rounded-xl shadow-md sticky top-5 transition-all duration-300 ease-in-out'>
                 <div className='p-5'>
                     <h2 className="text-xl font-medium mb-3 lg:mb-0 text-secondary">Edit Categories</h2>

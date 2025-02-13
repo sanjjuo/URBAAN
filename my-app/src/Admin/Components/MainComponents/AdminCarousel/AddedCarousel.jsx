@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import axios from 'axios';
 import AppLoader from '../../../../Loader';
+import toast from 'react-hot-toast';
 
 const AddedCarousel = ({ createEditCarousel, handleEditCarousel, adminCarousel, setAdminCarousel }) => {
     const { open, handleOpen, BASE_URL, modalType } = useContext(AppContext);
@@ -15,17 +16,18 @@ const AddedCarousel = ({ createEditCarousel, handleEditCarousel, adminCarousel, 
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(3);
 
-    useEffect(() => {
-        const fetchAdminCarousel = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/admin/slider`);
-                setAdminCarousel(response.data.slider || []);
-                setIsLoading(false)
-                console.log(response.data);
-            } catch (error) {
-                console.log("error fetching data:", error);
-            }
+    //fetch carousel
+    const fetchAdminCarousel = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/slider`);
+            setAdminCarousel(response.data || []);
+            setIsLoading(false)
+            console.log(response.data);
+        } catch (error) {
+            console.log("error fetching data:", error);
         }
+    }
+    useEffect(() => {
         fetchAdminCarousel();
     }, [BASE_URL])
 
@@ -46,6 +48,8 @@ const AddedCarousel = ({ createEditCarousel, handleEditCarousel, adminCarousel, 
             const response = await axios.delete(`${BASE_URL}/admin/slider/${carouselId}`, { headers });
             console.log(response.data);
             handleOpen()
+            toast.success("Carousel is deleted")
+            fetchAdminCarousel();
         } catch (error) {
             console.log(error, "error deleting carousel");
             alert('Carousel is not deleted')

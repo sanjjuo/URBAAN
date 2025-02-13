@@ -5,6 +5,7 @@ import EditDelivery from './EditDelivery';
 import AddedDelivery from './AddedDelivery';
 
 const Delivery = () => {
+    const [deliveryFees, setDeliveryFees] = useState([])
     const [createEditDelivery, setCreateEditDelivery] = useState("create");
     const [initialDelivery, setInitialDelivery] = useState(null);  // for displaying initial input fields on edit catgeory form before editing the form
 
@@ -24,12 +25,13 @@ const Delivery = () => {
                         {
                             createEditDelivery === "create" ? (
                                 <>
-                                    <CreateDelivery />
+                                    <CreateDelivery setDeliveryFees={setDeliveryFees}/>
                                 </>
                             )
                                 : (
                                     <>
                                         <EditDelivery
+                                            setDeliveryFees={setDeliveryFees}
                                             initialDelivery={initialDelivery}
                                         />
                                     </>
@@ -42,7 +44,7 @@ const Delivery = () => {
                 <div className="lg:col-span-4 space-y-5">
                     {/* Added Categories */}
                     <div className="h-[calc(100vh-10rem)] overflow-y-auto hide-scrollbar">
-                        <AddedDelivery createEditDelivery={createEditDelivery} handleEditDelivery={handleEditDelivery} />
+                        <AddedDelivery deliveryFees={deliveryFees} setDeliveryFees={setDeliveryFees} createEditDelivery={createEditDelivery} handleEditDelivery={handleEditDelivery} />
                     </div>
                 </div>
             </div>

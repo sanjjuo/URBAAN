@@ -31,6 +31,7 @@ const Coupons = () => {
       <AddCouponModal
         open={open === "addCouponModal"}
         handleOpen={handleOpen}
+        setAdminCoupon={setAdminCoupon}
       />
     </>
   )

@@ -5,11 +5,27 @@ import { AppContext } from '../../../../StoreContext/StoreContext'
 import { useState } from 'react'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { useEffect } from 'react'
 
-const CreateDelivery = () => {
+const CreateDelivery = ({ setDeliveryFees }) => {
     const [deliveryInput, setDeliveryInput] = useState('')
     const [quantityInput, setQuantityInput] = useState('')
     const { BASE_URL } = useContext(AppContext)
+
+
+    // fetch delivery fees
+    const fetchDeliveryFees = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/delivery-fee/view`)
+            setDeliveryFees(response.data.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    useEffect(() => {
+        fetchDeliveryFees()
+    }, [])
+
 
     // handle delivery
     const handleDeliveryFeeSubmit = async (e) => {
@@ -28,6 +44,9 @@ const CreateDelivery = () => {
             })
             console.log(response.data);
             toast.success('Delivery Fees is added')
+            fetchDeliveryFees();
+            setQuantityInput('')
+            setDeliveryInput('')
         } catch (error) {
             console.log(error);
         }

@@ -7,8 +7,10 @@ import { AppContext } from '../../../../StoreContext/StoreContext';
 import axios from 'axios';
 import { RiDeleteBin5Line } from 'react-icons/ri';
 import toast from 'react-hot-toast';
+import { IoIosArrowBack } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
 
-const EditCarousel = ({ initialEditCarouselData }) => {
+const EditCarousel = ({ initialEditCarouselData, setAdminCarousel }) => {
     const { BASE_URL } = useContext(AppContext)
     const [editCarouselImage, setEditCarouselImage] = useState(null);
     const [editCarouselIsActive, setEditCarouselIsActive] = useState(true);
@@ -17,6 +19,7 @@ const EditCarousel = ({ initialEditCarouselData }) => {
     const [editCarouselLink, setEditCarouselLink] = useState('')
     const [editCarouselCategory, setEditCarouselCategory] = useState('')
     const [categories, setCategories] = useState([])
+    const navigate = useNavigate()
 
     const handleCarouselUpload = (e) => {
         const file = e.target.files[0];
@@ -68,6 +71,20 @@ const EditCarousel = ({ initialEditCarouselData }) => {
         fetchCategories();
     }, []);
 
+
+    //fetch carousel
+    const fetchAdminCarousel = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/slider`);
+            setAdminCarousel(response.data || []);
+        } catch (error) {
+            console.log("error fetching data:", error);
+        }
+    }
+    useEffect(() => {
+        fetchAdminCarousel();
+    }, [BASE_URL])
+
     // form submission
     const handleEditCarouselSubmit = async (e) => {
         e.preventDefault();
@@ -103,7 +120,8 @@ const EditCarousel = ({ initialEditCarouselData }) => {
 
             const response = await axios.patch(`${BASE_URL}/admin/slider/${initialEditCarouselData._id}`, editCarouselFormData, { headers })
             console.log(response.data);
-            toast.success('Carousel is updated!')
+            toast.success('Carousel is updated!');
+            fetchAdminCarousel();
             setEditCarouselImage(null)
             setEditCarouselIsActive(true)
             setEditCarouselLabel('')
@@ -117,6 +135,8 @@ const EditCarousel = ({ initialEditCarouselData }) => {
     }
     return (
         <>
+            <p onClick={() => navigate(-1)} className='flex items-center cursor-pointer hover:text-primary mb-2'>
+                <IoIosArrowBack /> Back</p>
             <div className='bg-white rounded-xl'>
                 <div className='p-5'>
                     <h2 className="text-xl font-medium mb-3 lg:mb-0 text-secondary">Edit Carousel</h2>
@@ -237,7 +257,7 @@ const EditCarousel = ({ initialEditCarouselData }) => {
                             <select
                                 value={editCarouselCategory}
                                 onChange={(e) => setEditCarouselCategory(e.target.value)}
-                                className="w-full text-sm text-secondary font-light bg-gray-100/50 border p-2 rounded focus:outline-none"
+                                className="w-full capitalize text-sm text-secondary font-light bg-gray-100/50 border p-2 rounded focus:outline-none"
                             >
                                 <option value="">Select Category</option>
                                 {categories.map((category) => (

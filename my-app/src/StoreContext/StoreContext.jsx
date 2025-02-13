@@ -18,9 +18,7 @@ const StoreContext = ({ children }) => {
     const [cart, setCart] = useState([]) //is for updating cart length in product details and navbar
     const [fav, setFav] = useState([]) // is for updating fav length in product details and navbar
     const [searchedProducts, setSearchedProducts] = useState([])
-    const [searchUser, setSearchUser] = useState('')
-    // above serach bar state for used in both navbar search in desktop and userSearch.jsx in mobile side
-
+    const [searchUser, setSearchUser] = useState('') // above serach bar state for used in both navbar search in desktop and userSearch.jsx in mobile side
 
     // Handle modal
     const handleOpen = (modal, type) => {
@@ -105,7 +103,7 @@ const StoreContext = ({ children }) => {
                 searchUser,
                 searchedProducts,
                 setSearchedProducts,
-                setSearchUser
+                setSearchUser,
             }}
         >
             {children}

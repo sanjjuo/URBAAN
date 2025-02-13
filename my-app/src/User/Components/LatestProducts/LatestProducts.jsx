@@ -6,12 +6,15 @@ import AppLoader from '../../../Loader';
 import { RiHeart3Line, RiHeart3Fill } from 'react-icons/ri';
 import toast from 'react-hot-toast';
 import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { Button } from '@material-tailwind/react';
 
 const LatestProducts = () => {
   const { BASE_URL, favProduct, setOpenUserNotLogin, setFav } = useContext(AppContext);
   const [latestProducts, setLatestProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [heartIcons, setHeartIcons] = useState({}); // Store heart icon state for each product
+  const [showAllLatest, setShowAllLatest] = useState(false);
 
   useEffect(() => {
     const fetchLatestProducts = async () => {
@@ -80,7 +83,7 @@ const LatestProducts = () => {
     }
   };
 
-
+  const visibleProducts = showAllLatest ? latestProducts : latestProducts.slice(0, 5);
 
   return (
     <>
@@ -97,52 +100,67 @@ const LatestProducts = () => {
             <p className='col-span-5 flex items-center justify-center h-[50vh]'>No products available</p>
           </>
         ) : (
-          <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 xl:grid-cols-5 lg:grid-cols-5 gap-5'>
-            {latestProducts.map((product) => {
-              const isInWishlist = favProduct?.items?.some(item => item?.productId?._id === product._id);
-              return (
-                <div className='group relative' key={product._id}>
-                  <Link
-                    to="/product-details"
-                    state={{
-                      productId: product._id,
-                      categoryId: product.category._id
-                  }}
-                    className="cursor-pointer"
-                  >
-                    <div className='w-full h-52 xl:h-80 lg:h-80 rounded-xl overflow-hidden'>
-                      <img
-                        src={product.images[0]}
-                        alt={product.title}
-                        className='w-full h-full object-cover rounded-xl shadow-md
+          <>
+            <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 xl:grid-cols-5 lg:grid-cols-5 gap-5'>
+              {visibleProducts.map((product) => {
+                const isInWishlist = favProduct?.items?.some(item => item?.productId?._id === product._id);
+                return (
+                  <div className='group relative' key={product._id}>
+                    <Link
+                      to="/product-details"
+                      state={{
+                        productId: product._id,
+                        categoryId: product.category._id
+                      }}
+                      className="cursor-pointer"
+                    >
+                      <div className='w-full h-52 xl:h-80 lg:h-80 rounded-xl overflow-hidden'>
+                        <img
+                          src={product.images[0]}
+                          alt={product.title}
+                          className='w-full h-full object-cover rounded-xl shadow-md
                         transition transform scale-100 duration-500 ease-in-out cursor-pointer group-hover:scale-105'
-                        onError={(e) => e.target.src = '/no-image.jpg'}
+                          onError={(e) => e.target.src = '/no-image.jpg'}
+                        />
+                      </div>
+                    </Link>
+                    {heartIcons[product._id] || isInWishlist ? (
+                      <RiHeart3Fill
+                        onClick={() => handleWishlist(product._id, product.title)}
+                        className='absolute top-2 right-2 cursor-pointer text-primary bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                       />
-                    </div>
-                  </Link>
-                  {heartIcons[product._id] || isInWishlist ? (
-                    <RiHeart3Fill
-                      onClick={() => handleWishlist(product._id, product.title)}
-                      className='absolute top-2 right-2 cursor-pointer text-primary bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
-                    />
-                  ) : (
-                    <RiHeart3Line
-                      onClick={() => handleWishlist(product._id, product.title)}
-                      className='absolute top-2 right-2 cursor-pointer bg-white text-gray-600 w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
-                    />
-                  )}
-                  <div className='mt-3'>
-                    <h4 className='font-medium text-sm xl:text-lg lg:text-lg capitalize'>{product.title}</h4>
-                    <p className='text-gray-600 font-normal text-xs xl:text-sm lg:text-sm capitalize truncate overflow-hidden 
+                    ) : (
+                      <RiHeart3Line
+                        onClick={() => handleWishlist(product._id, product.title)}
+                        className='absolute top-2 right-2 cursor-pointer bg-white text-gray-600 w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
+                      />
+                    )}
+                    <div className='mt-3'>
+                      <h4 className='font-medium text-sm xl:text-lg lg:text-lg capitalize'>{product.title}</h4>
+                      <p className='text-gray-600 font-normal text-xs xl:text-sm lg:text-sm capitalize truncate overflow-hidden 
                       whitespace-nowrap w-40 xl:w-60 lg:w-60'>{product.description}</p>
-                    <p className='text-primary text-base xl:text-xl lg:text-xl font-semibold mt-2'>
-                      ₹{product.offerPrice}
-                    </p>
+                      <p className='text-primary text-base xl:text-xl lg:text-xl font-semibold mt-2'>
+                        ₹{product.offerPrice}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+
+            {latestProducts.length > 5 && (
+              <div className='flex justify-center items-center pb-8'>
+                <Button
+                  onClick={() => setShowAllLatest(!showAllLatest)}
+                  className='bg-transparent font-custom shadow-none text-black font-normal capitalize text-sm 
+                                    flex items-center gap-2 border border-gray-700 rounded-3xl px-3 py-2 hover:shadow-none'
+                >
+                  {showAllLatest ? "Show Less" : "Show More"} {showAllLatest ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                </Button>
+              </div>
+            )}
+          </>
+
         )}
 
       {/* <UserNotLoginPopup

@@ -15,19 +15,20 @@ const AddedSubCategories = ({ createEditSub, handleEditCategory, subCategory, se
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
 
+    // fetch sub category
+    const fetchSubCategory = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/Subcategory/get`);
+            setSubCategory(response.data);
+            console.log(response.data);
+            setIsLoading(false);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     useEffect(() => {
-        const fetchSubCategory = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/admin/Subcategory/get`);
-                setSubCategory(response.data);
-                // console.log(response.data);
-                setIsLoading(false);
-            } catch (error) {
-                console.log(error);
-            }
-        };
         fetchSubCategory();
-    }, [BASE_URL]);
+    }, []);
 
     const handleSubCategoryDelete = async (subCategoryId) => {
         try {
@@ -45,6 +46,7 @@ const AddedSubCategories = ({ createEditSub, handleEditCategory, subCategory, se
             console.log(response.data);
             handleOpen();
             toast.success('Subcategory is deleted');
+            fetchSubCategory();
         } catch (error) {
             console.log(error);
             alert("Sub category is not deleted");
@@ -99,7 +101,7 @@ const AddedSubCategories = ({ createEditSub, handleEditCategory, subCategory, se
                                         const isLast = index === currentSubCategories.length - 1;
                                         const classes = isLast ? "p-4 text-center" : "p-4 border-b border-gray-300 text-center";
                                         return (
-                                            <tr key={subCat.id} className="bg-transparent">
+                                            <tr key={subCat?._id} className="bg-transparent">
                                                 <td className={classes}>
                                                     <div className="flex flex-col items-center gap-3">
                                                         <div className='w-[60px] h-[60px] rounded-md'>
@@ -129,10 +131,10 @@ const AddedSubCategories = ({ createEditSub, handleEditCategory, subCategory, se
 
                                                 <td className={classes}>
                                                     <div className="flex justify-center gap-2 text-sm">
-                                                        <button onClick={() => {handleEditCategory(subCat); setSelectedCatId(subCat.id);}} className={`text-buttonBg bg-editBg w-14 h-7 flex justify-center items-center rounded-md hover:bg-buttonBg hover:text-editBg ${createEditSub === "editSub" && selectedCatId === subCat.id ? "!bg-buttonBg text-editBg" : ""}`}>
+                                                        <button onClick={() => { handleEditCategory(subCat); setSelectedCatId(subCat._id); }} className={`text-buttonBg bg-editBg w-14 h-7 flex justify-center items-center rounded-md hover:bg-buttonBg hover:text-editBg ${createEditSub === "editSub" && selectedCatId === subCat._id ? "!bg-buttonBg text-editBg" : ""}`}>
                                                             Edit
                                                         </button>
-                                                        <button onClick={() => {handleOpen("deleteModal"); setSelectedCatId(subCat.id); }} className="text-deleteBg bg-primary/20 w-14 h-7 flex justify-center items-center rounded-md hover:bg-primary hover:text-white">
+                                                        <button onClick={() => { handleOpen("deleteModal"); setSelectedCatId(subCat._id); }} className="text-deleteBg bg-primary/20 w-14 h-7 flex justify-center items-center rounded-md hover:bg-primary hover:text-white">
                                                             Delete
                                                         </button>
                                                     </div>

@@ -5,7 +5,7 @@ import { useContext } from 'react'
 import { AppContext } from '../../../../StoreContext/StoreContext'
 import toast from 'react-hot-toast'
 
-const CreateCarousel = () => {
+const CreateCarousel = ({ setAdminCarousel }) => {
     const { BASE_URL } = useContext(AppContext)
     const [carouselImage, setCarouselImage] = useState(null)
     const [carouselLabel, setCarouselLabel] = useState('')
@@ -47,6 +47,19 @@ const CreateCarousel = () => {
         fetchCategories();
     }, []);
 
+    //fetch carousel
+    const fetchAdminCarousel = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/slider`);
+            setAdminCarousel(response.data || []);
+        } catch (error) {
+            console.log("error fetching data:", error);
+        }
+    }
+    useEffect(() => {
+        fetchAdminCarousel();
+    }, [BASE_URL])
+
     const handleCarouselSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -75,6 +88,7 @@ const CreateCarousel = () => {
             const response = await axios.post(`${BASE_URL}/admin/slider/create`, carouselFormData, { headers });
             console.log(response.data);
             toast.success('Carousel is created!');
+            fetchAdminCarousel();
             setCarouselImage('')
             setCarouselCategory('')
             setCarouselLabel('')
@@ -166,7 +180,7 @@ const CreateCarousel = () => {
                         <select
                             value={carouselCategory}
                             onChange={(e) => setCarouselCategory(e.target.value)}
-                            className="w-full text-sm text-secondary font-light bg-gray-100/50 border p-2 rounded focus:outline-none"
+                            className="w-full capitalize text-sm text-secondary font-light bg-gray-100/50 border p-2 rounded focus:outline-none"
                         >
                             <option value="">Select Category</option>
                             {categories.map((category) => (

@@ -5,8 +5,9 @@ import { useContext } from 'react';
 import { RiDeleteBin5Line } from 'react-icons/ri';
 import { AppContext } from '../../../../StoreContext/StoreContext';
 import toast from 'react-hot-toast';
+import { useEffect } from 'react';
 
-const CreateCategories = () => {
+const CreateCategories = ({ setAdminCategory }) => {
     const { BASE_URL } = useContext(AppContext)
     const [createCategoryForm, setCreateCategoryForm] = useState({
         name: '',
@@ -25,6 +26,20 @@ const CreateCategories = () => {
             setCreateCategoryForm({ ...createCategoryForm, image: file });
         }
     };
+
+    //fetch category
+    const fetchCategory = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/admin/category/get`);
+            setAdminCategory(response.data);
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCategory();
+    }, []);
 
     const handleCategoryFormSubmit = async (e) => {
         e.preventDefault();
@@ -53,6 +68,7 @@ const CreateCategories = () => {
             const response = await axios.post(`${BASE_URL}/admin/category/create`, formData, { headers });
             console.log('Category created:', response.data);
             toast.success("Category is Created")
+            fetchCategory();
             // Reset form
             setCreateCategoryForm({ name: '', image: null, description: '' });
         } catch (error) {

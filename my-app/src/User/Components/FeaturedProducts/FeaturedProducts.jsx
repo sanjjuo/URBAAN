@@ -9,6 +9,8 @@ import { useEffect } from 'react';
 import { RiHeart3Fill, RiHeart3Line } from 'react-icons/ri';
 import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
 import toast from 'react-hot-toast';
+import { Button } from '@material-tailwind/react';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 
 
 const FeaturedProducts = () => {
@@ -16,7 +18,7 @@ const FeaturedProducts = () => {
     const [featuredProducts, setFeaturedProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [heartIcons, setHeartIcons] = useState({});
-
+    const [showAllFeature, setShowAllFeature] = useState(false);
 
     useEffect(() => {
         const fetchFeaturedProducts = async () => {
@@ -86,6 +88,8 @@ const FeaturedProducts = () => {
         }
     };
 
+    const visibleProducts = showAllFeature ? featuredProducts : featuredProducts.slice(0, 5);
+
     return (
         <>
             <h1 className='text-secondary text-lg xl:text-2xl lg:text-2xl font-semibold text-center xl:text-left'>Featured Products</h1>
@@ -102,7 +106,7 @@ const FeaturedProducts = () => {
                     <>
                         <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 xl:grid-cols-5 lg:grid-cols-5 gap-5 pb-10'>
                             {
-                                featuredProducts.map((product) => {
+                                visibleProducts.map((product) => {
                                     const isInWishlist = favProduct?.items?.some(item => item?.productId?._id === product._id);
                                     return (
                                         <div className='group relative' key={product._id}>
@@ -149,6 +153,18 @@ const FeaturedProducts = () => {
                                     )
                                 })}
                         </div>
+
+                        {featuredProducts.length > 5 && (
+                            <div className='flex justify-center items-center pb-8'>
+                                <Button
+                                    onClick={() => setShowAllFeature(!showAllFeature)}
+                                    className='bg-transparent font-custom shadow-none text-black font-normal capitalize text-sm 
+                                    flex items-center gap-2 border border-gray-700 rounded-3xl px-3 py-2 hover:shadow-none'
+                                >
+                                    {showAllFeature ? "Show Less" : "Show More"} {showAllFeature ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                                </Button>
+                            </div>
+                        )}
                     </>
                 )
             }

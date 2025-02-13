@@ -265,7 +265,7 @@ const EditProduct = () => {
             console.log(response.data);
 
             toast.success("Product is updated");
-
+            navigate(-1)
             // Reset form fields
             setEditProdTitle('');
             setEditProdCategory('');

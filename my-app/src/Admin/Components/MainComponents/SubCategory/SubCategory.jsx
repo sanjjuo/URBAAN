@@ -45,11 +45,13 @@ const SubCategory = () => {
             {
               createEditSub === "createSub" ? (
                 <>
-                  <CreateSubCategories />
+                  <CreateSubCategories setSubCategory={setSubCategory}/>
                 </>
               ) : (
                 <>
-                  <EditSubCategories initialSubCategory={initialSubCategory} />
+                  <EditSubCategories 
+                  initialSubCategory={initialSubCategory}
+                  setSubCategory={setSubCategory} />
                 </>
               )
             }

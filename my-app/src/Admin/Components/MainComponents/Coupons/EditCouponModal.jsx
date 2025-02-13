@@ -5,7 +5,7 @@ import { AppContext } from "../../../../StoreContext/StoreContext";
 import toast from "react-hot-toast";
 import { HiMiniXMark } from "react-icons/hi2";
 
-export function EditCouponModal({ open, handleOpen, initialEditCoupon }) {
+export function EditCouponModal({ open, handleOpen, initialEditCoupon, setAdminCoupon }) {
     const { BASE_URL } = useContext(AppContext);
     const [categories, setCategories] = useState([]);
     const [editCouponTitle, setEditCouponTitle] = useState('');
@@ -75,6 +75,28 @@ export function EditCouponModal({ open, handleOpen, initialEditCoupon }) {
         setSelectedCategories(prev => prev.filter(category => category._id !== categoryId));
     };
 
+    // fetch coupon
+    const fetchCoupons = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert("Authorization is missing");
+                return;
+            }
+
+            const headers = {
+                Authorization: `Bearer ${token}`
+            }
+            const response = await axios.get(`${BASE_URL}/admin/coupon/list`, { headers });
+            setAdminCoupon(response.data);
+        } catch (error) {
+            console.log(error, ": error fetching data");
+        }
+    }
+    useEffect(() => {
+        fetchCoupons();
+    }, [])
+
     const handleEditCouponSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -117,7 +139,7 @@ export function EditCouponModal({ open, handleOpen, initialEditCoupon }) {
             };
 
             console.log(couponData);
-            
+
 
             const headers = {
                 Authorization: `Bearer ${token}`,
@@ -125,13 +147,14 @@ export function EditCouponModal({ open, handleOpen, initialEditCoupon }) {
             };
 
             await axios.patch(
-                `${BASE_URL}/admin/coupon/update/${initialEditCoupon._id}`, 
-                couponData, 
+                `${BASE_URL}/admin/coupon/update/${initialEditCoupon._id}`,
+                couponData,
                 { headers }
             );
-            
+
             handleOpen();
             toast.success('Coupon is updated');
+            fetchCoupons();
         } catch (error) {
             console.error(error);
             toast.error(error.message || "Failed to update coupon");
@@ -175,7 +198,7 @@ export function EditCouponModal({ open, handleOpen, initialEditCoupon }) {
                             <label className="font-normal text-base">Available Categories</label>
                             <div className="flex items-center">
                                 <div className="flex flex-col items-center gap-2 border-r-2 pr-5">
-                                    <Button 
+                                    <Button
                                         onClick={() => setCategoryEnable(!categoryEnable)}
                                         className="text-sm capitalize font-custom font-normal bg-buttonBg shrink-0 w-28 px-2"
                                     >
@@ -184,12 +207,12 @@ export function EditCouponModal({ open, handleOpen, initialEditCoupon }) {
                                 </div>
                                 <div className="pl-5 flex items-center gap-2 overflow-x-auto hide-scrollbar">
                                     {selectedCategories.map((category) => (
-                                        <span 
+                                        <span
                                             key={category._id}
                                             className="flex items-center justify-between gap-5 cursor-default capitalize bg-gray-200 shrink-0 p-2 rounded-full text-sm"
                                         >
                                             {category.name}
-                                            <HiMiniXMark 
+                                            <HiMiniXMark
                                                 onClick={() => handleRemoveCategory(category._id)}
                                                 className="text-deleteBg cursor-pointer text-lg"
                                             />
@@ -288,14 +311,14 @@ export function EditCouponModal({ open, handleOpen, initialEditCoupon }) {
 
                         {/* Form Actions */}
                         <div className="flex justify-center items-center mt-5">
-                            <Button 
-                                onClick={handleOpen} 
+                            <Button
+                                onClick={handleOpen}
                                 className="mr-1 capitalize bg-primary/20 text-primary font-normal text-sm w-52"
                             >
                                 <span>Close</span>
                             </Button>
-                            <Button 
-                                type="submit" 
+                            <Button
+                                type="submit"
                                 className="capitalize bg-buttonBg font-normal text-sm w-52"
                             >
                                 <span>Update coupon</span>

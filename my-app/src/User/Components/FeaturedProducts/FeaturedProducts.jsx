@@ -11,6 +11,8 @@ import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
 import toast from 'react-hot-toast';
 import { Button } from '@material-tailwind/react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { MdZoomOutMap } from 'react-icons/md';
+import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 
 const FeaturedProducts = () => {
@@ -19,6 +21,14 @@ const FeaturedProducts = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [heartIcons, setHeartIcons] = useState({});
     const [showAllFeature, setShowAllFeature] = useState(false);
+    const [openImageModal, setOpenImageModal] = React.useState(false);
+    const [zoomImage, setZoomImage] = useState(null)
+
+    //handle image zoom
+    const handleOpenImageZoom = (productImage) => {
+        setOpenImageModal(!openImageModal);
+        setZoomImage(productImage)
+    }
 
     useEffect(() => {
         const fetchFeaturedProducts = async () => {
@@ -128,6 +138,10 @@ const FeaturedProducts = () => {
                                                     />
                                                 </div>
                                             </Link>
+                                            <MdZoomOutMap
+                                                onClick={() => handleOpenImageZoom(product)}
+                                                className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
+                                            />
                                             {heartIcons[product._id] || isInWishlist ? (
                                                 <RiHeart3Fill
                                                     onClick={() => handleWishlist(product._id, product.title)}
@@ -165,6 +179,12 @@ const FeaturedProducts = () => {
                                 </Button>
                             </div>
                         )}
+
+                        <ImageZoomModal
+                            open={openImageModal}
+                            handleOpen={handleOpenImageZoom}
+                            zoomImage={zoomImage}
+                        />
                     </>
                 )
             }

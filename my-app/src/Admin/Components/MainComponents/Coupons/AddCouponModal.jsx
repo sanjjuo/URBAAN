@@ -12,6 +12,9 @@ import axios from "axios";
 import { useContext } from "react";
 import { AppContext } from "../../../../StoreContext/StoreContext";
 import toast from 'react-hot-toast';
+import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { useRef } from "react";
 
 export function AddCouponModal({ open, handleOpen, setAdminCoupon }) {
     const { BASE_URL } = useContext(AppContext)
@@ -23,7 +26,8 @@ export function AddCouponModal({ open, handleOpen, setAdminCoupon }) {
     const [couponEndDate, setCouponEndDate] = useState('')
     const [couponDiscountValue, setCouponDiscountValue] = useState('')
     const [couponDiscountType, setCouponDiscountType] = useState('')
-    const [couponisActive, setCouponisActive] = useState(true)
+    const [couponisActive, setCouponisActive] = useState(true);
+    const categoryContainer = useRef(null);
 
     // handle category
     const handleCategorySelect = (categoryId) => {
@@ -130,7 +134,7 @@ export function AddCouponModal({ open, handleOpen, setAdminCoupon }) {
             setCouponCategory('')
         } catch (error) {
             console.error("Error creating coupon:", error.response ? error.response.data : error.message);
-            alert('Failed to create coupon. Please try again.');
+            // alert('Failed to create coupon. Please try again.');
         }
     }
 
@@ -148,6 +152,20 @@ export function AddCouponModal({ open, handleOpen, setAdminCoupon }) {
         }
         fetchCategories();
     }, [])
+
+
+    // Handle scrolling
+    const nextSlideCategory = () => {
+        if (categoryContainer.current) {
+            categoryContainer.current.scrollBy({ left: 200, behavior: "smooth" });
+        }
+    };
+
+    const prevSlideCategory = () => {
+        if (categoryContainer.current) {
+            categoryContainer.current.scrollBy({ left: -200, behavior: "smooth" });
+        }
+    };
 
 
     return (
@@ -188,33 +206,40 @@ export function AddCouponModal({ open, handleOpen, setAdminCoupon }) {
                             </div>
                             {/* category */}
                             <div className='flex flex-col gap-3 w-full'>
-                                <label className='font-normal text-base'>Category Type</label>
-                                <div className='flex flex-row items-center gap-2 overflow-x-auto hide-scrollbar'>
-                                    <div className='flex items-center space-x-0 shrink-0'>
-                                        <Checkbox
-                                            checked={couponCategory.length === categories.length}
-                                            onChange={handleSelectAll}
-                                            color='black'
-                                            className='w-4 h-4 border-2 border-gray-600 rounded-sm'
-                                        />
-                                        <Typography className='text-sm sm:text-base font-custom font-medium capitalize text-secondary'>
-                                            Select All
-                                        </Typography>
-                                    </div>
-                                    {categories.map((category) => (
-                                        <div key={category.id} className='flex items-center space-x-0 shrink-0'>
+                                    <label className="font-normal text-base">Select Category</label>
+                                <ul className='flex items-center justify-between'>
+                                        <li onClick={prevSlideCategory} className='text-sm font-semibold text-secondary flex items-center gap-0 cursor-pointer'><IoIosArrowBack /> Prev</li>
+                                        <li onClick={nextSlideCategory} className='text-sm font-semibold text-secondary flex items-center gap-0 cursor-pointer'>Next <IoIosArrowForward /></li>
+                                    </ul>
+                                    <div
+                                        className='flex flex-row items-center gap-2 overflow-x-auto hide-scrollbar scroll-smooth'
+                                        ref={categoryContainer}
+                                    >
+                                        <div className='flex items-center space-x-0 shrink-0'>
                                             <Checkbox
-                                                checked={couponCategory.includes(category.id)}
-                                                onChange={() => handleCategorySelect(category.id)}
+                                                checked={couponCategory.length === categories.length}
+                                                onChange={handleSelectAll}
                                                 color='black'
                                                 className='w-4 h-4 border-2 border-gray-600 rounded-sm'
                                             />
-                                            <Typography className='text-sm sm:text-base font-custom font-medium capitalize text-secondary truncate'>
-                                                {category.name}
+                                            <Typography className='text-sm sm:text-base font-custom font-medium capitalize text-secondary'>
+                                                Select All
                                             </Typography>
                                         </div>
-                                    ))}
-                                </div>
+                                        {categories.map((category) => (
+                                            <div key={category.id} className='flex items-center space-x-0 shrink-0'>
+                                                <Checkbox
+                                                    checked={couponCategory.includes(category.id)}
+                                                    onChange={() => handleCategorySelect(category.id)}
+                                                    color='black'
+                                                    className='w-4 h-4 border-2 border-gray-600 rounded-sm'
+                                                />
+                                                <Typography className='text-sm sm:text-base font-custom font-medium capitalize text-secondary truncate'>
+                                                    {category.name}
+                                                </Typography>
+                                            </div>
+                                        ))}
+                                    </div>
                             </div>
 
 

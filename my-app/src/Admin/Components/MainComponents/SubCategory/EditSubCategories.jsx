@@ -214,6 +214,8 @@ const EditSubCategories = ({ initialSubCategory, setSubCategory }) => {
                                         <label htmlFor="file" className="flex flex-col items-center cursor-pointer">
                                             <img src="/imgupload.png" alt="Upload Placeholder" className="w-16" />
                                             <p className="text-secondary text-xs">Browse files to upload</p>
+                                            <p className='text-secondary text-xs'>Max image size 5MB</p>
+                                            <p className='text-secondary text-xs'>We can read: JPG, JPEG</p>
                                         </label>
                                     </>
                                 )}

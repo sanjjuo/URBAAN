@@ -4,6 +4,8 @@ import axios from "axios";
 import { AppContext } from "../../../../StoreContext/StoreContext";
 import toast from "react-hot-toast";
 import { HiMiniXMark } from "react-icons/hi2";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { useRef } from "react";
 
 export function EditCouponModal({ open, handleOpen, initialEditCoupon, setAdminCoupon }) {
     const { BASE_URL } = useContext(AppContext);
@@ -17,6 +19,8 @@ export function EditCouponModal({ open, handleOpen, initialEditCoupon, setAdminC
     const [editCouponDiscountValue, setEditCouponDiscountValue] = useState('');
     const [editCouponDiscountType, setEditCouponDiscountType] = useState('');
     const [editCouponIsActive, setEditCouponIsActive] = useState(true);
+    const categoryContainerRef = useRef(null);
+    const categoryContainerRef2 = useRef(null);
 
     // Set initial values when modal opens
     useEffect(() => {
@@ -161,6 +165,30 @@ export function EditCouponModal({ open, handleOpen, initialEditCoupon, setAdminC
         }
     };
 
+    const nextSlide = () => {
+        if (categoryContainerRef.current) {
+            categoryContainerRef.current.scrollBy({ left: 200, behavior: "smooth" });
+        }
+    };
+
+    const prevSlide = () => {
+        if (categoryContainerRef.current) {
+            categoryContainerRef.current.scrollBy({ left: -200, behavior: "smooth" });
+        }
+    };
+
+    const nextSlide2 = () => {
+        if (categoryContainerRef2.current) {
+            categoryContainerRef2.current.scrollBy({ left: 200, behavior: "smooth" });
+        }
+    };
+
+    const prevSlide2 = () => {
+        if (categoryContainerRef2.current) {
+            categoryContainerRef2.current.scrollBy({ left: -200, behavior: "smooth" });
+        }
+    };
+
     return (
         <Dialog open={open} handler={handleOpen} size="md" className="rounded-none">
             <DialogBody>
@@ -195,9 +223,15 @@ export function EditCouponModal({ open, handleOpen, initialEditCoupon, setAdminC
 
                         {/* Category Selection */}
                         <div className="flex flex-col gap-3 w-full">
-                            <label className="font-normal text-base">Available Categories</label>
+                            <div className='flex items-center justify-between'>
+                                <label className="font-normal text-base">Available Categories</label>
+                                <ul className='flex items-center gap-5'>
+                                    <li onClick={prevSlide} className='text-sm font-semibold text-secondary flex items-center gap-0 cursor-pointer'><IoIosArrowBack /> Prev</li>
+                                    <li onClick={nextSlide} className='text-sm font-semibold text-secondary flex items-center gap-0 cursor-pointer'>Next <IoIosArrowForward /></li>
+                                </ul>
+                            </div>
                             <div className="flex items-center">
-                                <div className="flex flex-col items-center gap-2 border-r-2 pr-5">
+                                <div className="flex flex-col items-center gap-2 pr-3">
                                     <Button
                                         onClick={() => setCategoryEnable(!categoryEnable)}
                                         className="text-sm capitalize font-custom font-normal bg-buttonBg shrink-0 w-28 px-2"
@@ -205,7 +239,7 @@ export function EditCouponModal({ open, handleOpen, initialEditCoupon, setAdminC
                                         Add category
                                     </Button>
                                 </div>
-                                <div className="pl-5 flex items-center gap-2 overflow-x-auto hide-scrollbar">
+                                <div className="pl-2 flex items-center gap-2 overflow-x-auto hide-scrollbar" ref={categoryContainerRef}>
                                     {selectedCategories.map((category) => (
                                         <span
                                             key={category._id}
@@ -221,34 +255,40 @@ export function EditCouponModal({ open, handleOpen, initialEditCoupon, setAdminC
                                 </div>
                             </div>
                             {categoryEnable && (
-                                <div className="flex flex-row items-center gap-2 overflow-x-auto hide-scrollbar">
-                                    {categories.length > 0 && (
-                                        <div className="flex items-center space-x-0 shrink-0">
-                                            <Checkbox
-                                                checked={selectedCategories.length === categories.length}
-                                                onChange={handleSelectAll}
-                                                color="black"
-                                                className="w-4 h-4 border-2 border-gray-600 rounded-sm"
-                                            />
-                                            <Typography className="text-sm sm:text-base font-custom font-medium capitalize text-secondary">
-                                                Select All
-                                            </Typography>
+                                <>
+                                        <ul className='flex items-center justify-between'>
+                                            <li onClick={prevSlide2} className='text-sm font-semibold text-secondary flex items-center gap-0 cursor-pointer'><IoIosArrowBack /> Prev</li>
+                                            <li onClick={nextSlide2} className='text-sm font-semibold text-secondary flex items-center gap-0 cursor-pointer'>Next <IoIosArrowForward /></li>
+                                        </ul>
+                                        <div className="flex flex-row items-center gap-2 overflow-x-auto hide-scrollbar" ref={categoryContainerRef2}>
+                                            {categories.length > 0 && (
+                                                <div className="flex items-center space-x-0 shrink-0">
+                                                    <Checkbox
+                                                        checked={selectedCategories.length === categories.length}
+                                                        onChange={handleSelectAll}
+                                                        color="black"
+                                                        className="w-4 h-4 border-2 border-gray-600 rounded-sm"
+                                                    />
+                                                    <Typography className="text-sm sm:text-base font-custom font-medium capitalize text-secondary">
+                                                        Select All
+                                                    </Typography>
+                                                </div>
+                                            )}
+                                            {categories.map((category) => (
+                                                <div key={category.id} className="flex items-center space-x-0 shrink-0">
+                                                    <Checkbox
+                                                        checked={selectedCategories.some(cat => cat._id === category.id)}
+                                                        onChange={() => handleCategorySelect(category)}
+                                                        color="black"
+                                                        className="w-4 h-4 border-2 border-gray-600 rounded-sm"
+                                                    />
+                                                    <Typography className="text-sm sm:text-base font-custom font-medium capitalize text-secondary truncate">
+                                                        {category.name}
+                                                    </Typography>
+                                                </div>
+                                            ))}
                                         </div>
-                                    )}
-                                    {categories.map((category) => (
-                                        <div key={category.id} className="flex items-center space-x-0 shrink-0">
-                                            <Checkbox
-                                                checked={selectedCategories.some(cat => cat._id === category.id)}
-                                                onChange={() => handleCategorySelect(category)}
-                                                color="black"
-                                                className="w-4 h-4 border-2 border-gray-600 rounded-sm"
-                                            />
-                                            <Typography className="text-sm sm:text-base font-custom font-medium capitalize text-secondary truncate">
-                                                {category.name}
-                                            </Typography>
-                                        </div>
-                                    ))}
-                                </div>
+                                </>
                             )}
                         </div>
 

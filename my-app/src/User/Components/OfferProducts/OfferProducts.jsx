@@ -9,6 +9,9 @@ import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
 import toast from 'react-hot-toast';
 import { Button } from '@material-tailwind/react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { MdZoomOutMap } from 'react-icons/md';
+import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
+
 
 const OfferProducts = () => {
     const { BASE_URL, favProduct, setOpenUserNotLogin, setFav } = useContext(AppContext);
@@ -16,6 +19,14 @@ const OfferProducts = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [heartIcons, setHeartIcons] = useState({});
     const [showAllOffer, setShowAllOffer] = useState(false);
+    const [openImageModal, setOpenImageModal] = React.useState(false);
+    const [zoomImage, setZoomImage] = useState(null)
+
+    //handle image zoom
+    const handleOpenImageZoom = (productImage) => {
+        setOpenImageModal(!openImageModal);
+        setZoomImage(productImage)
+    }
 
     useEffect(() => {
         const fetchOfferProducts = async () => {
@@ -96,6 +107,10 @@ const OfferProducts = () => {
                                             />
                                         </div>
                                     </Link>
+                                    <MdZoomOutMap
+                                        onClick={() => handleOpenImageZoom(product)}
+                                        className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
+                                    />
                                     {heartIcons[product._id] || isInWishlist ? (
                                         <RiHeart3Fill
                                             onClick={() => handleWishlist(product._id, product.title)}
@@ -134,6 +149,12 @@ const OfferProducts = () => {
             <UserNotLoginPopup
                 title='You are not logged in'
                 description='Please log in or create an account to add items to your wishlist and keep track of your favorites.'
+            />
+
+            <ImageZoomModal
+                open={openImageModal}
+                handleOpen={handleOpenImageZoom}
+                zoomImage={zoomImage}
             />
         </>
     );

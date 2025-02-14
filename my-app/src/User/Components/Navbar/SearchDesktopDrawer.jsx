@@ -9,10 +9,20 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { HiXMark } from "react-icons/hi2";
+import { MdZoomOutMap } from "react-icons/md";
+import { ImageZoomModal } from "../ImageZoomModal/ImageZoomModal";
 
 export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
     const { BASE_URL, searchUser, setSearchUser, searchedProducts, setSearchedProducts, favProduct, setFav, } = useContext(AppContext);
     const [heartIcons, setHeartIcons] = useState({})
+    const [openImageModal, setOpenImageModal] = React.useState(false);
+    const [zoomImage, setZoomImage] = useState(null)
+
+    //handle image zoom
+    const handleOpenImageZoom = (productImage) => {
+        setOpenImageModal(!openImageModal);
+        setZoomImage(productImage)
+    }
 
     useEffect(() => {
         const fetchUserSearchProducts = async () => {
@@ -86,13 +96,13 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
                             </li>
                         </ul>
                     </div>
-                    <div className='mt-5 flex flex-col justify-center items-center'>
+                    {/* <div className='mt-5 flex flex-col justify-center items-center'>
                         <p className='uppercase text-sm tracking-wider text-center'>popular searches</p>
                         <ul className='mt-5 flex flex-wrap items-center gap-2'>
                             <li className='text-sm text-primary border-[1px] border-primary rounded-xl px-3 py-2'>Kurti</li>
                             <li className='text-sm text-primary border-[1px] border-primary rounded-xl px-3 py-2'>Night Wear</li>
                         </ul>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="xl:py-5 xl:px-32 lg:py-5 lg:px-32 font-normal">
                     {searchUser.length === 0 ? (
@@ -120,6 +130,10 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
                                                 />
                                             </div>
                                         </Link>
+                                        <MdZoomOutMap
+                                            onClick={() => handleOpenImageZoom(product)}
+                                            className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
+                                        />
                                         {heartIcons[product._id] || isInWishlist ? (
                                             <RiHeart3Fill
                                                 onClick={() => handleWishlist(product._id, product.title)}
@@ -148,6 +162,12 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
                     )}
                 </div>
             </Drawer>
+
+            <ImageZoomModal
+                open={openImageModal}
+                handleOpen={handleOpenImageZoom}
+                zoomImage={zoomImage}
+            />
         </React.Fragment>
     );
 }

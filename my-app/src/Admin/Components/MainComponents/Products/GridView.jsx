@@ -75,10 +75,15 @@ const GridView = ({ products, isLoading, selectedProductId, setSelectedProductId
                                                 </div>
                                             </CardHeader>
                                             <CardBody className='p-4'>
-                                                <div className="mb-2 flex items-center justify-between">
-                                                    <Typography color="blue-gray" className="font-semibold font-custom text-primary">
-                                                        ₹{product.offerPrice}
-                                                    </Typography>
+                                                <div className="mb-2 flex items-start justify-between">
+                                                    <div>
+                                                        <Typography color="blue-gray" className="font-semibold font-custom text-secondary capitalize">
+                                                            {product.title}
+                                                        </Typography>
+                                                        <Typography color="blue-gray" className="font-semibold font-custom text-primary">
+                                                            ₹{product.offerPrice}
+                                                        </Typography>
+                                                    </div>
                                                     <Typography color="blue-gray" className="flex items-center justify-center gap-1 font-normal font-custom text-secondary">
                                                         {product.rating}<FaStar className='text-ratingBg' />
                                                     </Typography>

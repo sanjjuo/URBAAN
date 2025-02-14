@@ -560,13 +560,15 @@ const AddProduct = () => {
                             <label htmlFor="file" className="flex flex-col items-center cursor-pointer">
                                 <IoMdCloudUpload className="text-primary text-5xl" />
                                 <p className="text-secondary text-xs">Browse files to upload</p>
+                                <p className='text-secondary text-xs'>Max image size 5MB</p>
+                                <p className='text-secondary text-xs'>We can read: JPG, JPEG</p>
                             </label>
                         </div>
 
                         <div className='col-span-2'>
                             <ul className="flex flex-row gap-2 overflow-y-auto hide-scrollbar">
                                 {productImage.length === 0 ? (
-                                    <p className="text-xs text-gray-600 font-normal flex justify-center items-center">
+                                    <p className="text-xs text-gray-600 font-normal flex justify-center items-center h-[30vh]">
                                         Your selected images display here
                                     </p>
                                 ) : (

@@ -6,8 +6,9 @@ import axios from 'axios';
 import AppLoader from '../../../../Loader';
 import toast from 'react-hot-toast';
 import { OrderStatusModal } from './OrderStatusModal';
+import { ViewOrdersModal } from './ViewOrdersModal';
 
-const TABLE_HEAD = ["ID", "Customer", "Address", "Delivery Date", "Product", "Size", "Payment", "Status"]; //action here 
+const TABLE_HEAD = ["ID", "Customer", "Address", "Order Date", "Payment", "Status", ""]; //action here 
 
 const OrderTable = ({ orderList, setOrderList }) => {
   const { BASE_URL } = useContext(AppContext);
@@ -17,8 +18,19 @@ const OrderTable = ({ orderList, setOrderList }) => {
   const [openOrderStatus, setOpenOrderStatus] = useState(false);
   const [selectOrder, setSelectOrder] = useState([])
   const [editStatusBtn, setEditStatusBtn] = useState(false)
+  const [openViewOrders, setOpenViewOrders] = useState(false);
+  const [getUserOrders, setGetUserOrders] = useState([])
 
 
+  //handle user order modal
+  const handleOpenViewOrders = (orderProducts) => {
+    setOpenViewOrders(!openViewOrders);
+    setGetUserOrders(orderProducts)
+    console.log(orderProducts);
+    
+  }
+
+  //handle order status
   const handleOpenOrderStatus = () => setOpenOrderStatus(!openOrderStatus);
 
   // Predefined allowed statuses
@@ -126,7 +138,7 @@ const OrderTable = ({ orderList, setOrderList }) => {
 
   // Add the new title conditionally when `editStatusBtn` is true
   const tableHead = editStatusBtn ? ["", ...TABLE_HEAD] : TABLE_HEAD;
-  
+
   return (
     <>
       {isLoading || orderList.length === 0 ? (
@@ -151,7 +163,7 @@ const OrderTable = ({ orderList, setOrderList }) => {
             <div className='flex items-center justify-end'>
               <Button
                 onClick={() => setEditStatusBtn(!editStatusBtn)}
-                className='bg-buttonBg capitalize text-sm font-normal font-custom'>Edit Status</Button>
+                className='bg-buttonBg capitalize text-sm font-normal font-custom'>{!editStatusBtn ? "Edit Status" : "Back"}</Button>
             </div>
           </div>
 
@@ -217,17 +229,6 @@ const OrderTable = ({ orderList, setOrderList }) => {
                             })}
                           </Typography>
                         </td>
-
-                        <td className={classes}>
-                          <Typography variant="small" className="font-normal font-custom text-sm capitalize">
-                            {order.products?.[0]?.productId?.title || "N/A"}
-                          </Typography>
-                        </td>
-                        <td className={classes}>
-                          <Typography variant="small" className="font-normal font-custom text-sm capitalize">
-                            {order.products?.[0]?.size || "N/A"}
-                          </Typography>
-                        </td>
                         <td className={classes}>
                           <Typography variant="small" className="font-normal font-custom text-sm capitalize">
                             {order.paymentMethod}
@@ -238,6 +239,12 @@ const OrderTable = ({ orderList, setOrderList }) => {
                             className={`capitalize text-sm text-center font-normal ${statusColors[order.status] || statusColors.default}`}
                             value={order.status}
                           />
+                        </td>
+                        <td className={classes}>
+                          <Button
+                            onClick={() => handleOpenViewOrders(order.products)}
+                            className='bg-transparent shadow-none text-secondary font-custom capitalize font-normal
+                          text-sm border border-gray-700 rounded-3xl px-4 py-2 hover:shadow-none'>View Orders</Button>
                         </td>
                         {/* <td className={classes}>
                           <Menu placement="bottom-end" className="outline-none">
@@ -315,6 +322,11 @@ const OrderTable = ({ orderList, setOrderList }) => {
         orderList={orderList}
         setSelectOrder={setSelectOrder}
       />
+
+      <ViewOrdersModal
+        handleOpen={handleOpenViewOrders}
+        open={openViewOrders}
+        getUserOrders={getUserOrders} />
     </>
   );
 };

@@ -6,7 +6,7 @@ import { RiDeleteBin5Line } from 'react-icons/ri';
 import { AppContext } from '../../../../StoreContext/StoreContext';
 import toast from 'react-hot-toast';
 
-const CreateSubCategories = ({setSubCategory}) => {
+const CreateSubCategories = ({ setSubCategory }) => {
     const { BASE_URL } = useContext(AppContext)
     const [createSubCategoryTitle, setCreateSubCategoryTitle] = useState('');
     const [createSubCategorySelect, setCreateSubCategorySelect] = useState('');
@@ -47,8 +47,8 @@ const CreateSubCategories = ({setSubCategory}) => {
         }
     };
 
-     // fetch sub category
-     const fetchSubCategory = async () => {
+    // fetch sub category
+    const fetchSubCategory = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/admin/Subcategory/get`);
             setSubCategory(response.data);
@@ -152,6 +152,8 @@ const CreateSubCategories = ({setSubCategory}) => {
                                     <label htmlFor="file" className="flex flex-col items-center cursor-pointer">
                                         <img src="/imgupload.png" alt="" className='w-16' />
                                         <p className="text-secondary text-xs">Browse files to upload</p>
+                                        <p className='text-secondary text-xs'>Max image size 5MB</p>
+                                        <p className='text-secondary text-xs'>We can read: JPG, JPEG</p>
                                     </label>
                                 )}
                                 <input

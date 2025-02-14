@@ -669,6 +669,8 @@ const EditProduct = () => {
                             <label htmlFor="file" className="flex flex-col items-center cursor-pointer">
                                 <IoMdCloudUpload className="text-primary text-5xl" />
                                 <p className="text-secondary text-xs">Browse files to upload</p>
+                                <p className='text-secondary text-xs'>Max image size 5MB</p>
+                                <p className='text-secondary text-xs'>We can read: JPG, JPEG</p>
                             </label>
                         </div>
 

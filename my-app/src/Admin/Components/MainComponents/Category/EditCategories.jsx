@@ -137,6 +137,8 @@ const EditCategories = ({ initialData, setAdminCategory }) => {
                                         >
                                             <img src="/imgupload.png" alt="" className='w-16' />
                                             <p className="text-secondary text-xs">Browse files to upload</p>
+                                            <p className='text-secondary text-xs'>Max image size 5MB</p>
+                                            <p className='text-secondary text-xs'>We can read: JPG, JPEG</p>
                                         </label>
                                     </>
                                 )}

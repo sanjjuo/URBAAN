@@ -8,6 +8,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { DeleteModal } from '../../DeleteModal/DeleteModal';
 import { RiHeart3Fill } from 'react-icons/ri';
+import * as XLSX from 'xlsx';
 
 const TABLE_HEAD = ["user name", "mobile", "email", "address", "city", "state", "pincode", "Action"];
 
@@ -83,6 +84,30 @@ const UsersListTable = ({ userList, setUserList }) => {
         }
     }
 
+    //download user list in excel format
+    const downloadUserList = () => {
+        if (userList.length === 0) {
+            toast.error("No users to download.");
+            return;
+        }
+
+        const worksheet = XLSX.utils.json_to_sheet(userList.map(user => ({
+            Name: user.name,
+            Mobile: user.phone || "N/A",
+            Email: user.email || "N/A",
+            Address: user.addresses?.[0]?.address || "N/A",
+            City: user.addresses?.[0]?.city || "N/A",
+            State: user.addresses?.[0]?.state || "N/A",
+            Pincode: user.addresses?.[0]?.pincode || "N/A",
+            Status: user.status ? "Active" : "Suspended"
+        })));
+
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "UserList");
+
+        XLSX.writeFile(workbook, "UserList.xlsx");
+    };
+
 
     return (
         <>
@@ -91,158 +116,167 @@ const UsersListTable = ({ userList, setUserList }) => {
                     <AppLoader />
                 </div>
             ) : (
-                <Card className="w-full shadow-sm rounded-xl bg-white border-[1px]">
-                    <CardBody>
-                        <table className="w-full table-auto text-left border-collapse">
-                            <thead className="bg-quaternary">
-                                <tr>
-                                    {TABLE_HEAD.map((head, index) => (
-                                        <th
-                                            key={index}
-                                            className="border-b border-gray-300 px-4 py-3 text-center text-sm font-semibold text-secondary uppercase w-[150px]"
-                                        // style={{ minWidth: "120px" }} // Adjust minWidth to ensure uniformity
-                                        >
-                                            {head}
-                                        </th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {currentUserList.map((user, index) => {
-                                    const isLast = index === currentUserList.length - 1;
-                                    const classes = `${isLast ? "p-4 relative" : "p-4 border-b border-gray-300 relative"} text-center w-[150px] truncate`;
-                                    const firstAddress = user.addresses?.[0] || {}; // Safely access the first address
-                                    return (
-                                        <tr key={user._id}>
-                                            <td className={classes}>
-                                                <Typography
-                                                    variant="small"
-                                                    className="font-normal flex items-center gap-1 capitalize font-custom text-sm"
-                                                >
-                                                    {user.name}
-                                                    {user.isFavorite === true && user.status === true ? <RiHeart3Fill className='text-primary' /> : null}
-                                                </Typography>
-                                                {user.status === false && (
-                                                    <p className='text-xs tracking-wider text-primary font-bold absolute inset-0 flex
+                <>
+                    <div className='flex items-center justify-end mb-10'>
+                        <a href=""
+                            onClick={downloadUserList}
+                            className='underline underline-offset-2 text-sm text-shippedBg cursor-pointer'
+                        >Download as an Excel file</a>
+                    </div>
+
+                    <Card className="w-full shadow-sm rounded-xl bg-white border-[1px]">
+                        <CardBody>
+                            <table className="w-full table-auto text-left border-collapse">
+                                <thead className="bg-quaternary">
+                                    <tr>
+                                        {TABLE_HEAD.map((head, index) => (
+                                            <th
+                                                key={index}
+                                                className="border-b border-gray-300 px-4 py-3 text-center text-sm font-semibold text-secondary uppercase w-[150px]"
+                                            // style={{ minWidth: "120px" }} // Adjust minWidth to ensure uniformity
+                                            >
+                                                {head}
+                                            </th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentUserList.map((user, index) => {
+                                        const isLast = index === currentUserList.length - 1;
+                                        const classes = `${isLast ? "p-4 relative" : "p-4 border-b border-gray-300 relative"} text-center w-[150px] truncate`;
+                                        const firstAddress = user.addresses?.[0] || {}; // Safely access the first address
+                                        return (
+                                            <tr key={user._id}>
+                                                <td className={classes}>
+                                                    <Typography
+                                                        variant="small"
+                                                        className="font-normal flex items-center gap-1 capitalize font-custom text-sm"
+                                                    >
+                                                        {user.name}
+                                                        {user.isFavorite === true && user.status === true ? <RiHeart3Fill className='text-primary' /> : null}
+                                                    </Typography>
+                                                    {user.status === false && (
+                                                        <p className='text-xs tracking-wider text-primary font-bold absolute inset-0 flex
                                                          justify-center items-end'>*suspended</p>
-                                                )}
-                                            </td>
-                                            <td className={classes}>
-                                                <Typography
-                                                    variant="small"
-                                                    className="font-normal capitalize font-custom text-sm"
-                                                >
-                                                    {user.phone || "N/A"}
-                                                </Typography>
-                                            </td>
-                                            <td className={classes}>
-                                                <Typography
-                                                    variant="small"
-                                                    className="font-normal font-custom text-sm"
-                                                >
-                                                    {user.email || "N/A"}
-                                                </Typography>
-                                            </td>
-                                            <td className={classes}>
-                                                <Typography
-                                                    variant="small"
-                                                    className="font-normal capitalize font-custom text-sm"
-                                                >
-                                                    {firstAddress.address || "N/A"}
-                                                </Typography>
-                                            </td>
-                                            <td className={classes}>
-                                                <Typography
-                                                    variant="small"
-                                                    className="font-normal capitalize font-custom text-sm"
-                                                >
-                                                    {firstAddress.city || "N/A"}
-                                                </Typography>
-                                            </td>
-                                            <td className={classes}>
-                                                <Typography
-                                                    variant="small"
-                                                    className="font-normal capitalize font-custom text-sm"
-                                                >
-                                                    {firstAddress.state || "N/A"}
-                                                </Typography>
-                                            </td>
-                                            <td className={classes}>
-                                                <Typography
-                                                    variant="small"
-                                                    className="font-normal font-custom text-xs"
-                                                >
-                                                    {firstAddress.pincode || "N/A"}
-                                                </Typography>
-                                            </td>
-                                            <td className={classes}>
-                                                <Menu>
-                                                    <MenuHandler>
-                                                        <IconButton variant="text">
-                                                            <HiOutlineDotsHorizontal className="text-primary text-2xl cursor-pointer" />
-                                                        </IconButton>
-                                                    </MenuHandler>
-                                                    <MenuList>
-                                                        <Link
-                                                            to={{
-                                                                pathname: '/adminHome/userDetails',
-                                                            }}
-                                                            state={{ user }}
-                                                        >
-                                                            <MenuItem className="font-custom text-buttonBg hover:!text-buttonBg">View</MenuItem>
-                                                        </Link>
-                                                        {/* <MenuItem className="font-custom text-processingBg hover:!text-processingBg">
+                                                    )}
+                                                </td>
+                                                <td className={classes}>
+                                                    <Typography
+                                                        variant="small"
+                                                        className="font-normal capitalize font-custom text-sm"
+                                                    >
+                                                        {user.phone || "N/A"}
+                                                    </Typography>
+                                                </td>
+                                                <td className={classes}>
+                                                    <Typography
+                                                        variant="small"
+                                                        className="font-normal font-custom text-sm"
+                                                    >
+                                                        {user.email || "N/A"}
+                                                    </Typography>
+                                                </td>
+                                                <td className={classes}>
+                                                    <Typography
+                                                        variant="small"
+                                                        className="font-normal capitalize font-custom text-sm"
+                                                    >
+                                                        {firstAddress.address || "N/A"}
+                                                    </Typography>
+                                                </td>
+                                                <td className={classes}>
+                                                    <Typography
+                                                        variant="small"
+                                                        className="font-normal capitalize font-custom text-sm"
+                                                    >
+                                                        {firstAddress.city || "N/A"}
+                                                    </Typography>
+                                                </td>
+                                                <td className={classes}>
+                                                    <Typography
+                                                        variant="small"
+                                                        className="font-normal capitalize font-custom text-sm"
+                                                    >
+                                                        {firstAddress.state || "N/A"}
+                                                    </Typography>
+                                                </td>
+                                                <td className={classes}>
+                                                    <Typography
+                                                        variant="small"
+                                                        className="font-normal font-custom text-xs"
+                                                    >
+                                                        {firstAddress.pincode || "N/A"}
+                                                    </Typography>
+                                                </td>
+                                                <td className={classes}>
+                                                    <Menu>
+                                                        <MenuHandler>
+                                                            <IconButton variant="text">
+                                                                <HiOutlineDotsHorizontal className="text-primary text-2xl cursor-pointer" />
+                                                            </IconButton>
+                                                        </MenuHandler>
+                                                        <MenuList>
+                                                            <Link
+                                                                to={{
+                                                                    pathname: '/adminHome/userDetails',
+                                                                }}
+                                                                state={{ user }}
+                                                            >
+                                                                <MenuItem className="font-custom text-buttonBg hover:!text-buttonBg">View</MenuItem>
+                                                            </Link>
+                                                            {/* <MenuItem className="font-custom text-processingBg hover:!text-processingBg">
                                                             Suspend
                                                         </MenuItem> */}
-                                                        <MenuItem
-                                                            onClick={() => {
-                                                                setSelectedUserId(user._id || user.id); // Set the selected user's ID
-                                                                handleOpen("deleteModal"); // Open the modal
-                                                            }}
-                                                            className="text-deleteBg font-custom"
-                                                        >
-                                                            Delete
-                                                        </MenuItem>
+                                                            <MenuItem
+                                                                onClick={() => {
+                                                                    setSelectedUserId(user._id || user.id); // Set the selected user's ID
+                                                                    handleOpen("deleteModal"); // Open the modal
+                                                                }}
+                                                                className="text-deleteBg font-custom"
+                                                            >
+                                                                Delete
+                                                            </MenuItem>
 
-                                                    </MenuList>
-                                                </Menu>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </CardBody>
-                    <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-                        <Button
-                            variant="outlined"
-                            size="sm"
-                            className='font-custom border-gray-300 font-normal capitalize text-sm cursor-pointer hover:bg-black hover:text-white'
-                            onClick={handlePrevPage}
-                            disabled={currentPage === 1}
-                        >
-                            Prev. page
-                        </Button>
+                                                        </MenuList>
+                                                    </Menu>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </CardBody>
+                        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+                            <Button
+                                variant="outlined"
+                                size="sm"
+                                className='font-custom border-gray-300 font-normal capitalize text-sm cursor-pointer hover:bg-black hover:text-white'
+                                onClick={handlePrevPage}
+                                disabled={currentPage === 1}
+                            >
+                                Prev. page
+                            </Button>
 
-                        <div className="flex items-center gap-2">
-                            {[...Array(Math.ceil(userList.length / itemsPerPage))].map((_, index) => (
-                                <IconButton key={index} variant="text" size="sm" onClick={() => paginate(index + 1)}>
-                                    {index + 1}
-                                </IconButton>
-                            ))}
-                        </div>
+                            <div className="flex items-center gap-2">
+                                {[...Array(Math.ceil(userList.length / itemsPerPage))].map((_, index) => (
+                                    <IconButton key={index} variant="text" size="sm" onClick={() => paginate(index + 1)}>
+                                        {index + 1}
+                                    </IconButton>
+                                ))}
+                            </div>
 
-                        <Button
-                            variant="outlined"
-                            size="sm"
-                            className='font-custom border-gray-300 font-normal capitalize text-sm cursor-pointer hover:bg-black hover:text-white'
-                            onClick={handleNextPage}
-                            disabled={currentPage === Math.ceil(userList.length / itemsPerPage)}
-                        >
-                            Next page
-                        </Button>
-                    </CardFooter>
-                </Card>
+                            <Button
+                                variant="outlined"
+                                size="sm"
+                                className='font-custom border-gray-300 font-normal capitalize text-sm cursor-pointer hover:bg-black hover:text-white'
+                                onClick={handleNextPage}
+                                disabled={currentPage === Math.ceil(userList.length / itemsPerPage)}
+                            >
+                                Next page
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </>
             )}
 
             <DeleteModal

@@ -12,16 +12,16 @@ import { RiHeart3Fill, RiHeart3Line } from 'react-icons/ri';
 import toast from 'react-hot-toast';
 import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
 import FilterBySubCategory from './FilterBySubCategory';
-import { IoIosArrowBack } from 'react-icons/io';
 import { MdZoomOutMap } from 'react-icons/md';
 import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
+import { CgArrowLongLeft } from "react-icons/cg";
 
 
 const AllCategory = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const productsCategory = location.state?.category || [];
-    const { BASE_URL, favProduct, setOpenUserNotLogin, setFav } = useContext(AppContext);
+    const { BASE_URL, favProduct, handleOpenUserNotLogin, openUserNotLogin, setFav } = useContext(AppContext);
 
     const [products, setProducts] = useState([]);
     const [allProducts, setAllProducts] = useState([]);
@@ -37,10 +37,11 @@ const AllCategory = () => {
     const [priceRange, setPriceRange] = useState([0, Infinity]);
 
     //handle image zoom
-    const handleOpenImageZoom = (productImage) => {
+    const handleOpenImageZoom = (productImages, index) => {
         setOpenImageModal(!openImageModal);
-        setZoomImage(productImage)
+        setZoomImage({ images: productImages, currentIndex: index });
     }
+
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -123,7 +124,7 @@ const AllCategory = () => {
             const userId = localStorage.getItem('userId');
 
             if (!userId) {
-                setOpenUserNotLogin(true);
+                handleOpenUserNotLogin();
                 return;
             }
 
@@ -179,8 +180,8 @@ const AllCategory = () => {
                     <img src="/banner.jpeg" alt="" className='w-full h-full object-cover' />
                     <div className='absolute inset-0 bg-primary/70'></div>
                     <div className='absolute inset-0 flex items-end justify-center mb-5'>
-                        <h1 className='text-white text-4xl font-medium capitalize flex items-center gap-5'>
-                            <IoIosArrowBack onClick={() => navigate(-1)} className="text-white text-3xl cursor-pointer" />
+                        <h1 className='text-white text-4xl font-medium capitalize flex items-center gap-2'>
+                            <CgArrowLongLeft onClick={() => navigate(-1)} className="text-white text-2xl cursor-pointer" />
                             {productsCategory.name}
                         </h1>
                     </div>
@@ -219,7 +220,7 @@ const AllCategory = () => {
                                                 </div>
                                             </Link>
                                             <MdZoomOutMap
-                                                onClick={() => handleOpenImageZoom(product)}
+                                                onClick={() => handleOpenImageZoom(product.images, 0)}
                                                 className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                                             />
                                             {heartIcons[product._id] || isInWishlist ? (
@@ -240,6 +241,13 @@ const AllCategory = () => {
                     </div>
                 </div>
             </div>
+
+            <UserNotLoginPopup
+                title='You are not logged in'
+                description='Please log in or create an account to add items to your wishlist and keep track of your favorites.'
+                open={openUserNotLogin}
+                handleOpen={handleOpenUserNotLogin}
+            />
 
             <ImageZoomModal
                 open={openImageModal}

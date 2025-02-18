@@ -3,11 +3,10 @@ import { FaStar } from "react-icons/fa6";
 import { FaCircle } from "react-icons/fa";
 import { Button } from '@material-tailwind/react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FiShoppingCart } from "react-icons/fi";
 import { AppContext } from '../../../StoreContext/StoreContext';
 import { IoHeartOutline } from "react-icons/io5";
 import { IoIosArrowBack } from 'react-icons/io';
-import { RiHeart3Fill } from 'react-icons/ri';
+import { RiHandbagLine, RiHeart3Fill } from 'react-icons/ri';
 import SimilarProducts from './SimilarProducts';
 import ProductReviews from './ProductReviews';
 import { SizeChart } from './SIzeChart';
@@ -17,9 +16,11 @@ import { useState } from 'react';
 import { TiTick } from "react-icons/ti";
 import { useEffect } from 'react';
 import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
+import { MdZoomOutMap } from 'react-icons/md';
+import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 const ProductDetails = () => {
-    const { handleOpenSizeDrawer, BASE_URL, favProduct, setOpenUserNotLogin, setCart, setFav } = useContext(AppContext)
+    const { handleOpenSizeDrawer, BASE_URL, favProduct, openUserNotLogin, handleOpenUserNotLogin, setCart, setFav } = useContext(AppContext)
     const location = useLocation();
     const { productId, categoryId } = location.state || {}
     const navigate = useNavigate();
@@ -33,7 +34,15 @@ const ProductDetails = () => {
     const [reviews, setReviews] = useState([]);
     const [similarProducts, setSimilarProducts] = useState([])
     const [reviewEligible, setReviewEligible] = useState(false);
+    const [openImageModal, setOpenImageModal] = React.useState(false);
+    const [zoomImage, setZoomImage] = useState(null);
 
+
+    //handle image zoom
+    const handleOpenImageZoom = (productImages, index) => {
+        setOpenImageModal(!openImageModal);
+        setZoomImage({ images: productImages, currentIndex: index });
+    }
 
     console.log("categry", categoryId);
 
@@ -135,7 +144,7 @@ const ProductDetails = () => {
             if (!userId && !userToken) {
                 setModalTitle('You are not logged in');
                 setModalDescription('To add items to your cart and complete your purchase, please log in or create an account.');
-                setOpenUserNotLogin(true);
+                handleOpenUserNotLogin();
                 return;
             }
 
@@ -179,7 +188,7 @@ const ProductDetails = () => {
             if (error.response && error.response.status === 401) {
                 setModalTitle('Session Expired');
                 setModalDescription('Your session has expired. Please log in again to continue.');
-                setOpenUserNotLogin(true);
+                handleOpenUserNotLogin();
             }
 
         }
@@ -264,7 +273,7 @@ const ProductDetails = () => {
                 const orders = response.data.orders;
                 const hasPurchased = orders.some(order =>
                     order.products.some(product =>
-                        product.productId._id === productId && order.status === "Delivered"
+                        product.productId?._id === productId && order.status === "Delivered"
                     )
                 );
 
@@ -293,7 +302,7 @@ const ProductDetails = () => {
             <div className="p-4 xl:py-16 xl:px-32 lg:py-16 lg:px-32 bg-userBg h-[calc(100vh-4rem)] pb-20 overflow-y-auto">
                 <h2 onClick={() => navigate(-1)} className='flex items-center gap-1 text-lg xl:text-xl lg:text-xl font-medium cursor-pointer'>
                     <IoIosArrowBack className="text-secondary text-2xl cursor-pointer" /> Back</h2>
-                <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 gap-5 xl:gap-10 lg:gap-10 mt-5">
+                <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-4 gap-5 xl:gap-16 lg:gap-16 mt-5 mb-52">
                     <div className='col-span-2 xl:space-y-3 lg:space-y-3 xl:sticky xl:top-0 lg:sticky lg:top-0 h-[350px] xl:h-[600px] lg:h-[600px]'>
                         <div className='w-full h-full relative'>
                             <img
@@ -301,31 +310,26 @@ const ProductDetails = () => {
                                 alt={productDetails.title}
                                 className='w-full h-full object-cover rounded-xl'
                             />
-
-                            {heartIcons[productDetails._id] || favProduct?.items?.some(item => item.productId?._id === productDetails._id) ? (
-                                <RiHeart3Fill
-                                    onClick={() => handleWishlist(productDetails._id, productDetails.title)}
-                                    className='absolute top-5 right-5 xl:text-3xl lg:text-3xl text-2xl cursor-pointer text-primary bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
-                                />
-                            ) : (
-                                <IoHeartOutline
-                                    onClick={() => handleWishlist(productDetails._id, productDetails.title)}
-                                    className='absolute top-5 right-5 xl:text-3xl lg:text-3xl text-2xl text-primary bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
-                                />
-                            )}
-                            {/* <div className='absolute bottom-5 left-1/2 -translate-x-1/2 flex justify-center items-center
-                             bg-white shadow-md rounded-lg p-2 gap-x-2'>
-                                <div className='w-12 h-12'>
-                                    <img src="c1.jpg" alt="" className='w-full h-full object-cover rounded-md' />
-                                </div>
-                            </div> */}
+                            <MdZoomOutMap
+                                onClick={() => handleOpenImageZoom(productDetails.images, 0)}
+                                className='absolute top-4 left-4 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
+                            />
                         </div>
-
-                        <Button onClick={addToCart}
-                            className='hidden xl:flex lg:flex items-center justify-center gap-2 font-normal capitalize font-custom tracking-wide text-sm
-                        w-full bg-primary'>
-                            <FiShoppingCart />Add to cart
-                        </Button>
+                        <div className='flex items-center gap-5'>
+                            {productDetails?.images?.slice(0, 5).map((image, index) => (
+                                <div
+                                    className='w-20 h-24 cursor-pointer'
+                                    key={index}
+                                    onClick={() => handleOpenImageZoom(productDetails.images, index)}
+                                >
+                                    <img
+                                        src={image}
+                                        alt={index}
+                                        className='w-full h-full object-cover rounded-xl'
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                     <div className='col-span-2'>
                         <div className='flex justify-between items-center'>
@@ -403,6 +407,37 @@ const ProductDetails = () => {
                                 </ul>
                             </div>
 
+                            <div className='mt-7 flex items-center gap-3'>
+                                <Button onClick={addToCart}
+                                    className='hidden xl:flex lg:flex items-center justify-center gap-2 font-normal font-custom tracking-wide text-sm
+                                        xl:text-base lg:text-base w-full bg-primary border-[3px] border-primary rounded-md hover:shadow-none'>
+                                    <RiHandbagLine />Add to cart
+                                </Button>
+
+                                {heartIcons[productDetails._id] || favProduct?.items?.some(item => item.productId?._id === productDetails._id) ? (
+                                    <Button
+                                        onClick={() => handleWishlist(productDetails._id, productDetails.title)}
+                                        className='hidden xl:flex lg:flex items-center justify-center gap-2 font-normal font-custom tracking-wide text-sm
+                                        xl:text-base lg:text-base w-full bg-transparent text-primary border-[1px] border-gray-500 shadow-none rounded-md 
+                                            hover:shadow-none'>
+                                        <RiHeart3Fill
+                                            className='xl:text-3xl lg:text-3xl text-2xl cursor-pointer text-primary'
+                                        />
+                                        add to wishlist
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        onClick={() => handleWishlist(productDetails._id, productDetails.title)}
+                                        className='hidden xl:flex lg:flex items-center justify-center gap-2 font-normal font-custom tracking-wide text-sm
+                                        xl:text-base lg:text-base w-full bg-transparent text-primary border-[1px] border-gray-500 shadow-none rounded-md
+                                         hover:shadow-none'>
+                                        <IoHeartOutline
+                                            className='xl:text-3xl lg:text-3xl text-2xl text-primary'
+                                        />
+                                        add to wishlist
+                                    </Button>
+                                )}
+                            </div>
 
                             {/* Specifications */}
                             <div className="mt-7">
@@ -479,14 +514,14 @@ const ProductDetails = () => {
                 </div>
 
                 {/* similar products */}
-                <div className='mt-10 xl:mt-32 lg:mt-32'>
+                <div className=''>
                     <SimilarProducts similarProducts={similarProducts} />
                 </div>
 
                 <div className="bg-white shadow-md fixed bottom-0 inset-x-0 z-50 w-full p-4 xl:hidden lg:hidden">
-                    <Button onClick={addToCart} className='flex items-center justify-center gap-2 font-normal capitalize font-custom tracking-wide text-sm
+                    <Button onClick={addToCart} className='flex items-center justify-center gap-2 font-normal rounded-md font-custom tracking-wide text-sm
                         w-full bg-primary'>
-                        <FiShoppingCart />Add to cart
+                        <RiHandbagLine />Add to cart
                     </Button>
                 </div>
             </div>
@@ -498,6 +533,14 @@ const ProductDetails = () => {
             <UserNotLoginPopup
                 title={modalTitle}
                 description={modalDescription}
+                open={openUserNotLogin}
+                handleOpen={handleOpenUserNotLogin}
+            />
+
+            <ImageZoomModal
+                open={openImageModal}
+                handleOpen={handleOpenImageZoom}
+                zoomImage={zoomImage}
             />
 
         </>

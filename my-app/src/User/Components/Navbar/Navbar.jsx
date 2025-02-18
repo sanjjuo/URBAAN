@@ -94,7 +94,7 @@ const NavList = () => {
 }
 
 const UserNavbar = () => {
-    const { BASE_URL, openDrawer, handleOpenDrawer, handleCloseDrawer, cart, setCart, fav, setFav, setOpenUserNotLogin } = useContext(AppContext)
+    const { BASE_URL, openDrawer, handleOpenDrawer, handleCloseDrawer, cart, setCart, fav, setFav, openUserNotLogin, handleOpenUserNotLogin } = useContext(AppContext)
     const location = useLocation();
     const isFavouritePage = location.pathname === "/favourite";
     const isCartPage = location.pathname === "/user-cart";
@@ -271,6 +271,8 @@ const UserNavbar = () => {
             <UserNotLoginPopup
                 title='You are not logged in'
                 description='Please click to login here'
+                open={openUserNotLogin}
+                handleOpen={handleOpenUserNotLogin}
             />
         </>
     )

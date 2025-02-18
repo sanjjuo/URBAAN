@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { RiHeart3Fill, RiHeart3Line, RiHome5Line } from "react-icons/ri";
-import { RiShoppingCartLine } from "react-icons/ri";
+import { RiHandbagFill, RiHandbagLine, RiHeart3Fill, RiHeart3Line, RiHome5Line } from "react-icons/ri";
 import { RiUser3Line } from "react-icons/ri";
 import { RiHome5Fill } from "react-icons/ri";
 import { RiShoppingCartFill } from "react-icons/ri";
@@ -95,7 +94,7 @@ const BottomBar = ({ cartView, favView, setCart, setFav }) => {
         <>
             <div className="xl:hidden lg:hidden sm:hidden md:hidden bg-white fixed bottom-0 shadow-xl w-full pt-3 pb-2 px-10 z-50">
                 <ul className="flex justify-between items-center">
-                    <Link to='/'><li onClick={() => setIconActive("home")} className={`text-gray-500 hover:text-primary flex flex-col items-center
+                    <Link to='/'><li onClick={() => setIconActive("home")} className={`text-gray-700 hover:text-primary flex flex-col items-center
                         ${iconActive === "home" ? "text-primary" : ""}`}>
                         {
                             iconActive === "home" ? (
@@ -108,10 +107,10 @@ const BottomBar = ({ cartView, favView, setCart, setFav }) => {
                                 </>
                             )
                         }
-                        <span className="text-[11px] h-5">Home</span>
+                        <span className="text-[11px] h-5 tracking-wider">Home</span>
                     </li></Link>
 
-                    <Link to='/favourite'><li onClick={() => setIconActive("favourite")} className={`text-gray-500 hover:text-primary flex flex-col items-center
+                    <Link to='/favourite'><li onClick={() => setIconActive("favourite")} className={`text-gray-700 hover:text-primary flex flex-col items-center
                         ${iconActive === "favourite" ? "text-primary" : ""}`}>
                         {
                             iconActive === "favourite" ? (
@@ -119,7 +118,7 @@ const BottomBar = ({ cartView, favView, setCart, setFav }) => {
                                     <span className='relative'>
                                         <RiHeart3Fill className="text-2xl" />
                                         {favView > 0 && (
-                                            <Chip value={favView || 0} size="sm" className="rounded-full bg-gray-500 text-xs text-white absolute -top-1 -right-2 p-1 w-4 h-4 flex 
+                                            <Chip value={favView || 0} size="sm" className="rounded-full bg-gray-600 text-xs text-white absolute -top-1 -right-2 p-1 w-4 h-4 flex 
                                         justify-center items-center" />
                                         )}
                                     </span>
@@ -136,16 +135,16 @@ const BottomBar = ({ cartView, favView, setCart, setFav }) => {
                                 </>
                             )
                         }
-                        <span className="text-[11px] h-5">Wishlist</span>
+                        <span className="text-[11px] h-5 tracking-wider">Wishlist</span>
                     </li></Link>
 
-                    <Link to='/user-cart'><li onClick={() => setIconActive("cart")} className={`text-gray-500 hover:text-primary flex flex-col items-center
+                    <Link to='/user-cart'><li onClick={() => setIconActive("cart")} className={`text-gray-700 hover:text-primary flex flex-col items-center
                         ${iconActive === "cart" ? "text-primary" : ""}`}>
                         {
                             iconActive === "cart" ? (
                                 <>
                                     <span className='relative'>
-                                        <RiShoppingCartFill className="text-2xl" />
+                                        <RiHandbagFill className="text-2xl" />
                                         {cartView > 0 && (
                                             <Chip value={cartView || 0} size="sm" className="rounded-full bg-gray-500 text-xs text-white absolute -top-1 -right-2 p-1 w-4 h-4 flex 
                                         justify-center items-center" />
@@ -155,7 +154,7 @@ const BottomBar = ({ cartView, favView, setCart, setFav }) => {
                             ) : (
                                 <>
                                     <span className='relative'>
-                                        <RiShoppingCartLine className="text-2xl" />
+                                        <RiHandbagLine className="text-2xl" />
                                         {cartView > 0 && (
                                             <Chip value={cartView || 0} size="sm" className="rounded-full text-xs bg-primary absolute -top-1 -right-2 p-1 w-4 h-4 flex 
                                         justify-center items-center" />
@@ -164,10 +163,10 @@ const BottomBar = ({ cartView, favView, setCart, setFav }) => {
                                 </>
                             )
                         }
-                        <span className="text-[11px] h-5">Cart</span>
+                        <span className="text-[11px] h-5 tracking-wider">Cart</span>
                     </li></Link>
 
-                    <Link to='/user-profile'><li onClick={() => setIconActive("profile")} className={`text-gray-500 hover:text-primary flex flex-col items-center
+                    <Link to='/user-profile'><li onClick={() => setIconActive("profile")} className={`text-gray-700 hover:text-primary flex flex-col items-center
                         ${iconActive === "profile" ? "text-primary" : ""}`}>
                         {
                             iconActive === "profile" ? (
@@ -180,7 +179,7 @@ const BottomBar = ({ cartView, favView, setCart, setFav }) => {
                                 </>
                             )
                         }
-                        <span className="text-[11px] h-5">Profile</span>
+                        <span className="text-[11px] h-5 tracking-wider">Profile</span>
                     </li></Link>
                 </ul>
             </div>

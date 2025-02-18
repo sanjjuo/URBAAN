@@ -11,17 +11,18 @@ import { useState } from "react";
 import { HiXMark } from "react-icons/hi2";
 import { MdZoomOutMap } from "react-icons/md";
 import { ImageZoomModal } from "../ImageZoomModal/ImageZoomModal";
+import { UserNotLoginPopup } from "../UserNotLogin/UserNotLoginPopup";
 
 export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
-    const { BASE_URL, searchUser, setSearchUser, searchedProducts, setSearchedProducts, favProduct, setFav, } = useContext(AppContext);
+    const { BASE_URL, searchUser, setSearchUser, searchedProducts, handleOpenUserNotLogin, openUserNotLogin, setSearchedProducts, favProduct, setFav, } = useContext(AppContext);
     const [heartIcons, setHeartIcons] = useState({})
     const [openImageModal, setOpenImageModal] = React.useState(false);
     const [zoomImage, setZoomImage] = useState(null)
 
     //handle image zoom
-    const handleOpenImageZoom = (productImage) => {
+    const handleOpenImageZoom = (productImages, index) => {
         setOpenImageModal(!openImageModal);
-        setZoomImage(productImage)
+        setZoomImage({ images: productImages, currentIndex: index });
     }
 
     useEffect(() => {
@@ -43,6 +44,11 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
     const handleWishlist = async (productId, productTitle) => {
         try {
             const userId = localStorage.getItem('userId')
+            if (!userId) {
+                handleOpenUserNotLogin();
+                return;
+            }
+
             const payload = { userId, productId }
 
             // Check if product is already in wishlist
@@ -131,7 +137,7 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
                                             </div>
                                         </Link>
                                         <MdZoomOutMap
-                                            onClick={() => handleOpenImageZoom(product)}
+                                            onClick={() => handleOpenImageZoom(product.images, 0)}
                                             className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                                         />
                                         {heartIcons[product._id] || isInWishlist ? (
@@ -162,6 +168,13 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
                     )}
                 </div>
             </Drawer>
+
+            <UserNotLoginPopup
+                title='You are not logged in'
+                description='Please log in or create an account to add items to your wishlist and keep track of your favorites.'
+                open={openUserNotLogin}
+                handleOpen={handleOpenUserNotLogin}
+            />
 
             <ImageZoomModal
                 open={openImageModal}

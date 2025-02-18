@@ -32,7 +32,7 @@ const ShopByCategory = () => {
     <>
       <div className='flex justify-between items-center'>
         <h1 className='text-secondary text-lg xl:text-xl lg:text-xl font-semibold'>Shop by Category</h1>
-        <Link to='/view-all-category'><p className='text-primary text-sm xl:text-base lg:text-base font-medium underline'>View all</p></Link>
+        <Link to='/view-all-category'><p className='text-primary text-sm xl:text-base lg:text-base font-medium underline underline-offset-2'>View all</p></Link>
       </div>
       {
         isLoading || categories.length === 0 ? (

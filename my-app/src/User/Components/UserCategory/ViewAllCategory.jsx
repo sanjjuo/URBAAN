@@ -16,7 +16,7 @@ import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 const ViewAllCategory = () => {
     const navigate = useNavigate();
-    const { handleOpenBottomDrawer, BASE_URL, favProduct, setOpenUserNotLogin, setFav } = useContext(AppContext);
+    const { handleOpenBottomDrawer, BASE_URL, favProduct, handleOpenUserNotLogin, openUserNotLogin, setFav } = useContext(AppContext);
     const [allProducts, setAllProducts] = useState([])
     const [isLoading, setIsLoading] = useState(true);
     const [searchProducts, setSearchProducts] = useState('');
@@ -34,10 +34,11 @@ const ViewAllCategory = () => {
     const [zoomImage, setZoomImage] = useState(null)
 
     //handle image zoom
-    const handleOpenImageZoom = (productImage) => {
+    const handleOpenImageZoom = (productImages, index) => {
         setOpenImageModal(!openImageModal);
-        setZoomImage(productImage)
+        setZoomImage({ images: productImages, currentIndex: index });
     }
+
 
     useEffect(() => {
         const fetchAllProducts = async () => {
@@ -80,7 +81,7 @@ const ViewAllCategory = () => {
             const userId = localStorage.getItem('userId');
 
             if (!userId) {
-                setOpenUserNotLogin(true);
+                handleOpenUserNotLogin();
                 return;
             }
 
@@ -173,10 +174,10 @@ const ViewAllCategory = () => {
                             </div>
                         ) : (
                             <>
-                                {filteredProducts.map((product) => {
+                                {filteredProducts.map((product, index) => {
                                     const isInWishlist = favProduct?.items?.some(item => item.productId?._id === product._id);
                                     return (
-                                        <div className='group relative' key={product._id}>
+                                        <div className='group relative' key={index}>
                                             <Link
                                                 to="/product-details"
                                                 state={{
@@ -193,7 +194,7 @@ const ViewAllCategory = () => {
                                                 </div>
                                             </Link>
                                             <MdZoomOutMap
-                                                onClick={() => handleOpenImageZoom(product)}
+                                                onClick={() => handleOpenImageZoom(product.images, 0)}
                                                 className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                                             />
                                             {heartIcons[product._id] || isInWishlist ? (
@@ -230,10 +231,14 @@ const ViewAllCategory = () => {
                 selectedFilters={selectedFilters}
                 setSelectedFilters={setSelectedFilters}
             />
+
             <UserNotLoginPopup
                 title='You are not logged in'
                 description='Please log in or create an account to add items to your wishlist and keep track of your favorites.'
+                open={openUserNotLogin}
+                handleOpen={handleOpenUserNotLogin}
             />
+
 
             <ImageZoomModal
                 open={openImageModal}

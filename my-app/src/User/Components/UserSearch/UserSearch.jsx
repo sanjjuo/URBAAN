@@ -9,19 +9,21 @@ import { RxCountdownTimer } from 'react-icons/rx'
 import UserSearchBar from './UserSearchBar'
 import { MdZoomOutMap } from 'react-icons/md'
 import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal'
+import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup'
 
 const UserSearch = () => {
-    const { BASE_URL, favProduct, setFav, searchedProducts, setSearchedProducts, searchUser } = useContext(AppContext)
+    const { BASE_URL, favProduct, setFav, searchedProducts, handleOpenUserNotLogin, openUserNotLogin, setSearchedProducts, searchUser } = useContext(AppContext)
     const navigate = useNavigate()
     const [heartIcons, setHeartIcons] = useState({});
     const [openImageModal, setOpenImageModal] = React.useState(false);
     const [zoomImage, setZoomImage] = useState(null)
 
     //handle image zoom
-    const handleOpenImageZoom = (productImage) => {
+    const handleOpenImageZoom = (productImages, index) => {
         setOpenImageModal(!openImageModal);
-        setZoomImage(productImage)
+        setZoomImage({ images: productImages, currentIndex: index });
     }
+
 
     useEffect(() => {
         const fetchSearchedProducts = async () => {
@@ -38,7 +40,13 @@ const UserSearch = () => {
     // add to wishlist
     const handleWishlist = async (productId, productTitle) => {
         try {
-            const userId = localStorage.getItem('userId')
+            const userId = localStorage.getItem('userId');
+
+            if (!userId) {
+                handleOpenUserNotLogin();
+                return;
+            }
+
             const payload = { userId, productId }
 
             // Check if product is already in wishlist
@@ -122,7 +130,7 @@ const UserSearch = () => {
                                         </div>
                                     </Link>
                                     <MdZoomOutMap
-                                        onClick={() => handleOpenImageZoom(product)}
+                                        onClick={() => handleOpenImageZoom(product.images, 0)}
                                         className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                                     />
                                     {heartIcons[product._id] || isInWishlist ? (
@@ -149,6 +157,13 @@ const UserSearch = () => {
                     </div>
                 )}
             </div>
+
+            <UserNotLoginPopup
+                title='You are not logged in'
+                description='Please log in or create an account to add items to your wishlist and keep track of your favorites.'
+                open={openUserNotLogin}
+                handleOpen={handleOpenUserNotLogin}
+            />
 
             <ImageZoomModal
                 open={openImageModal}

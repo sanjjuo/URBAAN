@@ -17,9 +17,9 @@ const SimilarProducts = ({ similarProducts }) => {
     const [zoomImage, setZoomImage] = useState(null)
 
     //handle image zoom
-    const handleOpenImageZoom = (productImage) => {
+    const handleOpenImageZoom = (productImages, index) => {
         setOpenImageModal(!openImageModal);
-        setZoomImage(productImage)
+        setZoomImage({ images: productImages, currentIndex: index });
     }
 
     console.log(similarProducts);
@@ -102,7 +102,7 @@ const SimilarProducts = ({ similarProducts }) => {
                                 </div>
                             </Link>
                             <MdZoomOutMap
-                                onClick={() => handleOpenImageZoom(product)}
+                                onClick={() => handleOpenImageZoom(product.images, 0)}
                                 className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                             />
                             {heartIcons[product._id] || isInWishlist ? (

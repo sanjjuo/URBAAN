@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Button, Card, CardBody, CardFooter, Checkbox, Chip, IconButton, Menu, MenuHandler, MenuItem, MenuList, Typography } from "@material-tailwind/react";
-import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import { AppContext } from '../../../../StoreContext/StoreContext';
 import axios from 'axios';
 import AppLoader from '../../../../Loader';
 import toast from 'react-hot-toast';
 import { OrderStatusModal } from './OrderStatusModal';
 import { ViewOrdersModal } from './ViewOrdersModal';
+import * as XLSX from 'xlsx';
 
-const TABLE_HEAD = ["ID", "Customer", "Address", "Order Date", "Payment", "Status", ""]; //action here 
+const TABLE_HEAD = ["", "ID", "Customer", "Address", "Order Date", "Payment", "Status"];
 
 const OrderTable = ({ orderList, setOrderList }) => {
   const { BASE_URL } = useContext(AppContext);
@@ -27,7 +27,7 @@ const OrderTable = ({ orderList, setOrderList }) => {
     setOpenViewOrders(!openViewOrders);
     setGetUserOrders(orderProducts)
     console.log(orderProducts);
-    
+
   }
 
   //handle order status
@@ -135,9 +135,36 @@ const OrderTable = ({ orderList, setOrderList }) => {
     }
   };
 
-
   // Add the new title conditionally when `editStatusBtn` is true
   const tableHead = editStatusBtn ? ["", ...TABLE_HEAD] : TABLE_HEAD;
+
+  //download in excel format
+  const downloadOrderList = () => {
+    if (!orderList || orderList.length === 0) {
+      toast.error("No orders to download");
+      return;
+    }
+
+    // Format data for Excel
+    const formattedData = orderList.map(order => ({
+      Order_ID: order.orderId,
+      Customer_Name: order.userId?.name || 'N/A',
+      Address: order.addressId?.address || 'N/A',
+      Order_Date: new Date(order.createdAt).toLocaleDateString(),
+      Payment_Method: order.paymentMethod,
+      Status: order.status,
+    }));
+
+    // Create a new workbook and add a worksheet
+    const ws = XLSX.utils.json_to_sheet(formattedData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Order List");
+
+    // Save the Excel file
+    XLSX.writeFile(wb, `order_list_${new Date().toISOString().split('T')[0]}.xlsx`);
+
+    toast.success("Order list downloaded successfully");
+  };
 
   return (
     <>
@@ -160,10 +187,24 @@ const OrderTable = ({ orderList, setOrderList }) => {
                 Select All
               </div>
             )}
-            <div className='flex items-center justify-end'>
-              <Button
-                onClick={() => setEditStatusBtn(!editStatusBtn)}
-                className='bg-buttonBg capitalize text-sm font-normal font-custom'>{!editStatusBtn ? "Edit Status" : "Back"}</Button>
+            <div className='flex items-center gap-5 justify-end'>
+              <a href=""
+                onClick={downloadOrderList}
+                className='underline underline-offset-2 text-sm text-shippedBg cursor-pointer'
+              >Download as an Excel file</a>
+              {!editStatusBtn ? (
+                <>
+                  <Button
+                    onClick={() => setEditStatusBtn(!editStatusBtn)}
+                    className='bg-buttonBg capitalize text-sm font-normal font-custom'>Edit Status</Button>
+                </>
+              ) : (
+                <>
+                  <p
+                    onClick={() => setEditStatusBtn(!editStatusBtn)}
+                    className='text-secondary underline underline-offset-2 text-lg cursor-pointer font-normal font-custom'>Back</p>
+                </>
+              )}
             </div>
           </div>
 

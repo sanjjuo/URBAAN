@@ -14,7 +14,7 @@ import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 
 const OfferProducts = () => {
-    const { BASE_URL, favProduct, setOpenUserNotLogin, setFav } = useContext(AppContext);
+    const { BASE_URL, favProduct, openUserNotLogin, handleOpenUserNotLogin, setFav } = useContext(AppContext);
     const [offerProducts, setOfferProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [heartIcons, setHeartIcons] = useState({});
@@ -23,10 +23,11 @@ const OfferProducts = () => {
     const [zoomImage, setZoomImage] = useState(null)
 
     //handle image zoom
-    const handleOpenImageZoom = (productImage) => {
+    const handleOpenImageZoom = (productImages, index) => {
         setOpenImageModal(!openImageModal);
-        setZoomImage(productImage)
+        setZoomImage({ images: productImages, currentIndex: index });
     }
+
 
     useEffect(() => {
         const fetchOfferProducts = async () => {
@@ -46,7 +47,7 @@ const OfferProducts = () => {
         try {
             const userId = localStorage.getItem('userId');
             if (!userId) {
-                setOpenUserNotLogin(true);
+                handleOpenUserNotLogin();
                 return;
             }
             const payload = { userId, productId };
@@ -58,6 +59,7 @@ const OfferProducts = () => {
             }
 
             const response = await axios.post(`${BASE_URL}/user/wishlist/add`, payload);
+            console.log(response.data);
             setHeartIcons(prev => ({ ...prev, [productId]: true }));
 
             setFav((prevFav) => (
@@ -108,7 +110,7 @@ const OfferProducts = () => {
                                         </div>
                                     </Link>
                                     <MdZoomOutMap
-                                        onClick={() => handleOpenImageZoom(product)}
+                                        onClick={() => handleOpenImageZoom(product.images, 0)}
                                         className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                                     />
                                     {heartIcons[product._id] || isInWishlist ? (
@@ -149,6 +151,8 @@ const OfferProducts = () => {
             <UserNotLoginPopup
                 title='You are not logged in'
                 description='Please log in or create an account to add items to your wishlist and keep track of your favorites.'
+                open={openUserNotLogin}
+                handleOpen={handleOpenUserNotLogin}
             />
 
             <ImageZoomModal

@@ -42,7 +42,9 @@ const StoreContext = ({ children }) => {
     const handleCloseSizeDrawer = () => setOpenSizeDrawer(false);
 
     // handle non logged users modal
-    const handleOpenUserNotLogin = () => setOpenUserNotLogin(!openUserNotLogin);
+    const handleOpenUserNotLogin = () => {
+        setOpenUserNotLogin(true);
+    };
 
     // fetch favourite for enabling the heart icon filled
     const userId = localStorage.getItem('userId');

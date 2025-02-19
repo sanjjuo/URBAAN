@@ -39,10 +39,10 @@ const OrderTable = ({ orderList, setOrderList }) => {
   // Status colors
   const statusColors = {
     Delivered: "text-shippedBg bg-shippedBg/20",
-    Processing: "text-processingBg bg-processingBg/20",
     Cancelled: "text-cancelBg bg-cancelBg/20",
     Pending: "text-pendingBg bg-pendingBg/20",
-    default: "text-gray-500 bg-gray-200",
+    default: "text-gray-100 bg-gray-500",
+    "In-Transist": "text-processingBg bg-processingBg/20"
   };
 
   const token = localStorage.getItem('token')
@@ -278,7 +278,7 @@ const OrderTable = ({ orderList, setOrderList }) => {
                         <td className={classes}>
                           <Chip
                             className={`capitalize text-sm text-center font-normal ${statusColors[order.status] || statusColors.default}`}
-                            value={order.status}
+                            value={order.status === 'In-Transist' ? 'dispatched' : order.status}
                           />
                         </td>
                         <td className={classes}>

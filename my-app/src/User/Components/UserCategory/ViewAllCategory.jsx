@@ -16,7 +16,7 @@ import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 const ViewAllCategory = () => {
     const navigate = useNavigate();
-    const { handleOpenBottomDrawer, BASE_URL, favProduct, handleOpenUserNotLogin, openUserNotLogin, setFav } = useContext(AppContext);
+    const { handleOpenBottomDrawer, BASE_URL, favProduct, setFav } = useContext(AppContext);
     const [allProducts, setAllProducts] = useState([])
     const [isLoading, setIsLoading] = useState(true);
     const [searchProducts, setSearchProducts] = useState('');
@@ -31,7 +31,14 @@ const ViewAllCategory = () => {
         material: []
     });
     const [openImageModal, setOpenImageModal] = React.useState(false);
-    const [zoomImage, setZoomImage] = useState(null)
+    const [zoomImage, setZoomImage] = useState(null);
+     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+    
+      // handle non logged users modal
+      const handleOpenUserNotLogin = () => {
+        setOpenUserNotLogin(!openUserNotLogin);
+      };
+    
 
     //handle image zoom
     const handleOpenImageZoom = (productImages, index) => {
@@ -233,8 +240,6 @@ const ViewAllCategory = () => {
             />
 
             <UserNotLoginPopup
-                title='You are not logged in'
-                description='Please log in or create an account to add items to your wishlist and keep track of your favorites.'
                 open={openUserNotLogin}
                 handleOpen={handleOpenUserNotLogin}
             />

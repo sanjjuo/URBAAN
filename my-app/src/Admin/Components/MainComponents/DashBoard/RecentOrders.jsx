@@ -24,7 +24,7 @@ const RecentOrders = () => {
         const fetchRecentOrders = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`${BASE_URL}/admin/dashboard/view-recent/orders?month=12`, {
+                const response = await axios.get(`${BASE_URL}/admin/dashboard/view-recent/orders`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

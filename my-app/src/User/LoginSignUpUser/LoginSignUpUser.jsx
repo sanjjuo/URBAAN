@@ -105,20 +105,22 @@ export function LoginSignUpUser() {
                     onSubmit={handleAuthSubmit}
                 >
                     <div className="mb-1 flex flex-col gap-6">
-                        <Input
-                            name="phone"
-                            type='number'
-                            maxLength={16}
-                            value={loginFormData.phone}
-                            onChange={handleInputChange}
-                            placeholder="Phone Number"
-                            pattern="\d{10,15}"
-                            className="!border-gray-300 bg-white py-6 placeholder:text-blue-gray-300 !font-custom placeholder:font-custom placeholder:opacity-100 focus:border-gray-300 focus:border-[1px] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                            labelProps={{
-                                className: "before:content-none after:content-none",
-                            }}
-                        />
-
+                        <div className="flex items-center border-[1px] rounded-lg !border-gray-300 bg-white">
+                            <span className="py-3 px-4 text-secondary cursor-default">+91</span>
+                            <Input
+                                name="phone"
+                                type='number'
+                                maxLength={16}
+                                value={loginFormData.phone}
+                                onChange={handleInputChange}
+                                placeholder="Phone Number"
+                                pattern="\d{10,15}"
+                                className="px-0 border-none placeholder:text-blue-gray-300 !font-custom placeholder:font-custom placeholder:opacity-100 focus:border-gray-300 focus:border-[1px] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                labelProps={{
+                                    className: "before:content-none after:content-none",
+                                }}
+                            />
+                        </div>
                         {loginSignUpUser !== "login" && (
                             <>
                                 <Input
@@ -245,16 +247,21 @@ export function LoginSignUpUser() {
                         )}
                     </Typography>
                     <div className="flex flex-col items-center justify-center gap-4 mt-10">
-                        <Typography className="font-custom font-medium text-secondary text-sm">
-                            Or continue with
-                        </Typography>
+                        <ul className="flex items-center justify-between w-full">
+                            <li className="bg-secondary h-[0.5px] rounded-full w-full"></li>
+                            <li className="font-custom font-medium text-secondary text-sm w-full text-center">or Log in with</li>
+                            <li className="bg-secondary h-[0.5px] rounded-full w-full"></li>
+                        </ul>
                         <div
                             onClick={() => {
                                 window.location.href = `${BASE_URL}/user/auth/google`;
                             }}
-                            className="bg-loginIconBg text-primary hover:bg-gray-300 text-xl w-12 h-10 p-1 rounded-md flex justify-center items-center cursor-pointer"
+                            className="flex items-center justify-center gap-2 border-[1px] bg-white w-full border-gray-300 text-xl p-3 rounded-lg cursor-pointer"
                         >
-                            <RiGoogleFill />
+                            <div className='w-6 h-6'>
+                                <img src="/google.png" alt="" className='w-full h-full object-cover' />
+                            </div>
+                            <p className='text-secondary text-sm'>Log in with Google</p>
                         </div>
 
                     </div>

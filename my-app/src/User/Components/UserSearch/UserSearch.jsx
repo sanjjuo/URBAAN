@@ -12,11 +12,18 @@ import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal'
 import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup'
 
 const UserSearch = () => {
-    const { BASE_URL, favProduct, setFav, searchedProducts, handleOpenUserNotLogin, openUserNotLogin, setSearchedProducts, searchUser } = useContext(AppContext)
+    const { BASE_URL, favProduct, setFav, searchedProducts, setSearchedProducts, searchUser } = useContext(AppContext)
     const navigate = useNavigate()
     const [heartIcons, setHeartIcons] = useState({});
     const [openImageModal, setOpenImageModal] = React.useState(false);
-    const [zoomImage, setZoomImage] = useState(null)
+    const [zoomImage, setZoomImage] = useState(null);
+    const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    // handle non logged users modal
+    const handleOpenUserNotLogin = () => {
+        setOpenUserNotLogin(!openUserNotLogin);
+    };
+
 
     //handle image zoom
     const handleOpenImageZoom = (productImages, index) => {
@@ -159,8 +166,6 @@ const UserSearch = () => {
             </div>
 
             <UserNotLoginPopup
-                title='You are not logged in'
-                description='Please log in or create an account to add items to your wishlist and keep track of your favorites.'
                 open={openUserNotLogin}
                 handleOpen={handleOpenUserNotLogin}
             />

@@ -12,8 +12,16 @@ import axios from 'axios';
 import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
 
 const BottomBar = ({ cartView, favView, setCart, setFav }) => {
-    const { BASE_URL, setOpenUserNotLogin } = useContext(AppContext)
+    const { BASE_URL } = useContext(AppContext)
     const location = useLocation();
+    const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    // handle non logged users modal
+    const handleOpenUserNotLogin = () => {
+        setOpenUserNotLogin(!openUserNotLogin);
+    };
+
+
     const [iconActive, setIconActive] = useState(() => {
         const path = location.pathname;
         if (path === '/') return "home";
@@ -48,7 +56,7 @@ const BottomBar = ({ cartView, favView, setCart, setFav }) => {
             } catch (error) {
                 console.error(error);
                 if (error.response.status === 401) {
-                    setOpenUserNotLogin(true);
+                    handleOpenUserNotLogin();
                 }
             }
         };
@@ -185,8 +193,8 @@ const BottomBar = ({ cartView, favView, setCart, setFav }) => {
             </div>
 
             <UserNotLoginPopup
-                title='You are not logged in'
-                description='Please click to login here'
+                open={openUserNotLogin}
+                handleOpen={handleOpenUserNotLogin}
             />
         </>
     );

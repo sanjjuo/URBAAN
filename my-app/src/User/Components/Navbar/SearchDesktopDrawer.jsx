@@ -14,10 +14,17 @@ import { ImageZoomModal } from "../ImageZoomModal/ImageZoomModal";
 import { UserNotLoginPopup } from "../UserNotLogin/UserNotLoginPopup";
 
 export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
-    const { BASE_URL, searchUser, setSearchUser, searchedProducts, handleOpenUserNotLogin, openUserNotLogin, setSearchedProducts, favProduct, setFav, } = useContext(AppContext);
+    const { BASE_URL, searchUser, setSearchUser, searchedProducts, setSearchedProducts, favProduct, setFav, } = useContext(AppContext);
     const [heartIcons, setHeartIcons] = useState({})
     const [openImageModal, setOpenImageModal] = React.useState(false);
-    const [zoomImage, setZoomImage] = useState(null)
+    const [zoomImage, setZoomImage] = useState(null);
+     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+    
+      // handle non logged users modal
+      const handleOpenUserNotLogin = () => {
+        setOpenUserNotLogin(!openUserNotLogin);
+      };
+    
 
     //handle image zoom
     const handleOpenImageZoom = (productImages, index) => {
@@ -82,7 +89,7 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
 
     return (
         <React.Fragment>
-            <Drawer open={open} onClose={closeSearchDrawer} className="p-4 overflow-y-scroll hide-scrollbar" placement='bottom' size={750}>
+            <Drawer open={open} className="p-4 overflow-y-scroll hide-scrollbar" placement='bottom' size={750}>
                 <div className="flex flex-col items-center justify-center my-20">
                     <div onClick={closeSearchDrawer} className='absolute right-5 top-5 z-50 cursor-pointer'>
                         <HiXMark className='text-4xl' />
@@ -170,8 +177,6 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
             </Drawer>
 
             <UserNotLoginPopup
-                title='You are not logged in'
-                description='Please log in or create an account to add items to your wishlist and keep track of your favorites.'
                 open={openUserNotLogin}
                 handleOpen={handleOpenUserNotLogin}
             />

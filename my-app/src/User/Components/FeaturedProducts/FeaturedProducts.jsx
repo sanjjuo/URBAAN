@@ -16,13 +16,20 @@ import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 
 const FeaturedProducts = () => {
-    const { BASE_URL, favProduct, handleOpenUserNotLogin, setFav } = useContext(AppContext);
+    const { BASE_URL, favProduct, setFav } = useContext(AppContext);
     const [featuredProducts, setFeaturedProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [heartIcons, setHeartIcons] = useState({});
     const [showAllFeature, setShowAllFeature] = useState(false);
     const [openImageModal, setOpenImageModal] = React.useState(false);
-    const [zoomImage, setZoomImage] = useState(null)
+    const [zoomImage, setZoomImage] = useState(null);
+    const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    // handle non logged users modal
+    const handleOpenUserNotLogin = () => {
+        setOpenUserNotLogin(!openUserNotLogin);
+    };
+
 
     //handle image zoom
     const handleOpenImageZoom = (productImages, index) => {
@@ -185,6 +192,11 @@ const FeaturedProducts = () => {
                             open={openImageModal}
                             handleOpen={handleOpenImageZoom}
                             zoomImage={zoomImage}
+                        />
+
+                        <UserNotLoginPopup
+                            open={openUserNotLogin}
+                            handleOpen={handleOpenUserNotLogin}
                         />
                     </>
                 )

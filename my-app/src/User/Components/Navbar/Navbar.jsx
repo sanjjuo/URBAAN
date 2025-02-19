@@ -94,7 +94,7 @@ const NavList = () => {
 }
 
 const UserNavbar = () => {
-    const { BASE_URL, openDrawer, handleOpenDrawer, handleCloseDrawer, cart, setCart, fav, setFav, openUserNotLogin, handleOpenUserNotLogin } = useContext(AppContext)
+    const { BASE_URL, openDrawer, handleOpenDrawer, handleCloseDrawer, cart, setCart, fav, setFav } = useContext(AppContext)
     const location = useLocation();
     const isFavouritePage = location.pathname === "/favourite";
     const isCartPage = location.pathname === "/user-cart";
@@ -102,6 +102,12 @@ const UserNavbar = () => {
     const cartView = cart?.length || 0;
     const favView = fav?.length || 0;
     const [openSearchDrawer, setOpenSearchDrawer] = useState(false);
+    const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    // handle non logged users modal
+    const handleOpenUserNotLogin = () => {
+        setOpenUserNotLogin(!openUserNotLogin);
+    };
 
     const handleOpenSearchDrawer = () => setOpenSearchDrawer(true);
     const closeSearchDrawer = () => setOpenSearchDrawer(false);
@@ -157,7 +163,7 @@ const UserNavbar = () => {
             } catch (error) {
                 console.error(error);
                 if (error.response.status === 401) {
-                    setOpenUserNotLogin(true);
+                    handleOpenUserNotLogin();
                 }
             }
         };
@@ -269,8 +275,6 @@ const UserNavbar = () => {
             />
 
             <UserNotLoginPopup
-                title='You are not logged in'
-                description='Please click to login here'
                 open={openUserNotLogin}
                 handleOpen={handleOpenUserNotLogin}
             />

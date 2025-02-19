@@ -17,7 +17,14 @@ const Checkout = () => {
     const [checkoutData, setCheckoutData] = useState({});
     const [isLoading, setIsLoading] = useState(true)
     const [deliveryCharge, setDeliveryCharge] = useState([]);
-    const [paymentMethod, setPaymentMethod] = useState('')
+    const [paymentMethod, setPaymentMethod] = useState('');
+    const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    // handle non logged users modal
+    const handleOpenUserNotLogin = () => {
+        setOpenUserNotLogin(!openUserNotLogin);
+    };
+
 
     const checkoutDetails = checkoutData?.checkout;
     console.log(checkoutDetails);
@@ -177,7 +184,7 @@ const Checkout = () => {
         } catch (error) {
             console.error("Order submission error:", error);
             if (error.response.status === 401) {
-                setOpenUserNotLogin(true)
+                handleOpenUserNotLogin()
             }
             alert(error.response?.data?.message || "Something went wrong. Please try again.");
         }
@@ -432,7 +439,10 @@ const Checkout = () => {
             </div>
 
 
-            <UserNotLoginPopup />
+            <UserNotLoginPopup
+                open={openUserNotLogin}
+                handleOpen={handleOpenUserNotLogin}
+            />
         </>
     )
 }

@@ -12,19 +12,25 @@ import { MdZoomOutMap } from 'react-icons/md';
 import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 const LatestProducts = () => {
-  const { BASE_URL, favProduct, handleOpenUserNotLogin, setFav } = useContext(AppContext);
+  const { BASE_URL, favProduct, setFav } = useContext(AppContext);
   const [latestProducts, setLatestProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [heartIcons, setHeartIcons] = useState({}); // Store heart icon state for each product
   const [showAllLatest, setShowAllLatest] = useState(false);
   const [openImageModal, setOpenImageModal] = React.useState(false);
-  const [zoomImage, setZoomImage] = useState(null)
+  const [zoomImage, setZoomImage] = useState(null);
+  const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+  // handle non logged users modal
+  const handleOpenUserNotLogin = () => {
+    setOpenUserNotLogin(!openUserNotLogin);
+  };
 
   //handle image zoom
   const handleOpenImageZoom = (productImages, index) => {
     setOpenImageModal(!openImageModal);
     setZoomImage({ images: productImages, currentIndex: index });
-}
+  }
 
 
   useEffect(() => {
@@ -178,10 +184,10 @@ const LatestProducts = () => {
 
         )}
 
-      {/* <UserNotLoginPopup
-        title='You are not logged in'
-        description='Please log in or create an account to add items to your wishlist and keep track of your favorites.'
-      /> */}
+      <UserNotLoginPopup
+        open={openUserNotLogin}
+        handleOpen={handleOpenUserNotLogin}
+      />
 
       <ImageZoomModal
         open={openImageModal}

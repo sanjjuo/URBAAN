@@ -21,14 +21,21 @@ const AllCategory = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const productsCategory = location.state?.category || [];
-    const { BASE_URL, favProduct, handleOpenUserNotLogin, openUserNotLogin, setFav } = useContext(AppContext);
+    const { BASE_URL, favProduct, setFav } = useContext(AppContext);
 
     const [products, setProducts] = useState([]);
     const [allProducts, setAllProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [heartIcons, setHeartIcons] = useState({});
     const [openImageModal, setOpenImageModal] = React.useState(false);
-    const [zoomImage, setZoomImage] = useState(null)
+    const [zoomImage, setZoomImage] = useState(null);
+    const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    // handle non logged users modal
+    const handleOpenUserNotLogin = () => {
+        setOpenUserNotLogin(!openUserNotLogin);
+    };
+
 
     // Filter states
     const [selectedSize, setSelectedSize] = useState(null);
@@ -243,8 +250,6 @@ const AllCategory = () => {
             </div>
 
             <UserNotLoginPopup
-                title='You are not logged in'
-                description='Please log in or create an account to add items to your wishlist and keep track of your favorites.'
                 open={openUserNotLogin}
                 handleOpen={handleOpenUserNotLogin}
             />

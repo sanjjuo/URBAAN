@@ -63,11 +63,12 @@ export function ViewOrdersModal({ handleOpen, open, getUserOrders }) {
                                         <td className={classes}>
                                             <div className='w-24 h-24'>
                                                 <img
-                                                    src={userOrder?.productId?.images[0]}
-                                                    alt=""
+                                                    src={userOrder?.images[0] || "/path/to/default-image.jpg"} // Use a default image if undefined
+                                                    alt="Product Image"
                                                     className='w-full h-full object-cover rounded-xl' />
                                             </div>
                                         </td>
+
                                         <td className={classes}>
                                             <Typography
                                                 variant="small"
@@ -83,9 +84,13 @@ export function ViewOrdersModal({ handleOpen, open, getUserOrders }) {
                                                 color="blue-gray"
                                                 className="font-normal capitalize font-custom"
                                             >
-                                                {getNamedColor(userOrder.productId?.colors[0]?.color)}
+                                                {userOrder.productId?.colors && userOrder.productId?.colors.length > 0
+                                                    ? getNamedColor(userOrder.productId?.colors[0]?.color)
+                                                    : "No Color Available"
+                                                }
                                             </Typography>
                                         </td>
+
                                         <td className={classes}>
                                             <Typography
                                                 variant="small"

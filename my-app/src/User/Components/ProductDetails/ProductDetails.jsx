@@ -20,7 +20,7 @@ import { MdZoomOutMap } from 'react-icons/md';
 import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 const ProductDetails = () => {
-    const { handleOpenSizeDrawer, BASE_URL, favProduct, openUserNotLogin, handleOpenUserNotLogin, setCart, setFav } = useContext(AppContext)
+    const { handleOpenSizeDrawer, BASE_URL, favProduct, setCart, setFav } = useContext(AppContext)
     const location = useLocation();
     const { productId, categoryId } = location.state || {}
     const navigate = useNavigate();
@@ -28,14 +28,18 @@ const ProductDetails = () => {
     const [selectedColor, setSelectedColor] = useState("");
     const [selectedSize, setSelectedSize] = useState({});
     const [heartIcons, setHeartIcons] = useState({});
-    const [modalTitle, setModalTitle] = useState('');
-    const [modalDescription, setModalDescription] = useState('');
     const [showMore, setShowMore] = useState(false);
     const [reviews, setReviews] = useState([]);
     const [similarProducts, setSimilarProducts] = useState([])
     const [reviewEligible, setReviewEligible] = useState(false);
     const [openImageModal, setOpenImageModal] = React.useState(false);
     const [zoomImage, setZoomImage] = useState(null);
+    const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    // handle non logged users modal
+    const handleOpenUserNotLogin = () => {
+        setOpenUserNotLogin(!openUserNotLogin);
+    };
 
 
     //handle image zoom
@@ -142,9 +146,7 @@ const ProductDetails = () => {
             }
 
             if (!userId && !userToken) {
-                setModalTitle('You are not logged in');
-                setModalDescription('To add items to your cart and complete your purchase, please log in or create an account.');
-                handleOpenUserNotLogin();
+                setOpenUserNotLogin(true);
                 return;
             }
 
@@ -186,9 +188,7 @@ const ProductDetails = () => {
         } catch (error) {
             console.error(error);
             if (error.response && error.response.status === 401) {
-                setModalTitle('Session Expired');
-                setModalDescription('Your session has expired. Please log in again to continue.');
-                handleOpenUserNotLogin();
+                setOpenUserNotLogin(true);
             }
 
         }
@@ -316,7 +316,7 @@ const ProductDetails = () => {
                                 className='absolute top-4 left-4 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                             />
                         </div>
-                        <div className='flex items-center gap-5'>
+                        <div className='flex items-center justify-center gap-2 xl:gap-5 lg:gap-5 overflow-x-scroll hide-scrollbar'>
                             {productDetails?.images?.slice(0, 5).map((image, index) => (
                                 <div
                                     className='w-20 h-24 cursor-pointer'
@@ -533,8 +533,6 @@ const ProductDetails = () => {
 
             {/* popup for non-logged users */}
             <UserNotLoginPopup
-                title={modalTitle}
-                description={modalDescription}
                 open={openUserNotLogin}
                 handleOpen={handleOpenUserNotLogin}
             />

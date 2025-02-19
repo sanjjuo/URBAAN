@@ -15,10 +15,12 @@ const OrdersTracking = () => {
                     <a href="https://www.dtdc.in/trace.asp" target='_blank'>
                         <Card className='p-2'>
                             <div className='flex justify-between items-center'>
+                            <div className='flex items-center gap-5'>
                                 <div className='w-16 h-14'>
                                     <img src="dtdc.jpg" alt="" className='w-full h-full object-cover rounded-lg' />
                                 </div>
                                 <p className='text-secondary text-sm font-medium'>DTDC Tracking</p>
+                                </div>
                                 <IoIosArrowForward className='text-secondary text-xl' />
                             </div>
                         </Card>
@@ -26,10 +28,12 @@ const OrdersTracking = () => {
                     <a href="https://www.indiapost.gov.in/_layouts/15/dop.portal.tracking/trackconsignment.aspx" target='_blank'>
                         <Card className='p-2'>
                             <div className='flex justify-between items-center'>
-                                <div className='w-16 h-14'>
-                                    <img src="speedpost.avif" alt="" className='w-full h-full object-cover rounded-lg' />
+                                <div className='flex items-center gap-5'>
+                                    <div className='w-16 h-14'>
+                                        <img src="speedpost.avif" alt="" className='w-full h-full object-cover rounded-lg' />
+                                    </div>
+                                    <p className='text-secondary text-sm font-medium'>Speed Post Tracking</p>
                                 </div>
-                                <p className='text-secondary text-sm font-medium'>Speed Post Tracking</p>
                                 <IoIosArrowForward className='text-secondary text-xl' />
                             </div>
                         </Card>

@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
 
 const WriteReview = () => {
-    const { BASE_URL, setOpenUserNotLogin } = useContext(AppContext)
+    const { BASE_URL, openUserNotLogin, handleOpenUserNotLogin, } = useContext(AppContext)
     const navigate = useNavigate();
     const location = useLocation();
     const productId = location.state?.productId;
@@ -54,7 +54,7 @@ const WriteReview = () => {
     // handle add review
     const handleAddReview = async () => {
         if (!userId || !token) {
-            setOpenUserNotLogin(true);
+            handleOpenUserNotLogin();
             return;
         }
 
@@ -194,8 +194,8 @@ const WriteReview = () => {
             </div>
 
             <UserNotLoginPopup
-                title='You are not logged in'
-                description="You need to be logged in to write a review for this product. If you don't have an account you can easily create one to enjoy all the features."
+                open={openUserNotLogin}
+                handleOpen={handleOpenUserNotLogin}
             />
         </>
     );

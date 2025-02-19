@@ -355,7 +355,7 @@ const EditProduct = () => {
             const imagePayload = { imageName: image };
 
             const response = await axios.post(
-                `${BASE_URL}/admin/products/delete-product-image/${initialProducts._id}`,
+                `${BASE_URL}/admin/products/delete-product-image/${initialProducts?._id}`,
                 imagePayload,
                 {
                     headers: { Authorization: `Bearer ${token}` },

@@ -11,10 +11,17 @@ import { MdZoomOutMap } from 'react-icons/md'
 import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal'
 
 const SimilarProducts = ({ similarProducts }) => {
-    const { BASE_URL, favProduct, setOpenUserNotLogin, setFav } = useContext(AppContext)
+    const { BASE_URL, favProduct, setFav } = useContext(AppContext)
     const [heartIcons, setHeartIcons] = useState({});
     const [openImageModal, setOpenImageModal] = React.useState(false);
-    const [zoomImage, setZoomImage] = useState(null)
+    const [zoomImage, setZoomImage] = useState(null);
+     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+    
+      // handle non logged users modal
+      const handleOpenUserNotLogin = () => {
+        setOpenUserNotLogin(!openUserNotLogin);
+      };
+    
 
     //handle image zoom
     const handleOpenImageZoom = (productImages, index) => {
@@ -117,7 +124,8 @@ const SimilarProducts = ({ similarProducts }) => {
                                 />
                             )}
                             <div className='mt-3'>
-                                <h4 className='font-medium text-sm xl:text-lg lg:text-lg capitalize'>{product.title}</h4>
+                                <h4 className='font-medium text-sm xl:text-lg lg:text-lg capitalize truncate overflow-hidden 
+                                    whitespace-nowrap w-40 xl:w-60 lg:w-60'>{product.title}</h4>
                                 <p className='text-gray-600 font-normal text-xs xl:text-sm lg:text-sm capitalize truncate overflow-hidden 
                                     whitespace-nowrap w-40 xl:w-60 lg:w-60'>
                                     {product.description}
@@ -132,8 +140,8 @@ const SimilarProducts = ({ similarProducts }) => {
             </div>
 
             <UserNotLoginPopup
-                title='You are not logged in'
-                description='Please log in or create an account to add items to your wishlist and keep track of your favorites.'
+                open={openUserNotLogin}
+                handleOpen={handleOpenUserNotLogin}
             />
 
             <ImageZoomModal

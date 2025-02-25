@@ -15,7 +15,7 @@ const App = () => {
         reverseOrder={false}
         gutter={8}
         toastOptions={{
-          duration: 2000,
+          duration: 5000,
           style: {
             textTransform: 'capitalize',
             fontSize:'15px',

@@ -41,9 +41,24 @@ export function OrderStatusModal({ open, handleOpen, selectOrder, setSelectOrder
                 }
             })
             console.log(response.data);
+
+            // Check if any updated orders have a TrackId
+            const hasTrackId = response.data.updatedOrders.some(order => order.TrackId);
+            if (hasTrackId) {
+                toast.success("Mail has been sent for tracked orders.");
+            }
+
+            // If there are skipped orders, extract their order numbers
+            if (response.data.skippedOrders && response.data.skippedOrders.length > 0) {
+                const skippedOrderNumbers = response.data.skippedOrders
+                    .map(order => order.order_id)
+                    .join(", ");
+                toast.error(`Warning: Orders (${skippedOrderNumbers}) were skipped due to missing TrackId.`);
+            }
+
             toast.success("status updated")
             setSelectOrder([])
-            handleOpen(false)
+            handleOpen()
         } catch (error) {
             console.log(error);
         }

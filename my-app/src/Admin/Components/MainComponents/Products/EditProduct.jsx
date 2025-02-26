@@ -21,6 +21,7 @@ const EditProduct = () => {
     const [editProdTitle, setEditProdTitle] = useState('')
     const [editProdCategory, setEditProdCategory] = useState('')
     const [editProdSubCategory, setEditProdSubCategory] = useState('')
+    const [editProdCode, setEditProdCode] = useState('')
     const [editProdActualPrice, setEditProdActualPrice] = useState('')
     const [editProdDiscount, setEditProdDiscount] = useState('')
     const [editProdOfferPrice, setEditProdOfferPrice] = useState('')
@@ -54,6 +55,7 @@ const EditProduct = () => {
             setEditProdTitle(initialProducts.title);
             setEditProdCategory(initialProducts.category._id);
             setEditProdSubCategory(initialProducts.subcategory?._id);
+            setEditProdCode(initialProducts.product_Code);
             setEditProdActualPrice(initialProducts.actualPrice);
             setEditProdDiscount(initialProducts.discount);
             setEditProdOfferPrice(initialProducts.offerPrice);
@@ -197,6 +199,7 @@ const EditProduct = () => {
             editproductFormData.append('title', editProdTitle);
             editproductFormData.append('category', editProdCategory);
             editproductFormData.append('subcategory', editProdSubCategory);
+            editproductFormData.append('product_Code', editProdCode);
             editproductFormData.append('actualPrice', editProdActualPrice);
             editproductFormData.append('discount', editProdDiscount);
             // Calculate offer price
@@ -270,6 +273,7 @@ const EditProduct = () => {
             setEditProdTitle('');
             setEditProdCategory('');
             setEditProdSubCategory('');
+            setEditProdCode('');
             setEditProdActualPrice('');
             setEditProdDiscount('');
             setEditProdOfferPrice('');
@@ -444,7 +448,22 @@ const EditProduct = () => {
 
                                 </select>
                             </div>
+                            {/* product code */}
+                            <div className='flex flex-col gap-1 w-full'>
+                                <label htmlFor="" className='font-normal text-base'>Product code</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={editProdCode}
+                                    onChange={(e) => setEditProdCode(e.target.value)}
+                                    id=""
+                                    placeholder='Enter Product title'
+                                    className='border-[1px] uppercase w-full
+                                    bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500
+                                     focus:outline-none placeholder:capitalize'/>
+                            </div>
                         </div>
+
                         {/* price , disvcount, offer price */}
                         <div className='flex justify-between items-center gap-2'>
                             <div className='flex flex-col gap-1 w-1/3'>

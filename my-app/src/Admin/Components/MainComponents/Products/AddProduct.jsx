@@ -19,6 +19,7 @@ const AddProduct = () => {
     const [productTitle, setProductTitle] = useState('')
     const [productCategory, setProductCategory] = useState('')
     const [productSubCategory, setProductSubCategory] = useState('')
+    const [productCode, setProductCode] = useState('')
     const [productActualPrice, setProductActualPrice] = useState('')
     const [productDiscount, setProductDiscount] = useState('')
     const [productOfferPrice, setProductOfferPrice] = useState('')
@@ -87,7 +88,7 @@ const AddProduct = () => {
             }
         }
         fetchCategories();
-    }, [])
+    }, [BASE_URL])
 
 
     // price computation
@@ -148,6 +149,7 @@ const AddProduct = () => {
             productFormData.append('title', productTitle);
             productFormData.append('category', productCategory);
             productFormData.append('subcategory', productSubCategory);
+            productFormData.append('product_Code', productCode);
             productFormData.append('actualPrice', productActualPrice);
             productFormData.append('discount', productDiscount);
             // Calculate offer price
@@ -208,12 +210,7 @@ const AddProduct = () => {
                 'Content-Type': 'multipart/form-data',
             };
 
-            const response = await axios.post(
-                `${BASE_URL}/admin/products/create-product`,
-                productFormData,
-                { headers }
-            );
-
+            const response = await axios.post(`${BASE_URL}/admin/products/create-product`, productFormData, { headers });
             console.log(response.data);
             toast.success("Product is created");
             navigate(-1)
@@ -221,11 +218,13 @@ const AddProduct = () => {
             setProductTitle('');
             setProductCategory('');
             setProductSubCategory('');
+            setProductCode('');
+            setProductOfferPrice(null);
             setProductActualPrice('');
             setProductDiscount('');
             setCheckboxes({ latest: false, offer: false, featured: false });
             setSpecifications({ netWeight: "", fit: "", sleevesType: "", Length: "", occasion: "", innerLining: "", material: "" })
-            setAttributeFields([{ color: "", size: "", stock: "" }]);
+            setAttributeFields([{ color: "", sizes: [{ size: "", stock: "" }] }]);
             setProductDescription('');
             setProductImage([]);
             setProductManuName('');
@@ -234,6 +233,16 @@ const AddProduct = () => {
         } catch (error) {
             console.error("Error in form submission:", error?.response?.data || error.message);
             alert(error?.response?.data?.message || "Product is not created");
+            if (error.response) {
+                if (error.response.status === 413) {
+                    toast.error("File size is too large. Please upload a smaller file.");
+                } else {
+                    toast.error(error.response.data?.message || "Something went wrong!");
+                }
+            } 
+            else {
+                toast.error("Network error. Please try again.");
+            }
         }
     };
 
@@ -353,6 +362,21 @@ const AddProduct = () => {
                                     }
 
                                 </select>
+                            </div>
+
+                            {/* product code */}
+                            <div className='flex flex-col gap-1 w-full'>
+                                <label htmlFor="" className='font-normal text-base'>Product code</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={productCode}
+                                    onChange={(e) => setProductCode(e.target.value)}
+                                    id=""
+                                    placeholder='Enter Product code'
+                                    className='border-[1px] w-full
+                                    bg-gray-100/50 p-2 uppercase rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500
+                                     focus:outline-none placeholder:capitalize'/>
                             </div>
                         </div>
                         {/* price */}

@@ -111,10 +111,14 @@ const ProductDetails = () => {
 
             try {
                 const response = await axios.get(`${BASE_URL}/user/products/products/category/${categoryId}`);
-                setSimilarProducts(response.data);
-                console.log('Similar Products:', response.data);
+                // Filter out the current product from the similar products list
+                const filteredSimilarProducts = response.data.filter(
+                    (product) => product._id !== productId
+                );
+                setSimilarProducts(filteredSimilarProducts);
+                console.log("Similar Products:", filteredSimilarProducts);
             } catch (error) {
-                console.error('Error fetching similar products:', error);
+                console.error("Error fetching similar products:", error);
             }
         };
 

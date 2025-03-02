@@ -41,28 +41,45 @@ export function OrderStatusModal({ open, handleOpen, selectOrder, setSelectOrder
                 }
             })
             console.log(response.data);
-
-            // Check if any updated orders have a TrackId
-            const hasTrackId = response.data.updatedOrders.some(order => order.TrackId);
-            if (hasTrackId) {
-                toast.success("Mail has been sent for tracked orders.");
-            }
+            toast.success("status updated");
 
             // If there are skipped orders, extract their order numbers
             if (response.data.skippedOrders && response.data.skippedOrders.length > 0) {
                 const skippedOrderNumbers = response.data.skippedOrders
                     .map(order => order.order_id)
                     .join(", ");
-                toast.error(`Warning: Orders (${skippedOrderNumbers}) were skipped due to missing TrackId.`);
+                setTimeout(() => {
+                    toast.error(`Warning: Orders (${skippedOrderNumbers}) were skipped due to missing TrackId.`);
+                }, 2000)
             }
 
-            toast.success("status updated")
+            // Check if any updated orders have a TrackId
+            const hasTrackId = response.data.updatedOrders.some(order => order.TrackId);
+            if (hasTrackId) {
+                setTimeout(() => {
+                    toast.success("Mail has been sent for tracked orders.");
+                }, 1000)
+            }
+            
             setSelectOrder([])
             handleOpen()
         } catch (error) {
-            console.log(error);
+            if (error.response && error.response.status === 400) {
+                // Handle specific 400 error
+                if (error.response.data.message === 'No valid orders found for updating.') {
+                    handleOpen()
+                    toast.error("No valid orders found for updating.");
+                } else {
+                    toast.error(error.response.data.message || "Something went wrong!");
+                }
+            } else {
+                // Generic error handling
+                console.log(error);
+                toast.error("An error occurred while updating the status.");
+            }
         }
-    }
+    };
+
     return (
         <>
             <Dialog open={open} handler={handleOpen} size='xs'>

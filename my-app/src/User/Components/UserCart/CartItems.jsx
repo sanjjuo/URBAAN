@@ -180,8 +180,10 @@ const CartItems = ({ cartItems, setCartItems, setViewCart }) => {
 
     return (
         <>
-            <p onClick={handleClearAll} className='capitalize flex justify-end items-center gap-1 text-sm hover:text-primary cursor-pointer'>
-                clear all <HiOutlineXMark className='text-lg' /></p>
+            {cartItems.length > 0 && (
+                <p onClick={handleClearAll} className='capitalize flex justify-end items-center gap-1 text-sm hover:text-primary cursor-pointer'>
+                    clear all <HiOutlineXMark className='text-lg' /></p>
+            )}
 
             {isLoading ? (
                 <div className='col-span-2 flex justify-center items-center h-[50vh]'>

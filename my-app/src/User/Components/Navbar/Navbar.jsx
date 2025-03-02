@@ -228,7 +228,7 @@ const UserNavbar = () => {
                                         <UserProfile />
                                     ) : (
                                         <Link to='/login-user'><Button className='bg-primary font-custom font-normal
-                                      capitalize text-sm'>sign in</Button>
+                                      capitalize text-sm'>Log in</Button>
                                         </Link>
                                     )}
                                 </li>

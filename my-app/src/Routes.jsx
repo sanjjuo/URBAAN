@@ -63,7 +63,7 @@ const RoutesWithLocation = () => {
 
     return (
         <>
-            <ScrollToTop />
+            {/* <ScrollToTop /> */}
             {/* Hide Navbar on login and OTP pages and Show Navbar only if not on an admin route */}
             {!isAdminRoute && !isLoginOrOtpPage && !location.pathname.includes('*') && <UserNavbar />}
             <Routes>

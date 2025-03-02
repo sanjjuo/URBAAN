@@ -15,13 +15,13 @@ const SimilarProducts = ({ similarProducts }) => {
     const [heartIcons, setHeartIcons] = useState({});
     const [openImageModal, setOpenImageModal] = React.useState(false);
     const [zoomImage, setZoomImage] = useState(null);
-     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
-    
-      // handle non logged users modal
-      const handleOpenUserNotLogin = () => {
+    const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    // handle non logged users modal
+    const handleOpenUserNotLogin = () => {
         setOpenUserNotLogin(!openUserNotLogin);
-      };
-    
+    };
+
 
     //handle image zoom
     const handleOpenImageZoom = (productImages, index) => {
@@ -90,13 +90,13 @@ const SimilarProducts = ({ similarProducts }) => {
                     return (
                         <div className='group relative' key={product._id}>
                             <Link
-                                to="/product-details"
+                                // to="/product-details"
                                 state={{
                                     productId: product._id,
-                                    categoryId: product.category // Pass the category ID
+                                    categoryId: product.category._id // Pass the category ID
                                 }}
                                 className="cursor-pointer"
-                            // onClick={handleClick}
+                                // onClick={handleClick}
                             >
                                 <div className='w-full h-52 xl:h-80 lg:h-80 relative rounded-xl overflow-hidden'>
                                     <img

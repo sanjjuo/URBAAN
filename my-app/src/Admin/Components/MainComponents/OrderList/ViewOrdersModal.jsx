@@ -63,9 +63,12 @@ export function ViewOrdersModal({ handleOpen, open, getUserOrders }) {
                                         <td className={classes}>
                                             <div className='w-24 h-24'>
                                                 <img
-                                                    src={userOrder?.images[0] || "/path/to/default-image.jpg"} // Use a default image if undefined
+                                                    src={Array.isArray(userOrder?.images) && userOrder.images.length > 0
+                                                        ? userOrder.images[0]
+                                                        : "/path/to/default-image.jpg"}
                                                     alt="Product Image"
-                                                    className='w-full h-full object-cover rounded-xl' />
+                                                    className='w-full h-full object-cover rounded-xl'
+                                                />
                                             </div>
                                         </td>
 
@@ -84,12 +87,13 @@ export function ViewOrdersModal({ handleOpen, open, getUserOrders }) {
                                                 color="blue-gray"
                                                 className="font-normal capitalize font-custom"
                                             >
-                                                {userOrder.productId?.colors && userOrder.productId?.colors.length > 0
-                                                    ? getNamedColor(userOrder.productId?.colors[0]?.color)
+                                                {userOrder.productId?.colors?.length > 0 && userOrder.productId?.colors[0]?.color
+                                                    ? getNamedColor(userOrder.productId.colors[0].color)
                                                     : "No Color Available"
                                                 }
                                             </Typography>
                                         </td>
+
 
                                         <td className={classes}>
                                             <Typography

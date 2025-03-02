@@ -14,7 +14,7 @@ export function ReadMoreModal({ handleOpen, open, category }) {
             open={open}
             handler={() => handleOpen(null)}
             size="xs"
-            className="fixed right-0 p-5"
+            className="fixed right-0 p-0 rounded-none"
             animate={{
                 mount: { x: 0, y: 0 }, // Center position
                 unmount: { x: 100, y: 0 }, // Move off to the right
@@ -25,32 +25,18 @@ export function ReadMoreModal({ handleOpen, open, category }) {
                     <img
                         src={category.imageUrl}
                         alt={category.name}
-                        className="w-full h-full object-cover rounded-lg"
+                        className="w-full h-full object-cover rounded-none"
                     />
                 </div>
                 <div>
-                    <h1 className="font-bold text-2xl text-secondary capitalize">
+                    <h1 className="font-bold text-2xl text-secondary capitalize mb-3">
                         {category.name}
                     </h1>
-                    <p className="font-normal text-secondary capitalize">
+                    <p className="font-normal text-gray-600 capitalize text-sm">
                         {category.description}
                     </p>
                 </div>
             </DialogBody>
-            <DialogFooter className="flex justify-center items-center gap-1">
-                <Button
-                    onClick={() => handleOpen(null)}
-                    className="w-32 bg-buttonBg text-white font-custom capitalize text-sm font-normal tracking-wider"
-                >
-                    <span>Edit</span>
-                </Button>
-                <Button
-                    onClick={() => handleOpen(null)}
-                    className="w-32 bg-primary/20 text-primary font-custom capitalize text-sm font-normal tracking-wider shadow-none hover:shadow-none"
-                >
-                    <span>Delete</span>
-                </Button>
-            </DialogFooter>
         </Dialog>
     );
 }

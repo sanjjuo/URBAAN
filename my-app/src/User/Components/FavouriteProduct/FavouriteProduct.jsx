@@ -20,20 +20,23 @@ const FavouriteProduct = () => {
     // Fetch wishlist products
     useEffect(() => {
         const fetchWishlistProducts = async () => {
-            if (!userId) return;
-            setIsLoading(true);
+            // if (!userId) return;
+            // setIsLoading(true);
             try {
                 const response = await axios.get(`${BASE_URL}/user/wishlist/view/${userId}`);
-                setWishlist(response.data?.items || []);
+                const items = response.data?.items || [];
+
+                setWishlist(items);
             } catch (error) {
                 console.error('Error fetching wishlist:', error);
             } finally {
-                setIsLoading(false);
+                setIsLoading(false); // ✅ Ensure `isLoading` is false, even if an error occurs or wishlist is empty
             }
         };
 
         fetchWishlistProducts();
-    }, [userId]); // ✅ Added `userId` as a dependency
+    }, [userId]);
+
 
     // Delete wishlist product
     const handleWishlistDelete = async (productId) => {

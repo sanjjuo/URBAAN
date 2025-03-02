@@ -74,7 +74,7 @@ const AddedCategories = ({ createEdit, handleEditCategory, adminCategory, setAdm
                                 </div>
                                 <div>
                                     <h2 className="font-bold text-2xl text-secondary capitalize">{category.name}</h2>
-                                    <h2 className="font-normal text-gray-600 text-sm capitalize">{category.description}</h2>
+                                    <h2 className="font-normal text-gray-600 text-sm capitalize truncate">{category.description}</h2>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     {/* Read More Link */}

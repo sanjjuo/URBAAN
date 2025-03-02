@@ -6,9 +6,11 @@ import AppLoader from '../../../../Loader';
 import toast from 'react-hot-toast';
 import { OrderStatusModal } from './OrderStatusModal';
 import { ViewOrdersModal } from './ViewOrdersModal';
+import { TrackIdModal } from './TrackIdModal';
+import EditTrackIdModal from './EditTrackIdModal'
 import * as XLSX from 'xlsx';
 
-const TABLE_HEAD = ["", "ID", "Customer", "Address", "Order Date", "Payment", "Status"];
+const TABLE_HEAD = ["ID", "Customer", "Address", "Order Date", "Payment", "Status", "Orders", "Track ID"];
 
 const OrderTable = ({ orderList, setOrderList }) => {
   const { BASE_URL } = useContext(AppContext);
@@ -20,6 +22,29 @@ const OrderTable = ({ orderList, setOrderList }) => {
   const [editStatusBtn, setEditStatusBtn] = useState(false)
   const [openViewOrders, setOpenViewOrders] = useState(false);
   const [getUserOrders, setGetUserOrders] = useState([])
+  const [trackId, setTrackId] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null)
+  const [editTrackId, setEditTrackId] = useState(false)
+  const [initialTrackId, setInitialTrackId] = useState(null);
+
+  const handleEditTrackId = (trackId) => {
+    setInitialTrackId(trackId)
+  }
+
+
+  //handle for set track id
+  const handleOpenTrackId = (orderId) => {
+    setTrackId(!trackId);
+    setSelectedOrderId(orderId)
+    console.log(orderId);
+  };
+
+  //handle for edit set track id
+  const handleOpenEditTrackIdModal = (orderId) => {
+    setEditTrackId(!editTrackId);
+    setSelectedOrderId(orderId);
+    console.log(orderId);
+  };
 
 
   //handle user order modal
@@ -33,61 +58,37 @@ const OrderTable = ({ orderList, setOrderList }) => {
   //handle order status
   const handleOpenOrderStatus = () => setOpenOrderStatus(!openOrderStatus);
 
-  // Predefined allowed statuses
-  const allowedStatuses = ["Delivered", "Processing", "Cancelled", "Pending"];
-
   // Status colors
   const statusColors = {
     Delivered: "text-shippedBg bg-shippedBg/20",
     Cancelled: "text-cancelBg bg-cancelBg/20",
     Pending: "text-pendingBg bg-pendingBg/20",
     default: "text-gray-100 bg-gray-500",
-    "In-Transist": "text-processingBg bg-processingBg/20"
+    "In-Transist": "text-processingBg bg-processingBg/20",
   };
 
   const token = localStorage.getItem('token')
 
+  //fetch order list
+  const fetchOrderList = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/admin/orderlist/get`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setOrderList(response.data);
+      console.log(response.data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching order list:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchOrderList = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/admin/orderlist/get`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        setOrderList(response.data);
-        console.log(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching order list:", error);
-      }
-    };
     fetchOrderList();
   }, [BASE_URL]);
 
-
-  // const handleStatusChange = async (statusId, newStatus) => {
-  //   if (!allowedStatuses.includes(newStatus)) {
-  //     alert(`Invalid status: ${newStatus}`);
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axios.patch(`${BASE_URL}/admin/orderlist/${statusId}/status`, { status: newStatus });
-  //     console.log("Status updated successfully:", response.data);
-  //     toast.success("Status updated!")
-
-  //     // Optimistically update the UI
-  //     setOrderList((prevList) =>
-  //       prevList.map((order) =>
-  //         order._id === statusId ? { ...order, status: newStatus } : order
-  //       )
-  //     );
-  //   } catch (error) {
-  //     console.error("Error updating status:", error.response?.data?.message || error.message);
-  //     alert(`Failed to update status: ${error.response?.data?.message || error.message}`);
-  //   }
-  // };
 
   // Handle individual checkbox click
   const handleCheckboxClick = (orderId) => {
@@ -285,28 +286,31 @@ const OrderTable = ({ orderList, setOrderList }) => {
                           <Button
                             onClick={() => handleOpenViewOrders(order.products)}
                             className='bg-transparent shadow-none text-secondary font-custom capitalize font-normal
-                          text-sm border border-gray-700 rounded-3xl px-4 py-2 hover:shadow-none'>View Orders</Button>
+                          text-xs border border-gray-700 rounded-3xl px-3 py-2 hover:shadow-none'>View Orders</Button>
                         </td>
-                        {/* <td className={classes}>
-                          <Menu placement="bottom-end" className="outline-none">
-                            <MenuHandler>
-                              <IconButton variant="text">
-                                <HiOutlineDotsHorizontal className="text-primary text-2xl cursor-pointer" />
-                              </IconButton>
-                            </MenuHandler>
-                            <MenuList>
-                              {allowedStatuses.map((status, index) => (
-                                <MenuItem
-                                  key={index}
-                                  onClick={() => handleStatusChange(order._id, status)}
-                                  className={`font-custom capitalize ${statusColors[status]?.split(" ")[0]} hover:!text-buttonBg`}
-                                >
-                                  {status}
-                                </MenuItem>
-                              ))}
-                            </MenuList>
-                          </Menu>
-                        </td> */}
+                        <td className={classes}>
+                          {order?.TrackId ? (
+                            <span
+                              onClick={() => {
+                                handleOpenEditTrackIdModal(order._id);
+                                handleEditTrackId(order.TrackId);
+                              }}
+                              className="text-buttonBg font-medium tracking-wider cursor-pointer hover:underline"
+                            >
+                              {order?.TrackId}
+                            </span>
+                          ) : (
+                            <Button
+                              variant="gradient"
+                              onClick={() => handleOpenTrackId(order._id)}
+                              className="bg-secondary shadow-none text-white font-custom capitalize font-normal 
+                                text-xs border border-gray-700 rounded-3xl px-3 py-2 hover:shadow-none"
+                            >
+                              Set Track ID
+                            </Button>
+                          )}
+                        </td>
+
                       </tr>
                     );
                   })}
@@ -368,6 +372,22 @@ const OrderTable = ({ orderList, setOrderList }) => {
         handleOpen={handleOpenViewOrders}
         open={openViewOrders}
         getUserOrders={getUserOrders} />
+
+      <TrackIdModal
+        handleOpen={handleOpenTrackId}
+        open={trackId}
+        selectedOrderId={selectedOrderId}
+        fetchOrderList={fetchOrderList}
+      />
+
+      <EditTrackIdModal
+        handleOpen={handleOpenEditTrackIdModal}
+        open={editTrackId}
+        initialTrackId={initialTrackId}
+        selectedOrderId={selectedOrderId}
+        fetchOrderList={fetchOrderList}
+      />
+
     </>
   );
 };

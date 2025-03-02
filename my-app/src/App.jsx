@@ -17,14 +17,12 @@ const App = () => {
         toastOptions={{
           duration: 5000,
           style: {
-            textTransform: 'capitalize',
+            textTransform: 'normal-case',
             fontSize:'15px',
             maxWidth: '650px',
             width: 'auto',
-            padding: '20px',
+            padding: '14px',
             height: 'auto',
-            color: '#000',
-            backgroundColor: '#FFEDED',
           },
         }}
       />

@@ -50,7 +50,7 @@ export function OrderStatusModal({ open, handleOpen, selectOrder, setSelectOrder
                     .join(", ");
                 setTimeout(() => {
                     toast.error(`Warning: Orders (${skippedOrderNumbers}) were skipped due to missing TrackId.`);
-                }, 2000)
+                }, 3000)
             }
 
             // Check if any updated orders have a TrackId
@@ -58,9 +58,9 @@ export function OrderStatusModal({ open, handleOpen, selectOrder, setSelectOrder
             if (hasTrackId) {
                 setTimeout(() => {
                     toast.success("Mail has been sent for tracked orders.");
-                }, 1000)
+                }, 2000)
             }
-            
+
             setSelectOrder([])
             handleOpen()
         } catch (error) {
@@ -124,6 +124,13 @@ export function OrderStatusModal({ open, handleOpen, selectOrder, setSelectOrder
                             color='green'
                             checked={statusHandle === 'Delivered'}
                             onChange={() => setStatusHandle('Delivered')}
+                        />
+                        <Radio
+                            name="type"
+                            label="Invoice Generation"
+                            color='black'
+                            checked={statusHandle === 'invoice_generated'}
+                            onChange={() => setStatusHandle('invoice_generated')}
                         />
                     </div>
                     <div className='flex items-center justify-center mt-10'>

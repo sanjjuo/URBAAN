@@ -213,7 +213,7 @@ const EditCarousel = ({ initialEditCarouselData, setAdminCarousel }) => {
                                 value={editCarouselLabel}
                                 onChange={(e) => setEditCarouselLabel(e.target.value)}
                                 id=""
-                                placeholder='Eg: Trending, New Season'
+                                placeholder='Enter label'
                                 className='border-[1px] text-sm
                                     bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500
                                      focus:outline-none'/>
@@ -228,7 +228,7 @@ const EditCarousel = ({ initialEditCarouselData, setAdminCarousel }) => {
                                 value={editCarouselTitle}
                                 onChange={(e) => setEditCarouselTitle(e.target.value)}
                                 id=""
-                                placeholder='eg: Stylish kurtis, kids Collection'
+                                placeholder='Enter title'
                                 className='border-[1px] text-sm 
                                     bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500
                                      focus:outline-none'/>
@@ -247,7 +247,7 @@ const EditCarousel = ({ initialEditCarouselData, setAdminCarousel }) => {
                                         setEditCarouselLink(`https://${value}`);
                                     }
                                 }}
-                                placeholder='https://www.carousel.com'
+                                placeholder='Enter URL starts with https:'
                                 className='border-[1px] text-sm bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500 focus:outline-none'
                             />
                         </div>

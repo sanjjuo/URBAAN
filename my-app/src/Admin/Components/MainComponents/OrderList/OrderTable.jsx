@@ -63,8 +63,9 @@ const OrderTable = ({ orderList, setOrderList }) => {
     Delivered: "text-shippedBg bg-shippedBg/20",
     Cancelled: "text-cancelBg bg-cancelBg/20",
     Pending: "text-pendingBg bg-pendingBg/20",
+    Processing: 'text-processingBg bg-processingBg/20',
     default: "text-gray-100 bg-gray-500",
-    "In-Transist": "text-processingBg bg-processingBg/20",
+    "In-Transist": "text-intransistBg bg-intransistBg/20",
   };
 
   const token = localStorage.getItem('token')
@@ -169,10 +170,14 @@ const OrderTable = ({ orderList, setOrderList }) => {
 
   return (
     <>
-      {isLoading || orderList.length === 0 ? (
+      {isLoading ? (
         <div className="col-span-2 flex justify-center items-center h-[50vh]">
           <AppLoader />
         </div>
+      ) : orderList.length === 0 ? (
+        <>
+          <p className='col-span-5 text-sm text-secondary flex justify-center items-center h-[50vh]'>No Orders match the selected filters.</p>
+        </>
       ) : (
         <>
           <div className='relative'>
@@ -279,7 +284,7 @@ const OrderTable = ({ orderList, setOrderList }) => {
                         <td className={classes}>
                           <Chip
                             className={`capitalize text-sm text-center font-normal ${statusColors[order.status] || statusColors.default}`}
-                            value={order.status === 'In-Transist' ? 'dispatched' : order.status}
+                            value={order.status === 'In-Transist' ? 'dispatched' : order.status === 'invoice_generated' ? 'Invoice Generated' : order.status}
                           />
                         </td>
                         <td className={classes}>

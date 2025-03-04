@@ -28,26 +28,27 @@ const SelectUserAddress = () => {
         console.log(addressId);
     }
 
-    useEffect(() => {
-        const fetchAddress = async () => {
-            try {
-                const userId = localStorage.getItem('userId')
-                const token = localStorage.getItem('userToken')
+    //fetch user address
+    const fetchAddress = async () => {
+        try {
+            const userId = localStorage.getItem('userId')
+            const token = localStorage.getItem('userToken')
 
-                const headers = {
-                    Authorization: `Bearer ${token}`
-                }
-                const response = await axios.get(`${BASE_URL}/user/address/view/${userId}`, { headers })
-                setGetAddress(response.data)
-                setIsLoading(false)
-                console.log(response.data);
-            } catch (error) {
-                console.log(error);
+            const headers = {
+                Authorization: `Bearer ${token}`
             }
-            finally {
-                setIsLoading(false); // Ensure this is called after the data is fetched
-            }
+            const response = await axios.get(`${BASE_URL}/user/address/view/${userId}`, { headers })
+            setGetAddress(response.data)
+            setIsLoading(false)
+            console.log(response.data);
+        } catch (error) {
+            console.log(error);
         }
+        finally {
+            setIsLoading(false); // Ensure this is called after the data is fetched
+        }
+    }
+    useEffect(() => {
         fetchAddress();
     }, [])
 
@@ -63,6 +64,7 @@ const SelectUserAddress = () => {
             console.log(response.data);
             handleOpenRemoveModal()
             toast.success('Address is deleted')
+            fetchAddress()
         } catch (error) {
             console.log(error);
         }

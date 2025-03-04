@@ -59,6 +59,16 @@ const RecentOrders = () => {
         }
     };
 
+    // Status colors
+    const statusColors = {
+        Delivered: "text-shippedBg bg-shippedBg/20",
+        Cancelled: "text-cancelBg bg-cancelBg/20",
+        Pending: "text-pendingBg bg-pendingBg/20",
+        Processing: 'text-processingBg bg-processingBg/20',
+        default: "text-gray-100 bg-gray-500",
+        "In-Transist": "text-intransistBg bg-intransistBg/20",
+    };
+
     return (
         <Card className="w-full p-10">
             <div>
@@ -150,19 +160,8 @@ const RecentOrders = () => {
                                     </td>
                                     <td className={classes}>
                                         <Chip
-                                            className={`capitalize text-sm text-center font-normal ${recentOrder.status === "delivered"
-                                                ? "text-deliveredBg bg-deliveredBg/20"
-                                                : recentOrder.status === "Processing"
-                                                    ? "text-processingBg bg-processingBg/20"
-                                                    : recentOrder.status === "Cancelled"
-                                                        ? "text-cancelBg bg-cancelBg/20"
-                                                        : recentOrder.status === "Pending"
-                                                            ? "text-pendingBg bg-pendingBg/20"
-                                                            : recentOrder.status === "Delivered"
-                                                                ? "text-shippedBg bg-shippedBg/20"
-                                                                : "text-gray-500 bg-gray-200"
-                                                }`}
-                                            value={recentOrder.status}
+                                            className={`capitalize text-sm text-center font-normal ${statusColors[recentOrder.status] || statusColors.default}`}
+                                            value={recentOrder.status === 'In-Transist' ? 'dispatched' : recentOrder.status}
                                         />
                                     </td>
                                 </tr>

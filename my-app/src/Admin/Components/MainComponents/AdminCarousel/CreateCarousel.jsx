@@ -147,7 +147,7 @@ const CreateCarousel = ({ setAdminCarousel }) => {
                             type="text"
                             value={carouselLabel}
                             onChange={(e) => setCarouselLabel(e.target.value)}
-                            placeholder='Eg: Trending, New Season'
+                            placeholder='Enter Label'
                             className='border-[1px] text-sm bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500 focus:outline-none'
                         />
                     </div>
@@ -159,7 +159,7 @@ const CreateCarousel = ({ setAdminCarousel }) => {
                             type="text"
                             value={carouselTitle}
                             onChange={(e) => setCarouselTitle(e.target.value)}
-                            placeholder='Eg: Stylish kurtis, kids Collection'
+                            placeholder='Enter title'
                             className='border-[1px] text-sm bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500 focus:outline-none'
                         />
                     </div>
@@ -171,7 +171,7 @@ const CreateCarousel = ({ setAdminCarousel }) => {
                             type="url"
                             value={carouselLink}
                             onChange={(e) => setCarouselLink(e.target.value)}
-                            placeholder='www.carousel.com'
+                            placeholder='Enter URL starts with https:'
                             className='border-[1px] text-sm bg-gray-100/50 p-2 rounded-md placeholder:text-sm placeholder:font-light placeholder:text-gray-500 focus:outline-none'
                         />
                     </div>

@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useContext } from 'react';
 import { AppContext } from '../../../StoreContext/StoreContext';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const UserDash = ({ profile, setUserDash }) => {
     const { BASE_URL } = useContext(AppContext)
@@ -16,22 +17,24 @@ const UserDash = ({ profile, setUserDash }) => {
     const token = localStorage.getItem('userToken')
     const userId = localStorage.getItem('userId')
 
-    useEffect(() => {
-        const displayCoupon = async () => {
-            try {
-                console.log(`${BASE_URL}/walkin/coupon/view/${userId}`);
 
-                const response = await axios.get(`${BASE_URL}/walkin/coupon/view/${userId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
-                setUserCoupon(response.data?.coupon?.code)
-                console.log(response.data);
-            } catch (error) {
-                console.log(error);
-            }
+    //fetch walkin coupon
+    const displayCoupon = async () => {
+        try {
+            console.log(`${BASE_URL}/walkin/coupon/view/${userId}`);
+
+            const response = await axios.get(`${BASE_URL}/walkin/coupon/view/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setUserCoupon(response.data?.coupon?.code)
+            console.log(response.data);
+        } catch (error) {
+            console.log(error);
         }
+    }
+    useEffect(() => {
         displayCoupon()
     }, [])
 
@@ -44,6 +47,8 @@ const UserDash = ({ profile, setUserDash }) => {
                 }
             })
             console.log(response.data);
+            displayCoupon()
+            toast.success('Walkin coupon is created')
         } catch (error) {
             console.log(error);
         }

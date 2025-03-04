@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import PrivateRoute from './Admin/Components/MainComponents/PrivateRoute/PrivateRoute';
 import LoginSignUp from "./Admin/LoginSignUp/LoginSignUp";
 import Home from "./Admin/Home/Home";
 import Dashboard from "./Admin/Components/MainComponents/DashBoard/DashBoard";
@@ -63,7 +64,7 @@ const RoutesWithLocation = () => {
 
     return (
         <>
-            {/* <ScrollToTop /> */}
+            <ScrollToTop />
             {/* Hide Navbar on login and OTP pages and Show Navbar only if not on an admin route */}
             {!isAdminRoute && !isLoginOrOtpPage && !location.pathname.includes('*') && <UserNavbar />}
             <Routes>
@@ -96,20 +97,20 @@ const RoutesWithLocation = () => {
 
                 {/* Routes of admin section */}
                 <Route path='/admin-login' element={<LoginSignUp />} />
-                <Route path='/adminHome' element={<Home />}>
-                    <Route path='' element={<Dashboard />} />
-                    <Route path='product' element={<Products />} />
-                    <Route path='category' element={<Category />} />
-                    <Route path='subcategory' element={<SubCategory />} />
-                    <Route path='admincarousel' element={<AdminCarousel />} />
-                    <Route path='orderlist' element={<OrderList />} />
-                    <Route path='coupon' element={<Coupons />} />
-                    <Route path='userslist' element={<UsersList />} />
-                    <Route path='delivery' element={<Delivery />} />
-                    <Route path='invoice' element={<Invoice />} />
-                    <Route path='addProduct' element={<AddProduct />} />
-                    <Route path='userDetails' element={<ViewUserDetails />} />
-                    <Route path='editProduct' element={<EditProduct />} />
+                <Route path='/adminHome' element={<PrivateRoute><Home /></PrivateRoute>}>
+                    <Route path='' element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+                    <Route path='product' element={<PrivateRoute><Products /></PrivateRoute>} />
+                    <Route path='category' element={<PrivateRoute><Category /></PrivateRoute>} />
+                    <Route path='subcategory' element={<PrivateRoute><SubCategory /></PrivateRoute>} />
+                    <Route path='admincarousel' element={<PrivateRoute><AdminCarousel /></PrivateRoute>} />
+                    <Route path='orderlist' element={<PrivateRoute><OrderList /></PrivateRoute>} />
+                    <Route path='coupon' element={<PrivateRoute><Coupons /></PrivateRoute>} />
+                    <Route path='userslist' element={<PrivateRoute><UsersList /></PrivateRoute>} />
+                    <Route path='delivery' element={<PrivateRoute><Delivery /></PrivateRoute>} />
+                    <Route path='invoice' element={<PrivateRoute><Invoice /></PrivateRoute>} />
+                    <Route path='addProduct' element={<PrivateRoute><AddProduct /></PrivateRoute>} />
+                    <Route path='userDetails' element={<PrivateRoute><ViewUserDetails /></PrivateRoute>} />
+                    <Route path='editProduct' element={<PrivateRoute><EditProduct /></PrivateRoute>} />
                 </Route>
                 <Route path='*' element={<NotFound />} />
             </Routes>

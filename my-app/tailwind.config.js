@@ -25,6 +25,7 @@ module.exports = withMT({
         editBg: "#E2EBF8",
         pendingBg: "#6777EE",
         processingBg: "#FFA425",
+        intransistBg:'#9a3412',
         cancelBg: "#FB544B",
         shippedBg: "#66BB6A",
         deliveredBg: "#38BAF4",

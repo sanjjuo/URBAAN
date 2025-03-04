@@ -106,7 +106,7 @@ const Login = () => {
                                     onClick={() => setPasswordVisible(!passwordVisible)} // Toggle visibility
                                     className="absolute top-3 right-3 text-gray-500 focus:outline-none"
                                 >
-                                    {passwordVisible ? <FaRegEyeSlash /> : <FaRegEye />}
+                                    {passwordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
                                 </button>
                             </div>
                         </div>

@@ -10,30 +10,24 @@ import {
 const paymentStatus = ["Paid", "Unpaid", "Refund", "Pending"];
 
 export function FilterPaymentStatus({ setFilters, resetFilter }) {
-  const [selectedPaymentStatus, setSelectedPaymentStatus] = useState([]);
+  const [selectedPaymentStatus, setSelectedPaymentStatus] = useState(null); // Store a single selected status
 
   const handleStatusSelect = useCallback((status) => {
-    setSelectedPaymentStatus((prev) => {
-      const updatedStatus = prev.includes(status)
-        ? prev.filter((s) => s !== status)
-        : [...prev, status];
+    setSelectedPaymentStatus(status); // Directly set the selected status
 
-      // Update filters
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        status: updatedStatus,  // Add the selected payment statuses to the filter
-      }));
-
-      return updatedStatus;
-    });
+    // Update filters
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      status: status,  // Set the selected payment status to the filter
+    }));
   }, [setFilters]);
 
   useEffect(() => {
     if (resetFilter) {
-      setSelectedPaymentStatus([]);
+      setSelectedPaymentStatus(null); // Reset the selected status
       setFilters((prevFilters) => ({
         ...prevFilters,
-        status: [],  // Reset the paymentStatus filter
+        status: null,  // Reset the paymentStatus filter
       }));
     }
   }, [resetFilter, setFilters]);
@@ -44,9 +38,7 @@ export function FilterPaymentStatus({ setFilters, resetFilter }) {
         <Button className="!bg-white text-secondary rounded-xl cursor-pointer flex items-center gap-5 p-3 font-custom 
         capitalize text-base font-normal border-gray-300 border-[1px] shadow-none focus:shadow-none hover:shadow-none">
           <div className="flex gap-1 whitespace-nowrap overflow-x-auto hide-scrollbar w-32">
-            {selectedPaymentStatus.length > 0
-              ? selectedPaymentStatus.join(", ")
-              : "Payment Status"}
+            {selectedPaymentStatus || "Payment Status"} {/* Display only the selected status */}
           </div>
           <ChevronDownIcon
             strokeWidth={2.5}
@@ -62,7 +54,7 @@ export function FilterPaymentStatus({ setFilters, resetFilter }) {
                 key={index}
                 onClick={() => handleStatusSelect(status)}
                 className={`cursor-pointer border-[1px] border-gray-400 text-sm w-[30%] p-2 flex justify-center items-center 
-                rounded-full ${selectedPaymentStatus.includes(status)
+                rounded-full ${selectedPaymentStatus === status
                     ? "bg-primary text-white"
                     : ""
                   }`}

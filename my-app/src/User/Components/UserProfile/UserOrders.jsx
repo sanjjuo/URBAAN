@@ -19,11 +19,12 @@ const UserOrders = () => {
     // Define status color mapping
     const statusColors = {
         Delivered: "text-shippedBg bg-shippedBg/20",
-        "In-Transist": "text-processingBg bg-processingBg/20",
         Cancelled: "text-cancelBg bg-cancelBg/20",
         Pending: "text-pendingBg bg-pendingBg/20",
-        default: "text-gray-500 bg-gray-200",
-    };
+        Processing: 'text-processingBg bg-processingBg/20',
+        default: "text-intransistBg bg-intransistBg/20",
+        "In-Transist": "text-intransistBg bg-intransistBg/20",
+      };
 
     const getNamedColor = (colorCode) => {
         try {
@@ -101,7 +102,7 @@ const UserOrders = () => {
                                     {/* price */}
                                     <div className='flex flex-col justify-between items-end'>
                                         <Chip
-                                            value={usrOrder.status === 'In-Transist' ? 'dispatched' : usrOrder.status}
+                                            value={usrOrder.status === 'In-Transist' ? 'dispatched' : usrOrder.status === 'invoice_generated' ? 'Dispatched' : usrOrder.status}
                                             className={`text-xs font-normal capitalize ${statusColors[usrOrder.status] || statusColors.default}`}
                                         />
                                         <p className='text-secondary font-bold text-2xl lg:text-xl'>₹{usrOrder.finalPayableAmount}</p>

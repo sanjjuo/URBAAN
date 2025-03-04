@@ -1,17 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Menu, MenuHandler, MenuList, Button } from "@material-tailwind/react";
-import { useEffect } from "react";
 
-const orderStatus = ["Pending", "Processing", "Cancelled", "Delivered"];
+const orderStatus = ["Pending", "Processing", "Cancelled", "Delivered", "In-Transist", 'invoice_generated'];
 
 export function FilterOrderStatus({ setFilters, resetFilter }) {
-    const [selectedStatuses, setSelectedStatuses] = useState([]);
+    const [selectedStatus, setSelectedStatus] = useState(null); // Single selection
 
-    // Reset selected statuses when resetFilter is triggered
+    // Reset selected status when resetFilter is triggered
     useEffect(() => {
         if (resetFilter) {
-            setSelectedStatuses([]);
+            setSelectedStatus(null);
             setFilters((prevFilters) => ({
                 ...prevFilters,
                 status: undefined, // Reset status filter
@@ -19,34 +18,18 @@ export function FilterOrderStatus({ setFilters, resetFilter }) {
         }
     }, [resetFilter, setFilters]);
 
-    // Handle status selection
+    // Handle status selection (single selection)
     const handleOrderStatusSelect = (status) => {
-        const updatedStatuses = selectedStatuses.includes(status)
-            ? selectedStatuses.filter((s) => s !== status) // Remove status
-            : [...selectedStatuses, status]; // Add status
-    
-        setSelectedStatuses(updatedStatuses);
-    
+        const newStatus = selectedStatus === status ? null : status; // Toggle selection
+
+        setSelectedStatus(newStatus);
+
         // Update filters immediately
         setFilters((prevFilters) => ({
             ...prevFilters,
-            status: updatedStatuses.length > 0 ? updatedStatuses : undefined, 
+            status: newStatus ? [newStatus] : undefined,
         }));
     };
-    
-
-    // // Handle Apply now click
-    // const handleApplyFilters = () => {
-    //     setFilters((prevFilters) => ({
-    //         ...prevFilters,
-    //         status: selectedStatuses.length > 0 ? selectedStatuses : undefined, // Update status field with selected statuses
-    //     }));
-    // };
-
-    // // Prevent the click event from propagating to the Menu component
-    // const handleClickInside = (event) => {
-    //     event.stopPropagation();
-    // };
 
     return (
         <Menu>
@@ -57,9 +40,7 @@ export function FilterOrderStatus({ setFilters, resetFilter }) {
                     style={{ width: 'fit-content', maxWidth: '200px' }}
                 >
                     <div className="flex gap-1 whitespace-nowrap overflow-x-auto hide-scrollbar w-32">
-                        {selectedStatuses.length > 0
-                            ? selectedStatuses.join(", ")
-                            : "Order Status"}
+                        {selectedStatus === 'In-Transist' ? 'Dispatched' : selectedStatus === 'invoice_generated' ? 'Invoice Generated' : selectedStatus || "Order Status"}
                     </div>
                     <ChevronDownIcon
                         strokeWidth={2.5}
@@ -74,26 +55,16 @@ export function FilterOrderStatus({ setFilters, resetFilter }) {
                         {orderStatus.map((status, index) => (
                             <li
                                 key={index}
-                                onClick={(e) => {
-                                    handleOrderStatusSelect(status);
-                                }}
-                                className={`cursor-pointer border-[1px] border-gray-400 text-sm w-[30%] p-2 flex justify-center items-center 
-                                    rounded-full ${selectedStatuses.includes(status) ? 'bg-primary text-white' : ''}`}
+                                onClick={() => handleOrderStatusSelect(status)}
+                                className={`cursor-pointer capitalize border-[1px] border-gray-400 text-sm w-[30%] p-2 flex justify-center items-center 
+                                rounded-full ${selectedStatus === status ? 'bg-primary text-white' : ''}`}
                             >
-                                {status}
+                            {status === 'In-Transit' ? 'Dispatched' : status === 'invoice_generated' ? 'Invoice Generated' : status}
                             </li>
+
                         ))}
                     </ul>
                 </div>
-                {/* <div className='p-5 flex flex-col justify-center items-center gap-5 hover:outline-none focus:outline-none'>
-                    <p className="text-sm">*You can choose multiple order statuses</p>
-                    <Button
-                        onClick={handleApplyFilters}
-                        className="bg-primary font-custom text-sm tracking-wider font-normal capitalize py-2 px-4"
-                    >
-                        Apply now
-                    </Button>
-                </div> */}
             </MenuList>
         </Menu>
     );

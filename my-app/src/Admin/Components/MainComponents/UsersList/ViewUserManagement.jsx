@@ -20,7 +20,7 @@ const ViewUserManagement = () => {
         </div>
         <div className="lg:col-span-3 space-y-5">
           <UserLargeImage user={user} />
-          <UserOrdersTable />
+          <UserOrdersTable user={user}/>
         </div>
       </div>
     </>

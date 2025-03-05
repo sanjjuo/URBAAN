@@ -1,18 +1,16 @@
-import React from "react";
 import {
     Button,
     Dialog,
-    DialogHeader,
     DialogBody,
     DialogFooter,
-    Typography,
+    Typography
 } from "@material-tailwind/react";
 import namer from 'color-namer'; // Import the color-namer library
-import { HiOutlineXMark } from "react-icons/hi2";
+import React from "react";
 
 export function ViewOrdersModal({ handleOpen, open, getUserOrders }) {
 
-    const TABLE_HEAD = ["Product", "Title", "Color", "Size", "Price"];
+    const TABLE_HEAD = ["Product", "Title", "Product Code", "Color", "Size", "Quantity", "Price"];
 
     // Function to get the nearest named color
     const getNamedColor = (colorCode) => {
@@ -27,12 +25,7 @@ export function ViewOrdersModal({ handleOpen, open, getUserOrders }) {
 
     return (
         <>
-            <Dialog open={open} handler={handleOpen}>
-                <DialogHeader>
-                    <div className="flex justify-end w-full">
-                        <HiOutlineXMark className='text-2xl cursor-pointer' onClick={handleOpen} />
-                    </div>
-                </DialogHeader>
+            <Dialog open={open} handler={handleOpen} size='lg'>
                 <DialogBody>
                     <table className="w-full min-w-max table-auto text-left">
                         <thead>
@@ -40,7 +33,7 @@ export function ViewOrdersModal({ handleOpen, open, getUserOrders }) {
                                 {TABLE_HEAD.map((head) => (
                                     <th
                                         key={head}
-                                        className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                                        className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center"
                                     >
                                         <Typography
                                             variant="small"
@@ -56,19 +49,20 @@ export function ViewOrdersModal({ handleOpen, open, getUserOrders }) {
                         <tbody>
                             {Array.isArray(getUserOrders) && getUserOrders.map((userOrder, index) => {
                                 const isLast = index === getUserOrders.length - 1;
-                                const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+                                const classes = isLast ? "p-4 text-center" : "p-4 border-b border-blue-gray-50 text-center";
 
                                 return (
                                     <tr key={userOrder._id}>
                                         <td className={classes}>
-                                            <div className='w-24 h-24'>
+                                            <div className='w-full h-24'>
                                                 <img
-                                                    src={Array.isArray(userOrder?.images) && userOrder.images.length > 0
-                                                        ? userOrder.images[0]
-                                                        : "/path/to/default-image.jpg"}
+                                                    src={userOrder.productId?.images?.length > 0
+                                                        ? userOrder.productId.images[0]
+                                                        : "/no-image.jpg"}
                                                     alt="Product Image"
                                                     className='w-full h-full object-cover rounded-xl'
                                                 />
+
                                             </div>
                                         </td>
 
@@ -78,7 +72,7 @@ export function ViewOrdersModal({ handleOpen, open, getUserOrders }) {
                                                 color="blue-gray"
                                                 className="font-normal capitalize font-custom"
                                             >
-                                                {userOrder.productId?.title}
+                                                {userOrder.productId?.title || 'product'}
                                             </Typography>
                                         </td>
                                         <td className={classes}>
@@ -87,8 +81,17 @@ export function ViewOrdersModal({ handleOpen, open, getUserOrders }) {
                                                 color="blue-gray"
                                                 className="font-normal capitalize font-custom"
                                             >
-                                                {userOrder.productId?.colors?.length > 0 && userOrder.productId?.colors[0]?.color
-                                                    ? getNamedColor(userOrder.productId.colors[0].color)
+                                                {userOrder.productId?.product_Code || 'code'}
+                                            </Typography>
+                                        </td>
+                                        <td className={classes}>
+                                            <Typography
+                                                variant="small"
+                                                color="blue-gray"
+                                                className="font-normal capitalize font-custom"
+                                            >
+                                                {userOrder?.color?.length > 0 && userOrder?.color
+                                                    ? getNamedColor(userOrder?.color)
                                                     : "No Color Available"
                                                 }
                                             </Typography>
@@ -110,7 +113,16 @@ export function ViewOrdersModal({ handleOpen, open, getUserOrders }) {
                                                 color="blue-gray"
                                                 className="font-normal capitalize font-custom"
                                             >
-                                                {userOrder.productId?.offerPrice}
+                                                {userOrder?.quantity}
+                                            </Typography>
+                                        </td>
+                                        <td className={classes}>
+                                            <Typography
+                                                variant="small"
+                                                color="blue-gray"
+                                                className="font-normal capitalize font-custom"
+                                            >
+                                                ₹{userOrder?.price}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -119,6 +131,9 @@ export function ViewOrdersModal({ handleOpen, open, getUserOrders }) {
                         </tbody>
                     </table>
                 </DialogBody>
+                <DialogFooter className='flex items-center justify-center'>
+                    <Button onClick={handleOpen} className='bg-cancelBg cursor-pointer text-sm font-custom font-normal capitalize tracking-wider'>Close</Button>
+                </DialogFooter>
             </Dialog>
         </>
     );

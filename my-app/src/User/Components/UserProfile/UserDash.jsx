@@ -15,8 +15,7 @@ const UserDash = ({ profile, setUserDash }) => {
     const [userCoupon, setUserCoupon] = useState('')
     const googleName = localStorage.getItem('name')
     const token = localStorage.getItem('userToken')
-    const userId = localStorage.getItem('userId')
-
+    const userId = localStorage.getItem('userId');
 
     //fetch walkin coupon
     const displayCoupon = async () => {
@@ -40,6 +39,11 @@ const UserDash = ({ profile, setUserDash }) => {
 
 
     const createWalkinCoupon = async () => {
+        if (!userId) {
+            console.error("User ID is missing from localStorage");
+            return;
+        }
+        
         try {
             const response = await axios.post(`${BASE_URL}/walkin/coupon/create/${userId}`, {}, {
                 headers: {
@@ -47,7 +51,7 @@ const UserDash = ({ profile, setUserDash }) => {
                 }
             })
             console.log(response.data);
-            displayCoupon()
+            displayCoupon();
             toast.success('Walkin coupon is created')
         } catch (error) {
             console.log(error);

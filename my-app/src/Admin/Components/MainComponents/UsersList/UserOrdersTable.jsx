@@ -7,21 +7,24 @@ import { useEffect } from "react";
 import AppLoader from "../../../../Loader";
 import axios from "axios";
 
-const TABLE_HEAD = ["Product", "Payment", "Status", "Price"];
+const TABLE_HEAD = ["Product", "Product Code", "Payment", "Status", "Price"];
 
 
-const UserOrdersTable = () => {
+const UserOrdersTable = ({ user }) => {
   const { BASE_URL } = useContext(AppContext)
   const [isLoading, setIsLoading] = useState(false)
   const [userOrders, setUserOrders] = useState([])
   const token = localStorage.getItem('token')
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const userGetAllOrders = user?.id || user?._id
+  console.log(userGetAllOrders);
+
 
   //fetch order list
   const fetchUserOrderList = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/orderlist/get`, {
+      const response = await axios.get(`${BASE_URL}/admin/orderlist/user/orders/${userGetAllOrders}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -72,11 +75,15 @@ const UserOrdersTable = () => {
   return (
     <>
       <h2 className="text-lg font-medium mb-5 text-secondary">Orders</h2>
-      {isLoading || userOrders.length === 0 ? (
+      {isLoading ? (
         <div className="col-span-2 flex justify-center items-center h-[50vh]">
           <AppLoader />
         </div>
-      ) : (
+      ) : userOrders.length === 0 ? (
+        <>
+        <p className='flex justify-center items-center h-[30vh]'>No orders still yet</p>
+        </>
+      ): (
         <>
           <Card className="w-full shadow-none bg-white">
             <table className="w-full table-auto text-left border-collapse">
@@ -89,7 +96,7 @@ const UserOrdersTable = () => {
                     >
                       <Typography
                         variant="small"
-                        className="font-semibold font-custom text-secondary text-base uppercase"
+                        className="font-semibold font-custom text-secondary text-sm uppercase"
                       >
                         {head}
                       </Typography>
@@ -105,13 +112,21 @@ const UserOrdersTable = () => {
                     : "p-4 border-b border-gray-300 text-center";
 
                   return (
-                    <tr key={index}>
+                    <tr key={item._id}>
                       <td className={classes}>
                         <Typography
                           variant="small"
                           className="font-normal font-custom text-sm"
                         >
                           {item.products[0].productId?.title || 'product'}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          className="font-normal font-custom text-sm"
+                        >
+                          {item.products[0].productId?.product_Code || 'code'}
                         </Typography>
                       </td>
                       <td className={classes}>

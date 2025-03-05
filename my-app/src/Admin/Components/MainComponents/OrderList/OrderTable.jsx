@@ -10,7 +10,7 @@ import { TrackIdModal } from './TrackIdModal';
 import EditTrackIdModal from './EditTrackIdModal'
 import * as XLSX from 'xlsx';
 
-const TABLE_HEAD = ["ID", "Customer", "Address", "Order Date", "Payment", "Status", "Orders", "Track ID"];
+const TABLE_HEAD = ["ID", "Customer", "Address", "Order Date", "Payment", "Total Price", "Status", "Orders", "Track ID"];
 
 const OrderTable = ({ orderList, setOrderList }) => {
   const { BASE_URL } = useContext(AppContext);
@@ -278,20 +278,25 @@ const OrderTable = ({ orderList, setOrderList }) => {
                         </td>
                         <td className={classes}>
                           <Typography variant="small" className="font-normal font-custom text-sm capitalize">
-                            {order.paymentMethod}
+                            {order?.paymentMethod}
+                          </Typography>
+                        </td>
+                        <td className={classes}>
+                          <Typography variant="small" className="font-normal font-custom text-sm capitalize">
+                          ₹{order?.finalPayableAmount}
                           </Typography>
                         </td>
                         <td className={classes}>
                           <Chip
                             className={`capitalize text-sm text-center font-normal ${statusColors[order.status] || statusColors.default}`}
-                            value={order.status === 'In-Transist' ? 'dispatched' : order.status === 'invoice_generated' ? 'Invoice Generated' : order.status}
+                            value={order?.status === 'In-Transist' ? 'dispatched' : order.status === 'invoice_generated' ? 'Invoice Generated' : order.status}
                           />
                         </td>
                         <td className={classes}>
                           <Button
                             onClick={() => handleOpenViewOrders(order.products)}
                             className='bg-transparent shadow-none text-secondary font-custom capitalize font-normal
-                          text-xs border border-gray-700 rounded-3xl px-3 py-2 hover:shadow-none'>View Orders</Button>
+                          text-sm border border-gray-700 rounded-3xl px-4 py-2 hover:shadow-none'>View</Button>
                         </td>
                         <td className={classes}>
                           {order?.TrackId ? (
@@ -309,7 +314,7 @@ const OrderTable = ({ orderList, setOrderList }) => {
                               variant="gradient"
                               onClick={() => handleOpenTrackId(order._id)}
                               className="bg-secondary shadow-none text-white font-custom capitalize font-normal 
-                                text-xs border border-gray-700 rounded-3xl px-3 py-2 hover:shadow-none"
+                                text-sm border border-gray-700 rounded-3xl px-3 py-2 hover:shadow-none"
                             >
                               Set Track ID
                             </Button>

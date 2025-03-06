@@ -77,7 +77,7 @@ const UserDash = ({ profile, setUserDash }) => {
                     <GrMapLocation className='text-[70px] xl:text-[100px] lg:text-[100px] text-gray-500' />
                     <p className='capitalize font-semibold text-secondary'>my addresses</p>
                 </div>
-                <div onClick={() => setUserDash('favourite')} className='border-[1px] border-gray-400 cursor-pointer
+                <div onClick={() => setUserDash('wishlist')} className='border-[1px] border-gray-400 cursor-pointer
                  rounded-xl p-6 flex flex-col justify-center items-center h-32 hover:opacity-60 duration-300'>
                     <RiHeart3Line className='text-[70px] xl:text-[100px] lg:text-[100px] text-gray-500' />
                     <p className='capitalize font-semibold text-secondary'>my wishlist</p>

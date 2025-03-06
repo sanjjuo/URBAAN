@@ -1,17 +1,16 @@
-import React, { useState, useContext } from "react";
 import {
-    Card,
-    Input,
     Button,
-    Typography,
+    Card,
     Checkbox,
+    Input,
+    Typography,
 } from "@material-tailwind/react";
+import axios from "axios";
+import React, { useContext, useState } from "react";
+import toast from "react-hot-toast";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { RiGoogleFill } from "react-icons/ri";
 import { AppContext } from "../../StoreContext/StoreContext";
-import axios from "axios";
-import toast from "react-hot-toast";
 
 export function LoginSignUpUser() {
     const [loginSignUpUser, setLoginSignUpUser] = useState("login");
@@ -25,6 +24,7 @@ export function LoginSignUpUser() {
         email: "", // Added email field
     });
     const [isWalkIn, setIsWalkIn] = useState(false); // Added state for isWalkIn
+    const [isPrivacyChecked, setIsPrivacyChecked] = useState(false);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -37,8 +37,27 @@ export function LoginSignUpUser() {
 
     const handleAuthSubmit = async (e) => {
         e.preventDefault();
+        const isLogin = loginSignUpUser === "login";
+
+        // Define required fields
+        const requiredFields = isLogin ? ["phone", "password"] : ["phone", "name", "email", "password"];
+
+        // Validate required fields dynamically
+        for (const field of requiredFields) {
+            if (!loginFormData[field]?.trim()) {
+                toast.error(`${field.charAt(0).toUpperCase() + field.slice(1)} is required.`);
+                return;
+            }
+        }
+
+        // Ensure privacy policy is checked for sign-up
+        if (!isLogin && !isPrivacyChecked) {
+            toast.error("To create an account, you must accept the Terms and Privacy Policy.");
+            return;
+        }
+
         try {
-            const isLogin = loginSignUpUser === "login";
+            // const isLogin = loginSignUpUser === "login";
             const endpoint = isLogin ? "/user/auth/login" : "/user/auth/register";
             const payload = isLogin
                 ? {
@@ -197,8 +216,8 @@ export function LoginSignUpUser() {
                         <div className="flex items-center">
                             <Checkbox
                                 color='pink'
-                                // checked={isWalkIn}
-                                // onChange={handleCheckboxChange}
+                                checked={isPrivacyChecked}
+                                onChange={() => setIsPrivacyChecked(!isPrivacyChecked)}
                                 className="h-4 w-4 rounded-sm"
                             />
                             <Typography className="font-custom text-sm text-secondary">
@@ -254,7 +273,7 @@ export function LoginSignUpUser() {
                         </ul>
                         <div
                             onClick={() => {
-                                window.location.href = `${BASE_URL}/user/auth/google`;
+                                window.open(`${BASE_URL}/user/auth/google`, "_self");
                             }}
                             className="flex items-center justify-center gap-2 border-[1px] bg-white w-full border-gray-300 text-xl p-3 rounded-lg cursor-pointer"
                         >

@@ -263,7 +263,7 @@ const OrderTable = ({ orderList, setOrderList }) => {
                           </Typography>
                         </td>
                         <td className={classes}>
-                          <Typography variant="small" className="font-normal font-custom text-sm capitalize">
+                          <Typography variant="small" className="font-normal font-custom text-sm capitalize w-40">
                             {order?.addressId?.address}
                           </Typography>
                         </td>
@@ -314,7 +314,7 @@ const OrderTable = ({ orderList, setOrderList }) => {
                               variant="gradient"
                               onClick={() => handleOpenTrackId(order._id)}
                               className="bg-secondary shadow-none text-white font-custom capitalize font-normal 
-                                text-sm border border-gray-700 rounded-3xl px-3 py-2 hover:shadow-none"
+                                text-xs border border-gray-700 rounded-3xl px-3 py-2 hover:shadow-none"
                             >
                               Set Track ID
                             </Button>

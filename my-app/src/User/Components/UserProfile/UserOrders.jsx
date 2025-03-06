@@ -24,7 +24,7 @@ const UserOrders = () => {
         Processing: 'text-processingBg bg-processingBg/20',
         default: "text-intransistBg bg-intransistBg/20",
         "In-Transist": "text-intransistBg bg-intransistBg/20",
-      };
+    };
 
     const getNamedColor = (colorCode) => {
         try {
@@ -60,7 +60,7 @@ const UserOrders = () => {
     return (
         <>
             <div>
-                <div className='grid grid-cols-1 xl:grid-cols-2 lg:grid-cols-2 gap-5 lg:gap-2'>
+                <div className='grid grid-cols-1 xl:grid-cols-2 lg:grid-cols-1 gap-5 lg:gap-2'>
                     {isLoading ? (
                         <div className="col-span-2 flex justify-center items-center h-[50vh]">
                             <AppLoader />
@@ -72,7 +72,7 @@ const UserOrders = () => {
                             <Card className='p-4' key={usrOrder._id}>
                                 <div className='flex justify-between'>
                                     <div className='flex gap-5 lg:gap-2'>
-                                        <div className='w-20 h-32 xl:w-24 lg:w-16 xl:h-32 lg:h-20'>
+                                        <div className='w-20 h-32 xl:w-24 lg:w-24 xl:h-32 lg:h-32'>
                                             <img
                                                 src={usrOrder.products[0]?.productId?.images[0]}
                                                 alt="Product"
@@ -81,11 +81,11 @@ const UserOrders = () => {
                                         </div>
                                         <div>
                                             <h1 className='text-secondary font-medium capitalize truncate overflow-hidden 
-                                            whitespace-nowrap w-28 xl:w-36 lg:w-24 text-base xl:text-lg lg:text-base'>
+                                            whitespace-nowrap w-28 xl:w-36 lg:w-full text-base xl:text-lg lg:text-base'>
                                                 {usrOrder.products[0]?.productId?.title || "Product Title Unavailable"}
                                             </h1>
                                             <p className='text-gray-700 text-sm truncate overflow-hidden 
-                                            whitespace-nowrap w-28 xl:w-36 lg:w-24 lg:text-xs'>{usrOrder.products[0]?.productId?.description || "No Description Available"}</p>
+                                            whitespace-nowrap w-28 xl:w-36 lg:w-72 lg:text-xs'>{usrOrder.products[0]?.productId?.description || "No Description Available"}</p>
                                             <ul className='mt-3'>
                                                 <li className='text-secondary space-x-2 lg:text-sm'>
                                                     <span>Color :</span>
@@ -94,6 +94,10 @@ const UserOrders = () => {
                                                 <li className='text-secondary space-x-2 lg:text-sm'>
                                                     <span>Size :</span>
                                                     <span className='uppercase font-semibold'>{usrOrder.products[0]?.size}</span>
+                                                </li>
+                                                <li className='text-secondary space-x-2'>
+                                                    <span className='text-sm'>Track ID :</span>
+                                                    <span className='font-medium text-sm text-buttonBg'>{usrOrder.TrackId || 'No-Track ID'}</span>
                                                 </li>
                                             </ul>
                                         </div>

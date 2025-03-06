@@ -40,6 +40,7 @@ const ApplyCouponModal = ({ handleCouponModalOpen, openCoupon, fetchCartItems })
             toast.success('Coupon is applied')
             await fetchCartItems();
         } catch (error) {
+            handleCouponModalOpen()
             console.error('Error:', error.response?.data || error.message);
             const errorMessage = error.response?.data?.message || 'Failed to apply coupon';
             toast.error(errorMessage);

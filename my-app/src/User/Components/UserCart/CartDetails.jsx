@@ -102,11 +102,11 @@ const CartDetails = ({ viewCart, setCartItems, setViewCart }) => {
             setIsLoading(false);
         }
     };
-    
+
     useEffect(() => {
         fetchCartItems();
     }, [BASE_URL]);
-    
+
 
 
 
@@ -144,10 +144,11 @@ const CartDetails = ({ viewCart, setCartItems, setViewCart }) => {
                     <li className='flex justify-between items-center'>
                         <span className='font-normal text-sm'>Discount</span>
                         <span className='text-secondary font-medium text-sm'>
-                            {viewCart?.coupenAmount || 0.00}
-                            {viewCart?.discountType === 'percentage' ? '%' : '₹'}
+                            ₹{viewCart?.coupenAmount || 0.00}
+                            {viewCart?.discountType === 'percentage' ? '%' : ''}
                         </span>
                     </li>
+
                 </ul>
                 <ul className='mt-2'>
                     <li className='flex justify-between items-center'>

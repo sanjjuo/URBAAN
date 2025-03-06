@@ -23,6 +23,18 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!formData.email) {
+            toast.error("Email is required")
+            return;
+        }
+        if (!formData.password) {
+            toast.error("Password is required")
+            return;
+        }
+        if (!formData.email || !formData.password) {
+            toast.error("Email and password is required")
+            return;
+        }
         try {
             const BASE_URL = import.meta.env.VITE_BASE_URL;
             console.log("BASE_URL:", BASE_URL);
@@ -64,11 +76,10 @@ const Login = () => {
                             </Typography>
                             <Input
                                 size="lg"
-                                placeholder="name@mail.com"
+                                placeholder="Enter your email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
-                                required
                                 className="border-[1px] border-gray-400 focus:border-[1px] focus:!border-gray-400 !font-custom"
                                 labelProps={{
                                     className: "before:content-none after:content-none",
@@ -90,11 +101,10 @@ const Login = () => {
                                 <Input
                                     type={passwordVisible ? "text" : "password"} // Toggle visibility
                                     size="lg"
-                                    placeholder="********"
+                                    placeholder='Enter your password'
                                     name="password"
                                     value={formData.password}
                                     onChange={handleInputChange}
-                                    required
                                     className=" border-[1px] border-gray-400 focus:border-[1px] focus:!border-gray-400"
                                     labelProps={{
                                         className: "before:content-none after:content-none",

@@ -8,6 +8,8 @@ import AppLoader from '../../../Loader';
 import toast from 'react-hot-toast';
 import { HiOutlineXMark } from 'react-icons/hi2';
 import { RiDeleteBin5Line } from 'react-icons/ri';
+import { MdZoomOutMap } from 'react-icons/md';
+import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 const UserWishlist = () => {
     const navigate = useNavigate();
@@ -15,8 +17,17 @@ const UserWishlist = () => {
     const [wishlist, setWishlist] = useState([])
     const [isLoading, setIsLoading] = useState(true);
     const wishlistProducts = wishlist?.items || [];
+    const [zoomImage, setZoomImage] = useState(null);
+    const [openImageModal, setOpenImageModal] = React.useState(false);
+
 
     const userId = localStorage.getItem('userId');
+
+    //handle image zoom
+    const handleOpenImageZoom = (productImages, index) => {
+        setOpenImageModal(!openImageModal);
+        setZoomImage({ images: productImages, currentIndex: index });
+    }
 
     // Fetch wishlist products
     useEffect(() => {
@@ -113,35 +124,49 @@ const UserWishlist = () => {
                                 />
                                 <Link
                                     to="/product-details"
-                                    state={{ productId: product.productId._id }}
+                                    state={{
+                                        productId: product?._id,
+                                        categoryId: product?.category?._id
+                                    }}
                                     className="group"
                                 >
                                     <div className='w-full h-52 xl:h-80 lg:h-80 rounded-xl overflow-hidden'>
                                         <img
-                                            src={`${BASE_URL}/uploads/category/${product.productId.images[0]}`}
+                                            src={product?.productId?.images[0]}
                                             alt={product.productId.title}
                                             className='w-full h-full object-cover rounded-xl shadow-md
                                         transition-transform scale-100 duration-500 ease-in-out group-hover:scale-105'
                                             onError={(e) => e.target.src = '/no-image.jpg'}
                                         />
                                     </div>
-                                    <div className='mt-3'>
-                                        <h4 className='font-medium text-sm xl:text-lg lg:text-lg capitalize'>
-                                            {product.productId.title}
-                                        </h4>
-                                        <p className='text-gray-600 text-xs xl:text-sm lg:text-sm capitalize'>
-                                            {product.productId.description}
-                                        </p>
-                                        <p className='text-primary text-base xl:text-xl lg:text-xl font-semibold mt-2'>
-                                            ₹{product.productId.offerPrice}
-                                        </p>
-                                    </div>
                                 </Link>
+                                <MdZoomOutMap
+                                    onClick={() => handleOpenImageZoom(product?.productId?.images, 0)}
+                                    className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
+                                />
+                                <div className='mt-3'>
+                                    <h4 className='font-medium text-sm xl:text-lg lg:text-lg capitalize truncate w-40 xl:w-60 lg:w-60'>
+                                        {product.productId.title}
+                                    </h4>
+                                    <p className="text-gray-600 text-xs xl:text-sm truncate w-40 xl:w-60 lg:w-60">
+                                        {product.productId.description}
+                                    </p>
+                                    <p className='text-primary text-base xl:text-xl lg:text-xl font-semibold mt-2'>
+                                        ₹{product.productId.offerPrice}
+                                    </p>
+                                </div>
+
                             </div>
                         ))}
                     </div>
                 )}
             </div>
+
+            <ImageZoomModal
+                open={openImageModal}
+                handleOpen={handleOpenImageZoom}
+                zoomImage={zoomImage}
+            />
         </>
     )
 }

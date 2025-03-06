@@ -181,8 +181,8 @@ const CartItems = ({ cartItems, setCartItems, setViewCart }) => {
     return (
         <>
             {cartItems.length > 0 && (
-                <p onClick={handleClearAll} className='capitalize flex justify-end items-center gap-1 text-sm hover:text-primary cursor-pointer'>
-                    clear all <HiOutlineXMark className='text-lg' /></p>
+                <p onClick={handleClearAll} className='capitalize underline underline-offset-1 flex justify-end items-center gap-1 text-sm hover:text-primary cursor-pointer'>
+                    clear all</p>
             )}
 
             {isLoading ? (

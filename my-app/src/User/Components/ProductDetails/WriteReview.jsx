@@ -92,6 +92,11 @@ const WriteReview = () => {
             }
         } catch (error) {
             console.warn("Error adding review:", error.response?.data || error.message);
+            if (error.response && error.response.data.message === 'You can only review products you have purchased and received.') {
+                toast.error("You can only review products you have purchased and received.");
+            } else {
+                toast.error("Something went wrong. Please try again.");
+            }
         }
     };
 

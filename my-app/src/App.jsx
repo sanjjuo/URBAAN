@@ -17,8 +17,9 @@ const App = () => {
         toastOptions={{
           duration: 5000,
           style: {
-            textTransform: 'normal-case',
+            textTransform: 'capitalize',
             fontSize:'15px',
+            fontWeight: 600,
             maxWidth: '650px',
             width: 'auto',
             padding: '14px',

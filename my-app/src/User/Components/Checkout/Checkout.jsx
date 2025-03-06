@@ -378,8 +378,8 @@ const Checkout = () => {
                                                 <li className='flex items-center justify-between'>
                                                     <span className='text-secondary'>Discount</span>
                                                     <span className='text-secondary font-bold'>
-                                                        {checkoutDetails?.coupen.discountValue || 0.00}
-                                                        {checkoutDetails?.coupen.discountType === "percentage" ? "%" : "₹"}
+                                                    ₹{checkoutDetails?.coupen.discountValue || 0.00}
+                                                        {checkoutDetails?.coupen.discountType === "percentage" ? "%" : ""}
                                                     </span>
                                                 </li>
                                             </>
@@ -407,7 +407,7 @@ const Checkout = () => {
                                         <div className='flex flex-col xl:flex-row lg:flex-row lg:items-center xl:items-center gap-0 xl:gap-4 lg:gap-4'>
                                             <Radio
                                                 name="type"
-                                                label="Cash on Delivery"
+                                                label="Cash on Delivery (coming soon)"
                                                 color='pink'
                                                 disabled
                                                 checked={paymentMethod === 'Cash on Delivery'}

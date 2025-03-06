@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { AppContext } from '../../../StoreContext/StoreContext'
 import axios from 'axios'
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 
 const EnterNumber = () => {
     const { BASE_URL } = useContext(AppContext)
@@ -21,7 +22,12 @@ const EnterNumber = () => {
             navigate('/reset-otp', { state: { phone: number } })
             console.log(response.data);
         } catch (error) {
-            console.log(error);
+            if (error.response && error.response.data.message === "User with this phone number does not exist") {
+                toast.error("User not found. Please sign up.");
+            } else {
+                toast.error("Something went wrong. Please try again.");
+            }
+            console.error(error);
         }
     }
     return (

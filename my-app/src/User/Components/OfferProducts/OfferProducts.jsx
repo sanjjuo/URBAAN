@@ -131,7 +131,7 @@ const OfferProducts = () => {
                                         />
                                     )}
                                     <div className='mt-3'>
-                                        <h4 className='font-medium text-sm xl:text-lg lg:text-lg capitalize'>{product.title}</h4>
+                                        <h4 className='font-medium text-sm xl:text-lg lg:text-lg capitalize truncate w-40 xl:w-60 lg:w-60'>{product.title}</h4>
                                         <p className='text-gray-600 text-xs xl:text-sm lg:text-sm truncate w-40 xl:w-60 lg:w-60'>{product.description}</p>
                                         <p className='text-primary text-base xl:text-xl lg:text-xl font-semibold mt-2'>₹{product.offerPrice}</p>
                                     </div>

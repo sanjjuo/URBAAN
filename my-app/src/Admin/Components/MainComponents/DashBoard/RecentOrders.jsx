@@ -67,7 +67,7 @@ const RecentOrders = () => {
         Processing: 'text-processingBg bg-processingBg/20',
         default: "text-gray-100 bg-gray-500",
         "In-Transist": "text-intransistBg bg-intransistBg/20",
-    };
+      };
 
     return (
         <Card className="w-full p-10">
@@ -106,26 +106,26 @@ const RecentOrders = () => {
                             return (
                                 <tr key={recentOrder._id}>
                                     <td className={classes}>
-                                        <div className="flex items-center gap-2">
-                                            {/* <div className="w-[60px] h-[60px] rounded-md">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <div className="w-[60px] h-[60px] rounded-md">
                                                 <img
-                                                    src={recentOrder.products[0].productId.image}
-                                                    alt={recentOrder.products[0].productId.name}
+                                                    src={recentOrder.products[0].productId.images[0]}
+                                                    alt={recentOrder.products[0].productId.title}
                                                     className="w-full h-full object-cover rounded-md"
                                                 />
-                                            </div> */}
-                                            {/* <Typography
+                                            </div>
+                                            <Typography
                                                 variant="small"
-                                                className="font-normal font-custom text-sm"
+                                                className="font-normal capitalize font-custom text-sm"
                                             >
-                                                {recentOrder.products[0].productId.name}
-                                            </Typography> */}
+                                                {recentOrder.products[0].productId.title}
+                                            </Typography>
                                         </div>
                                     </td>
                                     <td className={classes}>
                                         <Typography
                                             variant="small"
-                                            className="font-normal font-custom text-sm"
+                                            className="font-normal capitalize font-custom text-sm w-52"
                                         >
                                             {recentOrder.addressId.address}
                                         </Typography>
@@ -133,7 +133,7 @@ const RecentOrders = () => {
                                     <td className={classes}>
                                         <Typography
                                             variant="small"
-                                            className="font-normal font-custom text-sm"
+                                            className="font-normal capitalize font-custom text-sm"
                                         >
                                             {new Date(recentOrder.createdAt).toLocaleDateString('en-US', {
                                                 year: 'numeric',
@@ -161,7 +161,7 @@ const RecentOrders = () => {
                                     <td className={classes}>
                                         <Chip
                                             className={`capitalize text-sm text-center font-normal ${statusColors[recentOrder.status] || statusColors.default}`}
-                                            value={recentOrder.status === 'In-Transist' ? 'dispatched' : recentOrder.status}
+                                            value={recentOrder.status === 'In-Transist' ? 'dispatched' : recentOrder.status === 'invoice_generated' ? 'Invoice Generated' : recentOrder.status}
                                         />
                                     </td>
                                 </tr>

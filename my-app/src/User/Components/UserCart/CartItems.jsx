@@ -84,7 +84,12 @@ const CartItems = ({ cartItems, setCartItems, setViewCart }) => {
 
                     // Recalculate total price
                     const newTotal = updatedItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-                    setViewCart(prev => ({ ...prev, totalPrice: newTotal }));
+                    setViewCart(prev => ({
+                        ...prev,
+                        items: updatedItems,
+                        totalPrice: newTotal,
+                        discountedTotal: newTotal - (prev.coupenAmount || 0),
+                    }));
 
                     return updatedItems;
                 });

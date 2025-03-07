@@ -45,23 +45,24 @@ const Checkout = () => {
         }
     };
 
+    // fetch checkout details
+    const fetchCheckoutDetails = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/user/checkout/checkout/${checkoutDetailsId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setCheckoutData(response.data || {});
+            console.log(response.data);
+            setIsLoading(false);
+        } catch (error) {
+            console.error('Error fetching checkout details:', error);
+        } finally {
+            setIsLoading(false)
+        }
+    };
     useEffect(() => {
-        const fetchCheckoutDetails = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/user/checkout/checkout/${checkoutDetailsId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setCheckoutData(response.data || {});
-                console.log(response.data);
-                setIsLoading(false);
-            } catch (error) {
-                console.error('Error fetching checkout details:', error);
-            } finally {
-                setIsLoading(false)
-            }
-        };
         fetchCheckoutDetails();
     }, [BASE_URL, checkoutDetailsId]);
 
@@ -158,6 +159,10 @@ const Checkout = () => {
 
     // handleSubmitOrder
     const handleSubmitOrder = async () => {
+        if (!paymentMethod) {
+            toast.error("Select any Payment options")
+            return;
+        }
         try {
             const orderPayload = {
                 userId: userId,
@@ -177,10 +182,12 @@ const Checkout = () => {
             console.log(response.data);
             if (orderPayload.paymentMethod === 'UPI' && response.data.razorpayOrderId) {
                 handleRazorpayPayment(response.data)
-            } else {
-                // alert(response.message);
-                navigate('/order')
+                fetchCheckoutDetails();
             }
+            // else {
+            //     // alert(response.message);
+            //     navigate('/order')
+            // }
         } catch (error) {
             console.error("Order submission error:", error);
             if (error.response.status === 401) {
@@ -378,7 +385,7 @@ const Checkout = () => {
                                                 <li className='flex items-center justify-between'>
                                                     <span className='text-secondary'>Discount</span>
                                                     <span className='text-secondary font-bold'>
-                                                    ₹{checkoutDetails?.coupen.discountValue || 0.00}
+                                                        ₹{checkoutDetails?.coupen.discountValue || 0.00}
                                                         {checkoutDetails?.coupen.discountType === "percentage" ? "%" : ""}
                                                     </span>
                                                 </li>

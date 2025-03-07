@@ -1,14 +1,13 @@
 import { Button } from '@material-tailwind/react';
-import React, { useContext, useEffect, useState } from 'react';
-import { IoIosArrowBack } from 'react-icons/io';
-import { Link, useNavigate } from 'react-router-dom';
-import { AppContext } from '../../../StoreContext/StoreContext';
 import axios from 'axios';
-import AppLoader from '../../../Loader';
+import React, { useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { HiOutlineXMark } from 'react-icons/hi2';
-import { RiDeleteBin5Line } from 'react-icons/ri';
+import { IoIosArrowBack } from 'react-icons/io';
 import { MdZoomOutMap } from 'react-icons/md';
+import { RiDeleteBin5Line } from 'react-icons/ri';
+import { Link, useNavigate } from 'react-router-dom';
+import AppLoader from '../../../Loader';
+import { AppContext } from '../../../StoreContext/StoreContext';
 import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 const FavouriteProduct = () => {

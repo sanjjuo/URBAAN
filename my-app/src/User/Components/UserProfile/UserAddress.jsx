@@ -34,11 +34,15 @@ const UserAddress = () => {
     return (
         <div>
             <div className='grid grid-cols-1 xl:grid-cols-2 lg:grid-cols-2 gap-4'>
-                {isLoading || userAddresses.length === 0 ? (
+                {isLoading ? (
                     <div className='col-span-2 flex justify-center items-center h-[50vh]'>
                         <AppLoader />
                     </div>
-                ) : (
+                ) : userAddresses.length === 0 ? (
+                    <>
+                    <p className='col-span-2 flex items-center justify-center h-[80vh] xl:h-[50vh] lg:[50vh]'>No address found</p>
+                    </>
+                ):(
                     userAddresses.map((address) => (
                         <Card className='p-4' key={address._id}>
                             <div className='flex justify-between'>

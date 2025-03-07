@@ -35,17 +35,20 @@ const OfferProducts = () => {
     }
 
 
+    // fetch offer products
+    const fetchOfferProducts = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/user/products/view-products`);
+            const filteredProducts = response.data.filter(product => product.isOfferProduct);
+            setOfferProducts(filteredProducts);
+            console.log(filteredProducts);
+
+            setIsLoading(false);
+        } catch (error) {
+            console.error("Error fetching offer products:", error);
+        }
+    };
     useEffect(() => {
-        const fetchOfferProducts = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/user/products/view-products`);
-                const filteredProducts = response.data.filter(product => product.isOfferProduct);
-                setOfferProducts(filteredProducts);
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Error fetching offer products:", error);
-            }
-        };
         fetchOfferProducts();
     }, []);
 
@@ -132,7 +135,7 @@ const OfferProducts = () => {
                                     )}
                                     <div className='mt-3'>
                                         <h4 className='font-medium text-sm xl:text-lg lg:text-lg capitalize truncate w-40 xl:w-60 lg:w-60'>{product.title}</h4>
-                                        <p className='text-gray-600 text-xs xl:text-sm lg:text-sm truncate w-40 xl:w-60 lg:w-60'>{product.description}</p>
+                                        <p className='text-gray-600 capitalize text-xs xl:text-sm lg:text-sm truncate w-40 xl:w-60 lg:w-60'>{product.description}</p>
                                         <p className='text-primary text-base xl:text-xl lg:text-xl font-semibold mt-2'>₹{product.offerPrice}</p>
                                     </div>
                                 </div>

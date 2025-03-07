@@ -78,7 +78,7 @@ export function ResetOtp() {
             console.log(response.data);
             if (response.data.tempToken && response.status === 200) {
                 localStorage.setItem('newToken', response.data.tempToken)
-                toast.success("OTP verified successfully. Use the token to reset password.")
+                toast.success("OTP verified successfully.")
                 navigate('/new-password')
             }
         } catch (error) {

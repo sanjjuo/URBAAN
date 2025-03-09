@@ -18,13 +18,13 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
     const [heartIcons, setHeartIcons] = useState({})
     const [openImageModal, setOpenImageModal] = React.useState(false);
     const [zoomImage, setZoomImage] = useState(null);
-     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
-    
-      // handle non logged users modal
-      const handleOpenUserNotLogin = () => {
+    const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    // handle non logged users modal
+    const handleOpenUserNotLogin = () => {
         setOpenUserNotLogin(!openUserNotLogin);
-      };
-    
+    };
+
 
     //handle image zoom
     const handleOpenImageZoom = (productImages, index) => {
@@ -32,60 +32,59 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
         setZoomImage({ images: productImages, currentIndex: index });
     }
 
-    useEffect(() => {
-        const fetchUserSearchProducts = async () => {
-            if (searchUser.trim() === '') {
-                return setSearchedProducts([]); // Clear results if search is empty
-            }
-            try {
-                const response = await axios.get(`${BASE_URL}/user/search/view?query=${searchUser}`)
-                setSearchedProducts(response.data.products) // Setting the search results
-            } catch (error) {
-                console.log(error);
-            }
+    // fetch serahed products
+    const fetchUserSearchProducts = async () => {
+        if (searchUser.trim() === '') {
+            return setSearchedProducts([]); // Clear results if search is empty
         }
+        try {
+            const response = await axios.get(`${BASE_URL}/user/search/view?query=${searchUser}`)
+            setSearchedProducts(response.data.products) // Setting the search results
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    useEffect(() => {
         fetchUserSearchProducts()
     }, [searchUser, BASE_URL, setSearchedProducts])
 
     // add to wishlist
     const handleWishlist = async (productId, productTitle) => {
         try {
-            const userId = localStorage.getItem('userId')
             if (!userId) {
                 handleOpenUserNotLogin();
                 return;
             }
+            const payload = { userId, productId };
 
-            const payload = { userId, productId }
+            const response = await axios.post(`${BASE_URL}/user/wishlist/add`, payload);
+            console.log(response.data);
 
-            // Check if product is already in wishlist
-            const isInWishlist = favProduct?.items?.some(item => item.productId?._id === productId)
-
-            if (!isInWishlist) {
-                const response = await axios.post(`${BASE_URL}/user/wishlist/add`, payload)
-                console.log(response.data)
-
-                setHeartIcons(prevState => ({
-                    ...prevState,
-                    [productId]: true
-                }))
-
-                setFav((prevFav) => {
-                    const isAlreadyFav = prevFav.some(
-                        (item) => item.productId === payload.productId
-                    );
-                    return isAlreadyFav ? prevFav : [...prevFav, payload];
-                });
-
-
-                toast.success(`${productTitle} added to wishlist`)
+            if (response.data.isInWishlist) {
+                toast.success(`${productTitle} added to wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: true }));
             } else {
-                toast.error('Product already in wishlist')
-            }
+                toast.success(`${productTitle} removed from wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: false }));
+                fetchUserSearchProducts();
+            }            
+
+            setFav((prevFav) => {
+                if (response.data.isInWishlist) {
+                    // Product added to wishlist
+                    return prevFav.some(item => item.productId === payload.productId)
+                        ? prevFav
+                        : [...prevFav, payload];
+                } else {
+                    // Product removed from wishlist
+                    return prevFav.filter(item => item.productId !== payload.productId);
+                }
+            });
+
         } catch (error) {
-            console.log(error)
+            throw new Error(error)
         }
-    }
+    };
 
     return (
         <React.Fragment>
@@ -123,7 +122,6 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
                     ) : (
                         <div className='grid grid-cols-5 gap-5'>
                             {searchedProducts.map((product) => {
-                                const isInWishlist = favProduct?.items?.some(item => item.productId?._id === product._id)
                                 return (
                                     <div className='group relative' key={product._id}>
                                         <Link
@@ -147,7 +145,7 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
                                             onClick={() => handleOpenImageZoom(product.images, 0)}
                                             className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                                         />
-                                        {heartIcons[product._id] || isInWishlist ? (
+                                        {product.isInWishlist || heartIcons[product._id] ? (
                                             <RiHeart3Fill
                                                 onClick={() => handleWishlist(product._id, product.title)}
                                                 className='absolute top-2 right-2 cursor-pointer text-primary bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'

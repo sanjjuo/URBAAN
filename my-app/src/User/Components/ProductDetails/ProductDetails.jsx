@@ -38,6 +38,9 @@ const ProductDetails = () => {
     const [zoomImage, setZoomImage] = useState(null);
     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
 
+    const userId = localStorage.getItem('userId');
+    const userToken = localStorage.getItem('userToken');
+
     const topRef = useRef(null);
 
     const handleClick = () => {
@@ -103,40 +106,43 @@ const ProductDetails = () => {
     };
 
 
+    //fetch product details and similar products
+    const fetchProductDetails = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/user/products/product/${productId}`, {
+                params: {
+                    userId: `${userId}`
+                }
+            });
+            setProductDetails(response.data);
+            console.log('Product Details:', response.data);
+        } catch (error) {
+            console.error('Error fetching product details:', error);
+        }
+    };
 
+    const fetchSimilarProducts = async () => {
+        if (!categoryId) {
+            console.warn('Invalid categoryId:', categoryId);
+            setSimilarProducts([]);
+            return;
+        }
+
+        try {
+            const response = await axios.get(`${BASE_URL}/user/products/products/category/${categoryId}`);
+            // Filter out the current product from the similar products list
+            const filteredSimilarProducts = response.data.filter(
+                (product) => product._id !== productId
+            );
+            setSimilarProducts(filteredSimilarProducts);
+            // setSimilarProducts(response.data)
+            console.log("Similar Products:", filteredSimilarProducts);
+        } catch (error) {
+            console.error("Error fetching similar products:", error);
+            setSimilarProducts([])
+        }
+    };
     useEffect(() => {
-        const fetchProductDetails = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/user/products/product/${productId}`);
-                setProductDetails(response.data);
-                console.log('Product Details:', response.data);
-            } catch (error) {
-                console.error('Error fetching product details:', error);
-            }
-        };
-
-        const fetchSimilarProducts = async () => {
-            if (!categoryId) {
-                console.warn('Invalid categoryId:', categoryId);
-                setSimilarProducts([]);
-                return;
-            }
-
-            try {
-                const response = await axios.get(`${BASE_URL}/user/products/products/category/${categoryId}`);
-                // Filter out the current product from the similar products list
-                const filteredSimilarProducts = response.data.filter(
-                    (product) => product._id !== productId
-                );
-                setSimilarProducts(filteredSimilarProducts);
-                // setSimilarProducts(response.data)
-                console.log("Similar Products:", filteredSimilarProducts);
-            } catch (error) {
-                console.error("Error fetching similar products:", error);
-                setSimilarProducts([])
-            }
-        };
-
         if (productId && categoryId) {
             fetchProductDetails();
             fetchSimilarProducts();
@@ -153,9 +159,6 @@ const ProductDetails = () => {
         return yiq >= 128 ? 'text-black' : 'text-white';
     };
 
-
-    const userId = localStorage.getItem('userId')
-    const userToken = localStorage.getItem('userToken');
 
     const addToCart = async () => {
         try {
@@ -245,32 +248,38 @@ const ProductDetails = () => {
 
     const handleWishlist = async (productId, productTitle) => {
         try {
-            const payload = { userId: userId, productId: productId };
-
-            const isInWishlist = favProduct?.items?.some(item => item.productId._id === productId);
-
-            if (!isInWishlist) {
-                const response = await axios.post(`${BASE_URL}/user/wishlist/add`, payload);
-                console.log(response.data);
-
-                setHeartIcons(prevState => ({
-                    ...prevState,
-                    [productId]: true,
-                }));
-
-                setFav((prevFav) => {
-                    const isAlreadyFav = prevFav.some(
-                        (item) => item.productId === payload.productId
-                    );
-                    return isAlreadyFav ? prevFav : [...prevFav, payload];
-                });
-
-                toast.success(`${productTitle} added to wishlist`);
-            } else {
-                toast.error('Product already in wishlist');
+            if (!userId) {
+                handleOpenUserNotLogin();
+                return;
             }
+            const payload = { userId, productId };
+
+            const response = await axios.post(`${BASE_URL}/user/wishlist/add`, payload);
+            console.log(response.data);
+
+            if (response.data.isInWishlist) {
+                toast.success(`${productTitle} added to wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: true }));
+            } else {
+                toast.success(`${productTitle} removed from wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: false }));
+                fetchProductDetails();
+            }
+
+            setFav((prevFav) => {
+                if (response.data.isInWishlist) {
+                    // Product added to wishlist
+                    return prevFav.some(item => item.productId === payload.productId)
+                        ? prevFav
+                        : [...prevFav, payload];
+                } else {
+                    // Product removed from wishlist
+                    return prevFav.filter(item => item.productId !== payload.productId);
+                }
+            });
+
         } catch (error) {
-            console.log(error);
+            throw new Error(error)
         }
     };
 
@@ -436,7 +445,7 @@ const ProductDetails = () => {
                                         <RiHandbagLine />Add to cart
                                     </Button>
 
-                                    {heartIcons[productDetails._id] || favProduct?.items?.some(item => item.productId?._id === productDetails._id) ? (
+                                    {productDetails.isInWishlist || heartIcons[productDetails._id] ? (
                                         <Button
                                             onClick={() => handleWishlist(productDetails._id, productDetails.title)}
                                             className='hidden xl:flex lg:flex items-center justify-center gap-2 font-normal font-custom tracking-wide text-sm

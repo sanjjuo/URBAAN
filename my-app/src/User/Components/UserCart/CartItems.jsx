@@ -1,7 +1,7 @@
 import { Button, Card } from '@material-tailwind/react';
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { RiDeleteBin5Line } from "react-icons/ri";
+import { RiDeleteBin5Line, RiHeart3Fill } from "react-icons/ri";
 import { BsPlusLg } from "react-icons/bs";
 import { HiMinus } from "react-icons/hi2";
 import axios from 'axios';
@@ -42,6 +42,8 @@ const CartItems = ({ cartItems, setCartItems, setViewCart }) => {
                     });
                     setViewCart(response.data);
                     setCartItems(response.data.items);
+                    console.log(response.data.items);
+                    
                 }
             } catch (error) {
                 console.error(error);
@@ -212,7 +214,7 @@ const CartItems = ({ cartItems, setCartItems, setViewCart }) => {
                     <Card className='p-2 xl:p-6 lg:p-6' key={item._id}>
                         <div className='flex justify-between'>
                             <div className='flex gap-2 xl:gap-6 lg:gap-6'>
-                                <div className='w-20 h-28 xl:w-28 xl:h-32'>
+                                <div className='w-20 h-28 xl:w-28 xl:h-32 relative'>
                                     {item.productId && item.productId.images && item.productId.images.length > 0 ? (
                                         <img
                                             src={item.productId.images[0]}
@@ -223,6 +225,13 @@ const CartItems = ({ cartItems, setCartItems, setViewCart }) => {
                                         <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
                                             <span className="text-gray-500 text-sm text-center">Image not available</span>
                                         </div>
+                                    )}
+                                    {item?.productId?.isInWishlist === true ? (
+                                        <RiHeart3Fill
+                                            className='absolute top-2 right-2 cursor-pointer text-primary'
+                                        />
+                                    ) : (
+                                        <></>
                                     )}
                                 </div>
                                 <div className='flex flex-col justify-between'>

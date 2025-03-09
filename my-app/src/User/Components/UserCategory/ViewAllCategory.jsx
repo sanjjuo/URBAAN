@@ -32,13 +32,15 @@ const ViewAllCategory = () => {
     });
     const [openImageModal, setOpenImageModal] = React.useState(false);
     const [zoomImage, setZoomImage] = useState(null);
-     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
-    
-      // handle non logged users modal
-      const handleOpenUserNotLogin = () => {
+    const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    const userId = localStorage.getItem('userId')
+
+    // handle non logged users modal
+    const handleOpenUserNotLogin = () => {
         setOpenUserNotLogin(!openUserNotLogin);
-      };
-    
+    };
+
 
     //handle image zoom
     const handleOpenImageZoom = (productImages, index) => {
@@ -47,91 +49,82 @@ const ViewAllCategory = () => {
     }
 
 
-    useEffect(() => {
-        const fetchAllProducts = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/user/products/view-products`)
-                setAllProducts(response.data)
-                setFilteredProducts(response.data);
-                setIsLoading(false)
-                console.log(response.data);
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setIsLoading(false)
-            }
+    // fetch all products
+    const fetchAllProducts = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/user/products/view-products`, {
+                params: {
+                    userId: `${userId}`
+                }
+            })
+            setAllProducts(response.data)
+            setFilteredProducts(response.data);
+            setIsLoading(false)
+            console.log(response.data);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoading(false)
         }
+    }
+    useEffect(() => {
         fetchAllProducts()
     }, [])
 
     // search products
-    useEffect(() => {
-        const fetchSearchedProducts = async () => {
-            setIsLoading(true);
-            try {
-                const response = await axios.get(`${BASE_URL}/user/products/products/search?name=${searchProducts}`);
-                setAllProducts(response.data);
-                setFilteredProducts(response.data)
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    const fetchSearchedProducts = async () => {
+        setIsLoading(true);
+        try {
+            const response = await axios.get(`${BASE_URL}/user/products/products/search?name=${searchProducts}`);
+            setAllProducts(response.data);
+            setFilteredProducts(response.data)
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchSearchedProducts()
     }, [searchProducts]);
 
     // add to wishlist
     const handleWishlist = async (productId, productTitle) => {
         try {
-            const userId = localStorage.getItem('userId');
-
             if (!userId) {
                 handleOpenUserNotLogin();
                 return;
             }
+            const payload = { userId, productId };
 
-            const payload = {
-                userId: userId,
-                productId: productId
-            };
-
-            // Check if product is already in wishlist
-            const isInWishlist = favProduct?.items?.some(item => item.productId?._id === productId);
-            if (isInWishlist) {
-                // If product is already in wishlist, show the appropriate toast and return
-                toast.error(`${productTitle} is already in your wishlist`);
-                return; // Stop here without making the API call
-            }
-
-            // Add to wishlist if not already there
             const response = await axios.post(`${BASE_URL}/user/wishlist/add`, payload);
             console.log(response.data);
 
-            // If the response is successful, update the heart icon state and show success toast
-            setHeartIcons(prevState => ({
-                ...prevState,
-                [productId]: !isInWishlist, // Set the heart icon to filled
-            }));
+            if (response.data.isInWishlist) {
+                toast.success(`${productTitle} added to wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: true }));
+            } else {
+                toast.success(`${productTitle} removed from wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: false }));
+                fetchAllProducts();
+                fetchSearchedProducts();
+            }
 
             setFav((prevFav) => {
-                const isAlreadyFav = prevFav.some(
-                    (item) => item.productId === payload.productId
-                );
-                return isAlreadyFav ? prevFav : [...prevFav, payload];
+                if (response.data.isInWishlist) {
+                    // Product added to wishlist
+                    return prevFav.some(item => item.productId === payload.productId)
+                        ? prevFav
+                        : [...prevFav, payload];
+                } else {
+                    // Product removed from wishlist
+                    return prevFav.filter(item => item.productId !== payload.productId);
+                }
             });
 
-            toast.success(`${productTitle} added to wishlist`);
-
         } catch (error) {
-            // Check if the error is related to the product already being in the wishlist
-            if (error.response && error.response.data.message === "Product is already in the wishlist") {
-                toast.error(`${productTitle} is already in your wishlist`);
-            } else {
-                console.log("Error adding to wishlist:", error);
-                toast.error("Failed to add product to wishlist");
-            }
+            throw new Error(error)
         }
     };
 
@@ -182,7 +175,6 @@ const ViewAllCategory = () => {
                         ) : (
                             <>
                                 {filteredProducts.map((product, index) => {
-                                    const isInWishlist = favProduct?.items?.some(item => item.productId?._id === product._id);
                                     return (
                                         <div className='group relative' key={index}>
                                             <Link
@@ -204,7 +196,7 @@ const ViewAllCategory = () => {
                                                 onClick={() => handleOpenImageZoom(product.images, 0)}
                                                 className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                                             />
-                                            {heartIcons[product._id] || isInWishlist ? (
+                                             {product.isInWishlist || heartIcons[product._id] ? (
                                                 <RiHeart3Fill
                                                     onClick={() => handleWishlist(product._id, product.title)}
                                                     className='absolute top-2 right-2 cursor-pointer text-primary bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'

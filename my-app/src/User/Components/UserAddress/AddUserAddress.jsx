@@ -21,6 +21,22 @@ const AddUserAddress = () => {
 
     const createAddressFormSubmit = async (e) => {
         e.preventDefault()
+
+        // Ensure phone number is exactly 10 digits and does not contain alphabets
+        const phoneNumberRegex = /^[0-9]{10}$/;
+
+        if (!phoneNumberRegex.test(number)) {
+            toast.error(`${number} is not a valid phone number.`);
+            return;
+        }
+
+        const pinCodeRegex = /^[0-9]{6}$/;
+
+        if (!pinCodeRegex.test(pinCode)) {
+            toast.error("Pin code should be exactly 6 digits.");
+            return;
+        }
+
         try {
             const token = localStorage.getItem('userToken')
             const userId = localStorage.getItem('userId')

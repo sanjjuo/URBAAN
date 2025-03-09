@@ -21,6 +21,9 @@ const SelectUserAddress = () => {
     const [selectedId, setSelectedId] = useState(null)
     const [selectedAddress, setSelectedAddress] = useState(null);
 
+    const userId = localStorage.getItem('userId')
+    const token = localStorage.getItem('userToken')
+
     // remove address modal
     const handleOpenRemoveModal = (addressId) => {
         setOpenRemoveModal(!openRemoveModal);
@@ -31,22 +34,25 @@ const SelectUserAddress = () => {
     //fetch user address
     const fetchAddress = async () => {
         try {
-            const userId = localStorage.getItem('userId')
-            const token = localStorage.getItem('userToken')
-
-            const headers = {
-                Authorization: `Bearer ${token}`
-            }
-            const response = await axios.get(`${BASE_URL}/user/address/view/${userId}`, { headers })
-            setGetAddress(response.data)
+            const response = await axios.get(`${BASE_URL}/user/address/view/${userId}`, {
+                headers : {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             setIsLoading(false)
+            setGetAddress(response.data)
             console.log(response.data);
         } catch (error) {
             console.log(error);
+            if(error.response.data.message){
+                setIsLoading(false)
+            }
+            console.log(error.response.data.message);
+            
         }
-        finally {
-            setIsLoading(false); // Ensure this is called after the data is fetched
-        }
+        // finally {
+        //     setIsLoading(false); // Ensure this is called after the data is fetched
+        // }
     }
     useEffect(() => {
         fetchAddress();
@@ -64,7 +70,7 @@ const SelectUserAddress = () => {
             console.log(response.data);
             handleOpenRemoveModal()
             toast.success('Address is deleted')
-            fetchAddress()
+            setGetAddress(prevAddresses => prevAddresses.filter(address => address._id !== addressId));
         } catch (error) {
             console.log(error);
         }
@@ -98,7 +104,7 @@ const SelectUserAddress = () => {
                             <div className='col-span-2 flex justify-center items-center h-[50vh]'>
                                 <AppLoader />
                             </div>
-                        ) : getAddress.length === 0 ? (
+                        ) : getAddress?.length === 0 ? (
                             <>
                                 <div className='col-span-2 flex justify-center items-center'>
                                     <div className='w-96 h-96'>

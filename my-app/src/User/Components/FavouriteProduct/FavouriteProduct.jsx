@@ -29,8 +29,6 @@ const FavouriteProduct = () => {
     // Fetch wishlist products
     useEffect(() => {
         const fetchWishlistProducts = async () => {
-            // if (!userId) return;
-            // setIsLoading(true);
             try {
                 const response = await axios.get(`${BASE_URL}/user/wishlist/view/${userId}`);
                 const items = response.data?.items || [];

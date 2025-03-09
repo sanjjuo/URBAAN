@@ -23,8 +23,8 @@ const SalesGraph = () => {
                 });
 
                 const formattedData = response.data.data.map(item => ({
-                    x: item.monthName,
-                    y: item.totalRevenue
+                    x: item?.monthName,
+                    y: item?.totalRevenue
                 }));
                 setGraphData(formattedData);
                 setIsLoading(false)
@@ -77,7 +77,7 @@ const SalesGraph = () => {
                     <div className='w-[100%]'>
                         <BarChart
                             xAxis={[{
-                                data: graphData.map(item => formatMonth(item.x)),
+                                data: graphData.map(item => formatMonth(item?.x)),
                                 tickNumber: 12,
                                 scaleType: 'band',
                                 valueFormatter: (value) => value,
@@ -88,7 +88,7 @@ const SalesGraph = () => {
                                 valueFormatter: (value) => formatRevenue(value),
                             }]}
                             series={[{
-                                data: graphData.map(item => item.y),
+                                data: graphData.map(item => item?.y),
                                 curve: 'linear',
                                 color: '#A3BDF5',
                             }]}

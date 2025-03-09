@@ -21,7 +21,7 @@ const AllCategory = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const productsCategory = location.state?.category || [];
-    const { BASE_URL, favProduct, setFav } = useContext(AppContext);
+    const { BASE_URL, setFav } = useContext(AppContext);
 
     const [products, setProducts] = useState([]);
     const [allProducts, setAllProducts] = useState([]);
@@ -30,6 +30,8 @@ const AllCategory = () => {
     const [openImageModal, setOpenImageModal] = React.useState(false);
     const [zoomImage, setZoomImage] = useState(null);
     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    const userId = localStorage.getItem('userId');
 
     // handle non logged users modal
     const handleOpenUserNotLogin = () => {
@@ -49,21 +51,24 @@ const AllCategory = () => {
         setZoomImage({ images: productImages, currentIndex: index });
     }
 
-
+    // fetch products
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/user/products/products/category/${productsCategory.id}` ,{
+                params: {
+                    userId: `${userId}`
+                }
+            });
+            setProducts(response.data);
+            setAllProducts(response.data); // Save the original list
+            setIsLoading(false);
+        } catch (error) {
+            console.error("Error fetching categories:", error.response || error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/user/products/products/category/${productsCategory.id}`);
-                setProducts(response.data);
-                setAllProducts(response.data); // Save the original list
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Error fetching categories:", error.response || error.message);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
         fetchProducts();
     }, [productsCategory.id]);
 
@@ -128,53 +133,38 @@ const AllCategory = () => {
     // add to wishlist
     const handleWishlist = async (productId, productTitle) => {
         try {
-            const userId = localStorage.getItem('userId');
-
             if (!userId) {
                 handleOpenUserNotLogin();
                 return;
             }
+            const payload = { userId, productId };
 
-            // Check if product is already in wishlist
-            const isInWishlist = favProduct?.items?.some(item => item.productId?._id === productId);
-
-            if (isInWishlist) {
-                // If product is already in wishlist, show the appropriate toast and return
-                toast.error(`${productTitle} is already in your wishlist`);
-                return; // Stop here without making the API call
-            }
-
-            const payload = {
-                userId: userId,
-                productId: productId
-            };
-
-            // Add to wishlist if not already there
             const response = await axios.post(`${BASE_URL}/user/wishlist/add`, payload);
             console.log(response.data);
-            // If the response is successful, update the heart icon state and show success toast
-            setHeartIcons(prevState => ({
-                ...prevState,
-                [productId]: !isInWishlist, // Set the heart icon to filled
-            }));
+
+            if (response.data.isInWishlist) {
+                toast.success(`${productTitle} added to wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: true }));
+            } else {
+                toast.success(`${productTitle} removed from wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: false }));
+                fetchProducts();
+            }
 
             setFav((prevFav) => {
-                const isAlreadyFav = prevFav.some(
-                    (item) => item.productId === payload.productId
-                );
-                return isAlreadyFav ? prevFav : [...prevFav, payload];
+                if (response.data.isInWishlist) {
+                    // Product added to wishlist
+                    return prevFav.some(item => item.productId === payload.productId)
+                        ? prevFav
+                        : [...prevFav, payload];
+                } else {
+                    // Product removed from wishlist
+                    return prevFav.filter(item => item.productId !== payload.productId);
+                }
             });
 
-            toast.success(`${productTitle} added to wishlist`);
-
         } catch (error) {
-            // Check if the error is related to the product already being in the wishlist
-            if (error.response && error.response.data.message === "Product is already in the wishlist") {
-                toast.error(`${productTitle} is already in your wishlist`);
-            } else {
-                console.log("Error adding to wishlist:", error);
-                toast.error("Failed to add product to wishlist");
-            }
+            throw new Error(error)
         }
     };
 
@@ -218,7 +208,6 @@ const AllCategory = () => {
                                 </div>
                             ) : (
                                 products.map((product) => {
-                                    const isInWishlist = favProduct?.items?.some(item => item.productId?._id === product._id);
                                     return (
                                         <div className='group relative' key={product._id}>
                                             <Link to='/product-details' state={{ productId: product._id, categoryId: product.category._id }} className="cursor-pointer">
@@ -230,7 +219,7 @@ const AllCategory = () => {
                                                 onClick={() => handleOpenImageZoom(product.images, 0)}
                                                 className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                                             />
-                                            {heartIcons[product._id] || isInWishlist ? (
+                                            {product.isInWishlist || heartIcons[product._id] ? (
                                                 <RiHeart3Fill onClick={() => handleWishlist(product._id, product.title)} className='absolute top-2 right-2 cursor-pointer text-primary bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md' />
                                             ) : (
                                                 <RiHeart3Line onClick={() => handleWishlist(product._id, product.title)} className='absolute top-2 right-2 cursor-pointer bg-white text-gray-600 w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md' />

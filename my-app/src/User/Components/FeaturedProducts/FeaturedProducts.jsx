@@ -16,7 +16,7 @@ import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 
 const FeaturedProducts = () => {
-    const { BASE_URL, favProduct, setFav } = useContext(AppContext);
+    const { BASE_URL, setFav } = useContext(AppContext);
     const [featuredProducts, setFeaturedProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [heartIcons, setHeartIcons] = useState({});
@@ -24,6 +24,8 @@ const FeaturedProducts = () => {
     const [openImageModal, setOpenImageModal] = React.useState(false);
     const [zoomImage, setZoomImage] = useState(null);
     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    const userId = localStorage.getItem('userId');
 
     // handle non logged users modal
     const handleOpenUserNotLogin = () => {
@@ -37,72 +39,62 @@ const FeaturedProducts = () => {
         setZoomImage({ images: productImages, currentIndex: index });
     }
 
-
-    useEffect(() => {
-        const fetchFeaturedProducts = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/user/products/view-products`);
-                const filteredProducts = response.data.filter(product => product.isFeaturedProduct);
-                setFeaturedProducts(filteredProducts)
-                console.log(filteredProducts);
-                setIsLoading(false)
-            } catch (error) {
-                console.error("Error fetching offer products:", error);
-            }
+    // fetch featured products
+    const fetchFeaturedProducts = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/user/products/view-products`, {
+                params: {
+                    userId: `${userId}`
+                }
+            });
+            const filteredProducts = response.data.filter(product => product.isFeaturedProduct);
+            setFeaturedProducts(filteredProducts)
+            console.log(filteredProducts);
+            setIsLoading(false)
+        } catch (error) {
+            console.error("Error fetching offer products:", error);
         }
+    }
+    useEffect(() => {
         fetchFeaturedProducts()
     }, [])
 
     // add to wishlist
     const handleWishlist = async (productId, productTitle) => {
         try {
-            const userId = localStorage.getItem('userId');
-
             if (!userId) {
                 handleOpenUserNotLogin();
                 return;
             }
+            const payload = { userId, productId };
 
-            // Check if product is already in wishlist
-            const isInWishlist = favProduct?.items?.some(item => item.productId?._id === productId);
-
-            if (isInWishlist) {
-                // If product is already in wishlist, show the appropriate toast and return
-                toast.error(`${productTitle} is already in your wishlist`);
-                return; // Stop here without making the API call
-            }
-
-            const payload = {
-                userId: userId,
-                productId: productId
-            };
-
-            // Add to wishlist if not already there
             const response = await axios.post(`${BASE_URL}/user/wishlist/add`, payload);
             console.log(response.data);
-            // If the response is successful, update the heart icon state and show success toast
-            setHeartIcons(prevState => ({
-                ...prevState,
-                [productId]: !isInWishlist, // Set the heart icon to filled
-            }));
+
+            if (response.data.isInWishlist) {
+                toast.success(`${productTitle} added to wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: true }));
+            } else {
+                toast.success(`${productTitle} removed from wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: false }));
+                fetchFeaturedProducts();
+            }
+
 
             setFav((prevFav) => {
-                const isAlreadyFav = prevFav.some(
-                    (item) => item.productId === payload.productId
-                );
-                return isAlreadyFav ? prevFav : [...prevFav, payload];
+                if (response.data.isInWishlist) {
+                    // Product added to wishlist
+                    return prevFav.some(item => item.productId === payload.productId)
+                        ? prevFav
+                        : [...prevFav, payload];
+                } else {
+                    // Product removed from wishlist
+                    return prevFav.filter(item => item.productId !== payload.productId);
+                }
             });
 
-            toast.success(`${productTitle} added to wishlist`);
-
         } catch (error) {
-            // Check if the error is related to the product already being in the wishlist
-            if (error.response && error.response.data.message === "Product is already in the wishlist") {
-                toast.error(`${productTitle} is already in your wishlist`);
-            } else {
-                console.log("Error adding to wishlist:", error);
-                toast.error("Failed to add product to wishlist");
-            }
+            throw new Error(error)
         }
     };
 
@@ -125,7 +117,6 @@ const FeaturedProducts = () => {
                         <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 xl:grid-cols-5 lg:grid-cols-5 gap-5 pb-10'>
                             {
                                 visibleProducts.map((product) => {
-                                    const isInWishlist = favProduct?.items?.some(item => item?.productId?._id === product._id);
                                     return (
                                         <div className='group relative' key={product._id}>
                                             <Link
@@ -150,7 +141,7 @@ const FeaturedProducts = () => {
                                                 onClick={() => handleOpenImageZoom(product.images, 0)}
                                                 className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                                             />
-                                            {heartIcons[product._id] || isInWishlist ? (
+                                            {product.isInWishlist || heartIcons[product._id] ? (
                                                 <RiHeart3Fill
                                                     onClick={() => handleWishlist(product._id, product.title)}
                                                     className='absolute top-2 right-2 cursor-pointer text-primary bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'

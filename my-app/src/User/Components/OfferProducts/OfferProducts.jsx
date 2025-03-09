@@ -12,9 +12,8 @@ import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { MdZoomOutMap } from 'react-icons/md';
 import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
-
 const OfferProducts = () => {
-    const { BASE_URL, favProduct, setFav } = useContext(AppContext);
+    const { BASE_URL, setFav } = useContext(AppContext);
     const [offerProducts, setOfferProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [heartIcons, setHeartIcons] = useState({});
@@ -23,22 +22,27 @@ const OfferProducts = () => {
     const [zoomImage, setZoomImage] = useState(null);
     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
 
+    const userId = localStorage.getItem('userId');
+
     // handle non logged users modal
     const handleOpenUserNotLogin = () => {
         setOpenUserNotLogin(!openUserNotLogin);
     };
 
-    //handle image zoom
+    // handle image zoom
     const handleOpenImageZoom = (productImages, index) => {
         setOpenImageModal(!openImageModal);
         setZoomImage({ images: productImages, currentIndex: index });
     }
 
-
     // fetch offer products
     const fetchOfferProducts = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/user/products/view-products`);
+            const response = await axios.get(`${BASE_URL}/user/products/view-products`, {
+                params: {
+                    userId: `${userId}`
+                }
+            });
             const filteredProducts = response.data.filter(product => product.isOfferProduct);
             setOfferProducts(filteredProducts);
             console.log(filteredProducts);
@@ -48,41 +52,48 @@ const OfferProducts = () => {
             console.error("Error fetching offer products:", error);
         }
     };
+
     useEffect(() => {
         fetchOfferProducts();
     }, []);
 
     const handleWishlist = async (productId, productTitle) => {
         try {
-            const userId = localStorage.getItem('userId');
             if (!userId) {
                 handleOpenUserNotLogin();
                 return;
             }
             const payload = { userId, productId };
-            const isInWishlist = favProduct?.items?.some(item => item.productId?._id === productId);
-
-            if (isInWishlist) {
-                toast.error(`${productTitle} is already in your wishlist`);
-                return;
-            }
 
             const response = await axios.post(`${BASE_URL}/user/wishlist/add`, payload);
             console.log(response.data);
-            setHeartIcons(prev => ({ ...prev, [productId]: true }));
 
-            setFav((prevFav) => (
-                prevFav.some(item => item.productId === payload.productId)
-                    ? prevFav
-                    : [...prevFav, payload]
-            ));
+            if (response.data.isInWishlist) {
+                toast.success(`${productTitle} added to wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: true }));
+            } else {
+                toast.success(`${productTitle} removed from wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: false }));
+                fetchOfferProducts();
+            }            
 
-            toast.success(`${productTitle} added to wishlist`);
+            setFav((prevFav) => {
+                if (response.data.isInWishlist) {
+                    // Product added to wishlist
+                    return prevFav.some(item => item.productId === payload.productId)
+                        ? prevFav
+                        : [...prevFav, payload];
+                } else {
+                    // Product removed from wishlist
+                    return prevFav.filter(item => item.productId !== payload.productId);
+                }
+            });
+
         } catch (error) {
-            const errorMessage = error.response?.data?.message;
-            toast.error(errorMessage || "Failed to add product to wishlist");
+            throw new Error(error)
         }
     };
+    
 
     const visibleProducts = showAllOffer ? offerProducts : offerProducts.slice(0, 5);
 
@@ -101,7 +112,6 @@ const OfferProducts = () => {
                 <>
                     <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 xl:grid-cols-5 lg:grid-cols-5 gap-5 pb-2'>
                         {visibleProducts.map(product => {
-                            const isInWishlist = favProduct?.items?.some(item => item?.productId?._id === product._id);
                             return (
                                 <div className='group relative' key={product._id}>
                                     <Link
@@ -122,7 +132,7 @@ const OfferProducts = () => {
                                         onClick={() => handleOpenImageZoom(product.images, 0)}
                                         className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                                     />
-                                    {heartIcons[product._id] || isInWishlist ? (
+                                    {product.isInWishlist || heartIcons[product._id] ? (
                                         <RiHeart3Fill
                                             onClick={() => handleWishlist(product._id, product.title)}
                                             className='absolute top-2 right-2 cursor-pointer text-primary bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'

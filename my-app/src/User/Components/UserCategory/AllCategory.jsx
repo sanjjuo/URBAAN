@@ -54,7 +54,7 @@ const AllCategory = () => {
     // fetch products
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/user/products/products/category/${productsCategory.id}` ,{
+            const response = await axios.get(`${BASE_URL}/user/products/products/category/${productsCategory?.id}` ,{
                 params: {
                     userId: `${userId}`
                 }
@@ -62,6 +62,7 @@ const AllCategory = () => {
             setProducts(response.data);
             setAllProducts(response.data); // Save the original list
             setIsLoading(false);
+            console.log(response.data);
         } catch (error) {
             console.error("Error fetching categories:", error.response || error.message);
         } finally {
@@ -71,6 +72,7 @@ const AllCategory = () => {
     useEffect(() => {
         fetchProducts();
     }, [productsCategory.id]);
+    
 
     // Function to apply all filters
     const applyFilters = () => {

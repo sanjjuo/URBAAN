@@ -129,14 +129,21 @@ const ProductDetails = () => {
         }
 
         try {
-            const response = await axios.get(`${BASE_URL}/user/products/products/category/${categoryId}`);
-            // Filter out the current product from the similar products list
-            const filteredSimilarProducts = response.data.filter(
-                (product) => product._id !== productId
-            );
-            setSimilarProducts(filteredSimilarProducts);
-            // setSimilarProducts(response.data)
-            console.log("Similar Products:", filteredSimilarProducts);
+            // const response = await axios.get(`${BASE_URL}/user/products/products/category/${categoryId}`);
+            // // Filter out the current product from the similar products list
+            // const filteredSimilarProducts = response.data.filter(
+            //     (product) => product._id !== productId
+            // );
+            // setSimilarProducts(filteredSimilarProducts);
+            const response = await axios.get(`${BASE_URL}/user/products/similar/${productId}`, {
+                params: {
+                    userId: `${userId}`
+                }
+            });
+            setSimilarProducts(response.data)
+            // console.log("Similar Products:", filteredSimilarProducts);
+            console.log(response.data);
+            
         } catch (error) {
             console.error("Error fetching similar products:", error);
             setSimilarProducts([])
@@ -547,7 +554,7 @@ const ProductDetails = () => {
 
                 {/* similar products */}
                 <div className=''>
-                    <SimilarProducts similarProducts={similarProducts} />
+                    <SimilarProducts similarProducts={similarProducts} fetchSimilarProducts={fetchSimilarProducts} />
                 </div>
 
                 <div className="bg-white shadow-md fixed bottom-0 inset-x-0 z-50 w-full p-4 xl:hidden lg:hidden">

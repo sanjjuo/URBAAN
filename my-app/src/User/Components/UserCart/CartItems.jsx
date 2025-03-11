@@ -264,7 +264,7 @@ const CartItems = ({ cartItems, setCartItems, setViewCart }) => {
                                             <HiMinus className="text-lg" />
                                         </li>
 
-                                        <li className="text-secondary text-center font-medium text-base w-7">{item.quantity}</li>
+                                        <li className="text-secondary cursor-default text-center font-medium text-base w-7">{item.quantity}</li>
 
                                         <li
                                             className="text-secondary flex items-center justify-center w-7 h-7 rounded-full cursor-pointer border-[1px] 

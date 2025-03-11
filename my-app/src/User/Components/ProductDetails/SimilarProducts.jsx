@@ -10,8 +10,8 @@ import axios from 'axios'
 import { MdZoomOutMap } from 'react-icons/md'
 import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal'
 
-const SimilarProducts = ({ similarProducts }) => {
-    const { BASE_URL, favProduct, setFav } = useContext(AppContext)
+const SimilarProducts = ({ similarProducts, fetchSimilarProducts }) => {
+    const { BASE_URL, setFav } = useContext(AppContext)
     const [heartIcons, setHeartIcons] = useState({});
     const [openImageModal, setOpenImageModal] = React.useState(false);
     const [zoomImage, setZoomImage] = useState(null);
@@ -34,49 +34,38 @@ const SimilarProducts = ({ similarProducts }) => {
 
     const handleWishlist = async (productId, productTitle) => {
         try {
-            const userId = localStorage.getItem('userId');
-
             if (!userId) {
-                setOpenUserNotLogin(true);
+                handleOpenUserNotLogin();
                 return;
             }
-
-            const payload = {
-                userId: userId,
-                productId: productId
-            };
-
-            const isInWishlist = favProduct?.items?.some(item => item.productId?._id === productId);
-
-            if (isInWishlist) {
-                toast.error(`${productTitle} is already in your wishlist`);
-                return;
-            }
+            const payload = { userId, productId };
 
             const response = await axios.post(`${BASE_URL}/user/wishlist/add`, payload);
             console.log(response.data);
 
-            setHeartIcons(prevState => ({
-                ...prevState,
-                [productId]: !isInWishlist,
-            }));
+            if (response.data.isInWishlist) {
+                toast.success(`${productTitle} added to wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: true }));
+            } else {
+                toast.success(`${productTitle} removed from wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: false }));
+                fetchSimilarProducts();
+            }
 
             setFav((prevFav) => {
-                const isAlreadyFav = prevFav.some(
-                    (item) => item.productId === payload.productId
-                );
-                return isAlreadyFav ? prevFav : [...prevFav, payload];
+                if (response.data.isInWishlist) {
+                    // Product added to wishlist
+                    return prevFav.some(item => item.productId === payload.productId)
+                        ? prevFav
+                        : [...prevFav, payload];
+                } else {
+                    // Product removed from wishlist
+                    return prevFav.filter(item => item.productId !== payload.productId);
+                }
             });
 
-            toast.success(`${productTitle} added to wishlist`);
-
         } catch (error) {
-            if (error.response && error.response.data.message === "Product is already in the wishlist") {
-                toast.error(`${productTitle} is already in your wishlist`);
-            } else {
-                console.log("Error adding to wishlist:", error);
-                toast.error("Failed to add product to wishlist");
-            }
+            throw new Error(error)
         }
     };
 
@@ -85,8 +74,13 @@ const SimilarProducts = ({ similarProducts }) => {
         <>
             <h1 className='text-secondary text-lg xl:text-2xl lg:text-2xl font-semibold text-center mb-10'>Similar Products</h1>
             <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 xl:grid-cols-5 lg:grid-cols-5 gap-5 pb-10'>
-                {similarProducts.map(product => {
-                    const isInWishlist = favProduct?.items?.some(item => item?.productId?._id === product._id);
+                {similarProducts.length === 0 ? (
+                    <>
+                    <p className='col-span-5 flex justify-center items-center h-[50vh]'>No similar products</p>
+                    </>
+                ): (
+                    <>
+                     {similarProducts.map(product => {
                     return (
                         <div className='group relative' key={product._id}>
                             <Link
@@ -96,7 +90,7 @@ const SimilarProducts = ({ similarProducts }) => {
                                     categoryId: product.category._id // Pass the category ID
                                 }}
                                 className="cursor-pointer"
-                                // onClick={handleClick}
+                            // onClick={handleClick}
                             >
                                 <div className='w-full h-52 xl:h-80 lg:h-80 relative rounded-xl overflow-hidden'>
                                     <img
@@ -112,7 +106,7 @@ const SimilarProducts = ({ similarProducts }) => {
                                 onClick={() => handleOpenImageZoom(product.images, 0)}
                                 className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                             />
-                            {heartIcons[product._id] || isInWishlist ? (
+                            {product.isInWishlist || heartIcons[product._id] ? (
                                 <RiHeart3Fill
                                     onClick={() => handleWishlist(product._id, product.title)}
                                     className='absolute top-2 right-2 cursor-pointer text-primary bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
@@ -137,6 +131,8 @@ const SimilarProducts = ({ similarProducts }) => {
                         </div>
                     )
                 })}
+                    </>
+                )}
             </div>
 
             <UserNotLoginPopup

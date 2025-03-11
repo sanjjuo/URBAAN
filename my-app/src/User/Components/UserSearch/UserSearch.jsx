@@ -1,23 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
+import React, { useContext, useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
+import { IoIosArrowBack } from 'react-icons/io'
+import { MdZoomOutMap } from 'react-icons/md'
+import { RiHeart3Fill, RiHeart3Line } from 'react-icons/ri'
 import { Link, useNavigate } from 'react-router-dom'
 import { AppContext } from '../../../StoreContext/StoreContext'
-import toast from 'react-hot-toast'
-import { RiHeart3Fill, RiHeart3Line } from 'react-icons/ri'
-import { IoIosArrowBack } from 'react-icons/io'
-import { RxCountdownTimer } from 'react-icons/rx'
-import UserSearchBar from './UserSearchBar'
-import { MdZoomOutMap } from 'react-icons/md'
 import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal'
 import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup'
+import UserSearchBar from './UserSearchBar'
 
 const UserSearch = () => {
-    const { BASE_URL, favProduct, setFav, searchedProducts, setSearchedProducts, searchUser } = useContext(AppContext)
+    const { BASE_URL, setFav, searchedProducts, setSearchedProducts, searchUser } = useContext(AppContext)
     const navigate = useNavigate()
     const [heartIcons, setHeartIcons] = useState({});
     const [openImageModal, setOpenImageModal] = React.useState(false);
     const [zoomImage, setZoomImage] = useState(null);
     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
+
+    const userId = localStorage.getItem('userId')
 
     // handle non logged users modal
     const handleOpenUserNotLogin = () => {
@@ -31,59 +32,60 @@ const UserSearch = () => {
         setZoomImage({ images: productImages, currentIndex: index });
     }
 
-
-    useEffect(() => {
-        const fetchSearchedProducts = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/user/products/view-products`)
-                setSearchedProducts(response.data)
-            } catch (error) {
-                console.log(error)
-            }
+    //fetch searched products
+    const fetchSearchedProducts = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/user/products/view-products`, {
+                params: {
+                    userId: `${userId}`
+                }
+            });
+            setSearchedProducts(response.data)
+        } catch (error) {
+            console.log(error)
         }
+    }
+    useEffect(() => {
         fetchSearchedProducts()
     }, [BASE_URL])
 
     // add to wishlist
     const handleWishlist = async (productId, productTitle) => {
         try {
-            const userId = localStorage.getItem('userId');
-
             if (!userId) {
                 handleOpenUserNotLogin();
                 return;
             }
+            const payload = { userId, productId };
 
-            const payload = { userId, productId }
+            const response = await axios.post(`${BASE_URL}/user/wishlist/add`, payload);
+            console.log(response.data);
 
-            // Check if product is already in wishlist
-            const isInWishlist = favProduct?.items?.some(item => item.productId._id === productId)
-
-            if (!isInWishlist) {
-                const response = await axios.post(`${BASE_URL}/user/wishlist/add`, payload)
-                console.log(response.data)
-
-                setHeartIcons(prevState => ({
-                    ...prevState,
-                    [productId]: true
-                }))
-
-                setFav((prevFav) => {
-                    const isAlreadyFav = prevFav.some(
-                        (item) => item.productId === payload.productId
-                    );
-                    return isAlreadyFav ? prevFav : [...prevFav, payload];
-                });
-
-
-                toast.success(`${productTitle} added to wishlist`)
+            if (response.data.isInWishlist) {
+                toast.success(`${productTitle} added to wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: true }));
             } else {
-                toast.error('Product already in wishlist')
+                toast.success(`${productTitle} removed from wishlist`);
+                setHeartIcons(prev => ({ ...prev, [productId]: false }));
+                fetchSearchedProducts();
             }
+
+            setFav((prevFav) => {
+                if (response.data.isInWishlist) {
+                    // Product added to wishlist
+                    return prevFav.some(item => item.productId === payload.productId)
+                        ? prevFav
+                        : [...prevFav, payload];
+                } else {
+                    // Product removed from wishlist
+                    return prevFav.filter(item => item.productId !== payload.productId);
+                }
+            });
+
         } catch (error) {
-            console.log(error)
+            throw new Error(error)
         }
-    }
+    };
 
     return (
         <>
@@ -123,7 +125,6 @@ const UserSearch = () => {
                 ) : (
                     <div className='grid grid-cols-2 gap-5 mt-10'>
                         {searchedProducts.map((product) => {
-                            const isInWishlist = favProduct?.items?.some(item => item.productId._id === product._id)
                             return (
                                 <div className='group relative' key={product._id}>
                                     <Link to="/product-details" state={{ productId: product._id, categoryId: product.category?._id }} className="cursor-pointer">
@@ -140,7 +141,7 @@ const UserSearch = () => {
                                         onClick={() => handleOpenImageZoom(product.images, 0)}
                                         className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                                     />
-                                    {heartIcons[product._id] || isInWishlist ? (
+                                    {product.isInWishlist || heartIcons[product._id] ? (
                                         <RiHeart3Fill
                                             onClick={() => handleWishlist(product._id, product.title)}
                                             className='absolute top-2 right-2 cursor-pointer text-primary bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'

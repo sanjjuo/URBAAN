@@ -17,6 +17,8 @@ const SimilarProducts = ({ similarProducts, fetchSimilarProducts }) => {
     const [zoomImage, setZoomImage] = useState(null);
     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
 
+    const userId = localStorage.getItem('userId')
+
     // handle non logged users modal
     const handleOpenUserNotLogin = () => {
         setOpenUserNotLogin(!openUserNotLogin);

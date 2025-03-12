@@ -112,7 +112,7 @@ const FavouriteProduct = () => {
                     <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-5 mt-10">
                         {wishlist.map((product) => (
                             product.productId && (
-                                <div key={product._id} className="relative">
+                                <div key={product?.productId?._id} className="relative">
                                     <RiDeleteBin5Line
                                         onClick={() => handleWishlistDelete(product.productId._id)}
                                         className="text-deleteBg absolute -top-5 right-1 cursor-pointer"
@@ -120,14 +120,14 @@ const FavouriteProduct = () => {
                                     <Link
                                         to="/product-details"
                                         state={{
-                                            productId: product?._id,
-                                            categoryId: product?.category?._id
+                                            productId: product?.productId?._id,
+                                            categoryId: product?.productId?.category?._id
                                         }}
                                         className="group">
                                         <div className="w-full h-52 xl:h-80 rounded-xl overflow-hidden">
                                             <img
-                                                src={product.productId.images[0] || '/no-image.jpg'}
-                                                alt={product.productId.title}
+                                                src={product?.productId?.images[0] || '/no-image.jpg'}
+                                                alt={product?.productId?.title}
                                                 className="w-full h-full object-cover rounded-xl shadow-md transition-transform scale-100 duration-500 group-hover:scale-105"
                                             />
                                         </div>

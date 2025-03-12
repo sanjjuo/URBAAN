@@ -12,6 +12,7 @@ const App = () => {
     <StoreContext>
       <Toaster
         position="top-center"
+        containerClassName="!z-[99999]"
         reverseOrder={false}
         gutter={8}
         toastOptions={{

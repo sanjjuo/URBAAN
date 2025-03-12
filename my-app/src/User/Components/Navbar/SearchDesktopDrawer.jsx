@@ -20,6 +20,8 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
     const [zoomImage, setZoomImage] = useState(null);
     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
 
+    const userId = localStorage.getItem('userId')
+
     // handle non logged users modal
     const handleOpenUserNotLogin = () => {
         setOpenUserNotLogin(!openUserNotLogin);
@@ -38,8 +40,14 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
             return setSearchedProducts([]); // Clear results if search is empty
         }
         try {
-            const response = await axios.get(`${BASE_URL}/user/search/view?query=${searchUser}`)
+            const response = await axios.get(`${BASE_URL}/user/search/view?query=${searchUser}`,{
+                params: {
+                    userId: `${userId}`
+                }
+            });
             setSearchedProducts(response.data.products) // Setting the search results
+            console.log(response.data.products);
+            
         } catch (error) {
             console.log(error);
         }
@@ -67,7 +75,7 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
                 toast.success(`${productTitle} removed from wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: false }));
                 fetchUserSearchProducts();
-            }            
+            }
 
             setFav((prevFav) => {
                 if (response.data.isInWishlist) {

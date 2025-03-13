@@ -42,11 +42,8 @@ const FeaturedProducts = () => {
     // fetch featured products
     const fetchFeaturedProducts = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/user/products/view-products`, {
-                params: {
-                    userId: `${userId}`
-                }
-            });
+            const params = userId ? { userId } : {}; // Only include userId if it exists
+            const response = await axios.get(`${BASE_URL}/user/products/view-products`, { params });
             const filteredProducts = response.data.filter(product => product.isFeaturedProduct);
             setFeaturedProducts(filteredProducts)
             console.log(filteredProducts);

@@ -35,11 +35,8 @@ const UserSearch = () => {
     //fetch searched products
     const fetchSearchedProducts = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/user/products/view-products`, {
-                params: {
-                    userId: `${userId}`
-                }
-            });
+            const params = userId ? { userId } : {};
+            const response = await axios.get(`${BASE_URL}/user/products/view-products`, { params });
             setSearchedProducts(response.data)
         } catch (error) {
             console.log(error)

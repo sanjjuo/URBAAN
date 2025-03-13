@@ -40,14 +40,11 @@ export function SearchDesktopDrawer({ open, closeSearchDrawer }) {
             return setSearchedProducts([]); // Clear results if search is empty
         }
         try {
-            const response = await axios.get(`${BASE_URL}/user/search/view?query=${searchUser}`,{
-                params: {
-                    userId: `${userId}`
-                }
-            });
+            const params = userId ? { userId } : {};
+            const response = await axios.get(`${BASE_URL}/user/search/view?query=${searchUser}`, { params });
             setSearchedProducts(response.data.products) // Setting the search results
             console.log(response.data.products);
-            
+
         } catch (error) {
             console.log(error);
         }

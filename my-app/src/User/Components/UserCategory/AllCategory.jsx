@@ -54,11 +54,8 @@ const AllCategory = () => {
     // fetch products
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/user/products/products/category/${productsCategory?.id}` ,{
-                params: {
-                    userId: `${userId}`
-                }
-            });
+            const params = userId ? { userId } : {};
+            const response = await axios.get(`${BASE_URL}/user/products/products/category/${productsCategory?.id}`, { params });
             setProducts(response.data);
             setAllProducts(response.data); // Save the original list
             setIsLoading(false);
@@ -72,7 +69,7 @@ const AllCategory = () => {
     useEffect(() => {
         fetchProducts();
     }, [productsCategory.id]);
-    
+
 
     // Function to apply all filters
     const applyFilters = () => {

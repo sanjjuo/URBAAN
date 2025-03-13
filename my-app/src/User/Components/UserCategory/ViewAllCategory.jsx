@@ -52,11 +52,8 @@ const ViewAllCategory = () => {
     // fetch all products
     const fetchAllProducts = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/user/products/view-products`, {
-                params: {
-                    userId: `${userId}`
-                }
-            })
+            const params = userId ? { userId } : {};
+            const response = await axios.get(`${BASE_URL}/user/products/view-products`, { params })
             setAllProducts(response.data)
             setFilteredProducts(response.data);
             setIsLoading(false)
@@ -196,7 +193,7 @@ const ViewAllCategory = () => {
                                                 onClick={() => handleOpenImageZoom(product.images, 0)}
                                                 className='absolute top-2 left-2 cursor-pointer text-gray-600 bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'
                                             />
-                                             {product.isInWishlist || heartIcons[product._id] ? (
+                                            {product.isInWishlist || heartIcons[product._id] ? (
                                                 <RiHeart3Fill
                                                     onClick={() => handleWishlist(product._id, product.title)}
                                                     className='absolute top-2 right-2 cursor-pointer text-primary bg-white w-7 h-7 xl:w-8 xl:h-8 lg:w-8 lg:h-8 p-1 rounded-full shadow-md'

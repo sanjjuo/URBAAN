@@ -109,11 +109,8 @@ const ProductDetails = () => {
     //fetch product details and similar products
     const fetchProductDetails = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/user/products/product/${productId}`, {
-                params: {
-                    userId: `${userId}`
-                }
-            });
+            const params = userId ? { userId } : {};
+            const response = await axios.get(`${BASE_URL}/user/products/product/${productId}`, { params });
             setProductDetails(response.data);
             console.log('Product Details:', response.data);
         } catch (error) {
@@ -135,15 +132,12 @@ const ProductDetails = () => {
             //     (product) => product._id !== productId
             // );
             // setSimilarProducts(filteredSimilarProducts);
-            const response = await axios.get(`${BASE_URL}/user/products/similar/${productId}`, {
-                params: {
-                    userId: `${userId}`
-                }
-            });
+            const params = userId ? { userId } : {};
+            const response = await axios.get(`${BASE_URL}/user/products/similar/${productId}`, { params });
             setSimilarProducts(response.data)
             // console.log("Similar Products:", filteredSimilarProducts);
             console.log(response.data);
-            
+
         } catch (error) {
             console.error("Error fetching similar products:", error);
             setSimilarProducts([])

@@ -178,7 +178,7 @@ const UserNavbar = () => {
             try {
                 const response = await axios.get(`${BASE_URL}/user/wishlist/view/${userId}`);
                 if (response.status === 200 && response.data.items) {
-                    setFav(response.data.items);
+                    setFav(response.data?.items);
                 } else {
                     console.warn("Wishlist is empty. Setting an empty array.");
                     setFav([]); // Ensure fav list is not undefined
@@ -193,7 +193,7 @@ const UserNavbar = () => {
             }
         };
         fetchWishlistProducts();
-    }, []);
+    }, [BASE_URL, userId]);
 
     // pages where navbar don't visible
     const noNavbar = ["/customer-reviews", "/write-review", "/add-delivery-address", "/edit-delivery-address", "/select-delivery-address",

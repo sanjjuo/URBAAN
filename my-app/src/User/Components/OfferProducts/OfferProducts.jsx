@@ -68,9 +68,11 @@ const OfferProducts = () => {
             if (response.data.isInWishlist) {
                 toast.success(`${productTitle} added to wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: true }));
+                // setFav(prevFav => [...prevFav, { productId }]);
             } else {
                 toast.success(`${productTitle} removed from wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: false }));
+                // setFav(prevFav => prevFav.filter(item => item.productId !== productId)); 
                 fetchOfferProducts();
             }            
 
@@ -113,7 +115,7 @@ const OfferProducts = () => {
                                 <div className='group relative' key={product._id}>
                                     <Link
                                         to="/product-details"
-                                        state={{ productId: product._id, categoryId: product.category._id }}
+                                        state={{ productId: product._id, categoryId: product.category?._id }}
                                         className="cursor-pointer"
                                     >
                                         <div className='w-full h-52 xl:h-80 lg:h-80 relative rounded-xl overflow-hidden'>

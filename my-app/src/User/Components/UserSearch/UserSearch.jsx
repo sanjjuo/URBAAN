@@ -20,7 +20,7 @@ const UserSearch = () => {
 
     const userId = localStorage.getItem('userId')
 
-    // handle non logged users modal
+    // handle non logged users modal 
     const handleOpenUserNotLogin = () => {
         setOpenUserNotLogin(!openUserNotLogin);
     };

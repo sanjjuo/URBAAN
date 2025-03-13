@@ -27,36 +27,36 @@ const FavouriteProduct = () => {
     }
 
     // Fetch wishlist products
+    const fetchWishlistProducts = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/user/wishlist/view/${userId}`);
+            const items = response.data?.items || [];
+
+            setWishlist(items);
+            console.log(items)
+        } catch (error) {
+            console.error('Error fetching wishlist:', error);
+        } finally {
+            setIsLoading(false); // ✅ Ensure `isLoading` is false, even if an error occurs or wishlist is empty
+        }
+    };
+
     useEffect(() => {
-        const fetchWishlistProducts = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/user/wishlist/view/${userId}`);
-                const items = response.data?.items || [];
-
-                setWishlist(items);
-                console.log(items)
-            } catch (error) {
-                console.error('Error fetching wishlist:', error);
-            } finally {
-                setIsLoading(false); // ✅ Ensure `isLoading` is false, even if an error occurs or wishlist is empty
-            }
-        };
-
         fetchWishlistProducts();
     }, [userId]);
 
 
     // Delete wishlist product
-    const handleWishlistDelete = async (productId) => {
+    const handleWishlistDelete = async (productId, productTitle) => {
         try {
             const response = await axios.delete(`${BASE_URL}/user/wishlist/remove`, {
                 data: { userId, productId },
             });
 
             if (response.status === 200) {
-                setWishlist((prev) => prev.filter((item) => item.productId._id !== productId));
-                setFav((prevFav) => prevFav.filter((item) => item.productId._id !== productId));
-                toast.success('Product removed from wishlist');
+                fetchWishlistProducts()
+                setFav((prevFav) => prevFav.filter((item) => item.productId !== productId));
+                toast.success(`${productTitle} is removed from wishlist`);
             }
         } catch (error) {
             console.error('Error deleting wishlist item:', error);
@@ -114,7 +114,7 @@ const FavouriteProduct = () => {
                             product.productId && (
                                 <div key={product?.productId?._id} className="relative">
                                     <RiDeleteBin5Line
-                                        onClick={() => handleWishlistDelete(product.productId._id)}
+                                        onClick={() => handleWishlistDelete(product.productId?._id, product.productId?.title)}
                                         className="text-deleteBg absolute -top-5 right-1 cursor-pointer"
                                     />
                                     <Link

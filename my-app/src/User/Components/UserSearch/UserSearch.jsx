@@ -11,7 +11,7 @@ import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup'
 import UserSearchBar from './UserSearchBar'
 
 const UserSearch = () => {
-    const { BASE_URL, setFav, searchedProducts, setSearchedProducts, searchUser } = useContext(AppContext)
+    const { BASE_URL, searchedProducts, setSearchedProducts, searchUser, fetchWishlistProducts } = useContext(AppContext)
     const navigate = useNavigate()
     const [heartIcons, setHeartIcons] = useState({});
     const [openImageModal, setOpenImageModal] = React.useState(false);
@@ -61,23 +61,13 @@ const UserSearch = () => {
             if (response.data.isInWishlist) {
                 toast.success(`${productTitle} added to wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: true }));
+                fetchWishlistProducts();
             } else {
-                toast.success(`${productTitle} removed from wishlist`);
+                toast.error(`${productTitle} removed from wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: false }));
                 fetchSearchedProducts();
+                fetchWishlistProducts();
             }
-
-            setFav((prevFav) => {
-                if (response.data.isInWishlist) {
-                    // Product added to wishlist
-                    return prevFav.some(item => item.productId === payload.productId)
-                        ? prevFav
-                        : [...prevFav, payload];
-                } else {
-                    // Product removed from wishlist
-                    return prevFav.filter(item => item.productId !== payload.productId);
-                }
-            });
 
         } catch (error) {
             throw new Error(error)

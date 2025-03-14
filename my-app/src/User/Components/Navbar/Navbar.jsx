@@ -19,9 +19,9 @@ import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
 
 
 const NavList = () => {
-    const { cart, fav } = useContext(AppContext)
-    const cartView = cart?.length || 0;
-    const favView = fav?.length || 0;
+    const { wishlist, cartItems } = useContext(AppContext)
+    const cartView = cartItems?.length || 0;
+    const favView = wishlist?.length || 0;
     const location = useLocation();
     const [navActive, setNavActive] = useState(() => {
         const path = location.pathname;
@@ -94,13 +94,11 @@ const NavList = () => {
 }
 
 const UserNavbar = () => {
-    const { BASE_URL, openDrawer, handleOpenDrawer, handleCloseDrawer, cart, setCart, fav, setFav } = useContext(AppContext)
+    const { openDrawer, handleOpenDrawer, handleCloseDrawer } = useContext(AppContext)
     const location = useLocation();
     const isFavouritePage = location.pathname === "/favourite";
     const isCartPage = location.pathname === "/user-cart";
     const isSearch = location.pathname === '/user-search'
-    const cartView = cart?.length || 0;
-    const favView = fav?.length || 0;
     const [openSearchDrawer, setOpenSearchDrawer] = useState(false);
     const [openUserNotLogin, setOpenUserNotLogin] = useState(false);
 
@@ -149,51 +147,6 @@ const UserNavbar = () => {
     }, [location.search]);
 
 
-    // fetching cart items and fav items for identifying the length initially
-    useEffect(() => {
-        const fetchCartItems = async () => {
-            if (!token || !userId) return;
-            try {
-                const response = await axios.get(`${BASE_URL}/user/cart/view-cart/${userId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                setCart(response.data?.items || []);
-            } catch (error) {
-                console.error(error);
-                if (error.response.status === 401) {
-                    handleOpenUserNotLogin();
-                }
-            }
-        };
-
-        fetchCartItems();
-    }, []);
-
-
-    useEffect(() => {
-        const fetchWishlistProducts = async () => {
-            if (!userId) return;
-            try {
-                const response = await axios.get(`${BASE_URL}/user/wishlist/view/${userId}`);
-                if (response.status === 200 && response.data.items) {
-                    setFav(response.data?.items);
-                } else {
-                    console.warn("Wishlist is empty. Setting an empty array.");
-                    setFav([]); // Ensure fav list is not undefined
-                }
-            } catch (error) {
-                if (error.response?.status === 404 && error.response.data?.message === "Wishlist not found") {
-                    console.warn("Wishlist not found, setting an empty array.");
-                    setFav([]); // Handle empty wishlist without an error
-                } else {
-                    console.error("Error fetching wishlist:", error);
-                }
-            }
-        };
-        fetchWishlistProducts();
-    }, [BASE_URL, userId]);
 
     // pages where navbar don't visible
     const noNavbar = ["/customer-reviews", "/write-review", "/add-delivery-address", "/edit-delivery-address", "/select-delivery-address",
@@ -263,7 +216,7 @@ const UserNavbar = () => {
                 </ul>
             </div>
 
-            <BottomBar cartView={cartView} favView={favView} setCart={setCart} setFav={setFav} />
+            <BottomBar />
             <MobileSidebar
                 openDrawer={openDrawer}
                 handleCloseDrawer={handleCloseDrawer}

@@ -22,7 +22,7 @@ import SimilarProducts from './SimilarProducts';
 import { useRef } from 'react';
 
 const ProductDetails = () => {
-    const { handleOpenSizeDrawer, BASE_URL, favProduct, setCart, setFav } = useContext(AppContext)
+    const { handleOpenSizeDrawer, BASE_URL, setCart, setFav } = useContext(AppContext)
     const location = useLocation();
     const { productId, categoryId } = location.state || {}
     const navigate = useNavigate();
@@ -137,10 +137,18 @@ const ProductDetails = () => {
             setSimilarProducts(response.data)
             // console.log("Similar Products:", filteredSimilarProducts);
             console.log(response.data);
-
         } catch (error) {
-            console.error("Error fetching similar products:", error);
-            setSimilarProducts([])
+            if (error.response) {
+                if (error.response.status === 404) {
+                    console.warn("No similar products available.");
+                } else {
+                    console.error("Error fetching similar products:", error.response.data);
+                }
+            } else {
+                console.error("Network error or server issue:", error.message);
+            }
+
+            setSimilarProducts([]);
         }
     };
     useEffect(() => {
@@ -194,19 +202,19 @@ const ProductDetails = () => {
             if (response.status === 200 || response.status === 201) {
                 navigate('/user-cart')
                 toast.success(`${productDetails.title} added to your cart`);
-                setCart((prevCart) => {
-                    const item = prevCart.find(
-                        (item) =>
-                            item.productId === payload.productId &&
-                            item.color === payload.color &&
-                            item.size === payload.size
-                    );
-                    if (item) {
-                        item.quantity += 1;
-                        return [...prevCart];
-                    }
-                    return [...prevCart, payload];
-                });
+                // setCart((prevCart) => {
+                //     const item = prevCart.find(
+                //         (item) =>
+                //             item.productId === payload.productId &&
+                //             item.color === payload.color &&
+                //             item.size === payload.size
+                //     );
+                //     if (item) {
+                //         item.quantity += 1;
+                //         return [...prevCart];
+                //     }
+                //     return [...prevCart, payload];
+                // });
             }
         } catch (error) {
             console.error(error);
@@ -261,24 +269,12 @@ const ProductDetails = () => {
             if (response.data.isInWishlist) {
                 toast.success(`${productTitle} added to wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: true }));
+                fetchProductDetails();
             } else {
-                toast.success(`${productTitle} removed from wishlist`);
+                toast.error(`${productTitle} removed from wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: false }));
                 fetchProductDetails();
             }
-
-            setFav((prevFav) => {
-                if (response.data.isInWishlist) {
-                    // Product added to wishlist
-                    return prevFav.some(item => item.productId === payload.productId)
-                        ? prevFav
-                        : [...prevFav, payload];
-                } else {
-                    // Product removed from wishlist
-                    return prevFav.filter(item => item.productId !== payload.productId);
-                }
-            });
-
         } catch (error) {
             throw new Error(error)
         }

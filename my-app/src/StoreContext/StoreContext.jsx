@@ -14,11 +14,14 @@ const StoreContext = ({ children }) => {
     const [profile, setProfile] = useState([]) //for userprofile and mobile sidebar
     const [getAddress, setGetAddress] = useState([])
     const [openUserNotLogin, setOpenUserNotLogin] = useState(false); //for non-logged users
-    const [favProduct, setFavproduct] = useState([]) //this is for displaying heartfilled icon if product is in wishlist
-    const [cart, setCart] = useState([]) //is for updating cart length in product details and navbar
-    const [fav, setFav] = useState([]) // is for updating fav length in product details and navbar
+    // const [cart, setCart] = useState([]) //is for updating cart length in product details and navbar
+    // const [fav, setFav] = useState([]) // is for updating fav length in product details and navbar
     const [searchedProducts, setSearchedProducts] = useState([])
     const [searchUser, setSearchUser] = useState('') // above serach bar state for used in both navbar search in desktop and userSearch.jsx in mobile side
+    const [wishlist, setWishlist] = useState([]); //fetching wishlist products
+    const [isLoading, setIsLoading] = useState(true);
+    const [viewCart, setViewCart] = useState([]) //for UserCart.jsx
+    const [cartItems, setCartItems] = useState(viewCart.items || []); // for get details
 
     // Handle modal
     const handleOpen = (modal, type) => {
@@ -46,32 +49,59 @@ const StoreContext = ({ children }) => {
         setOpenUserNotLogin(true);
     };
 
-    // fetch favourite for enabling the heart icon filled
     const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('userToken');
+
+    // fetch favourite products
+    const fetchWishlistProducts = async () => {
+        if (!userId) {
+            handleOpenUserNotLogin();
+            return;
+        }
+        try {
+            const response = await axios.get(`${BASE_URL}/user/wishlist/view/${userId}`);
+            const items = response.data?.items || [];
+            setWishlist(items);
+            console.log(items)
+        } catch (error) {
+            console.error('Error fetching wishlist:', error);
+        }
+        finally {
+            setIsLoading(false); // ✅ Ensure `isLoading` is false, even if an error occurs or wishlist is empty
+        }
+    };
 
     useEffect(() => {
-        const fetchWishlistProducts = async () => {
-            if (!userId) return;
-            try {
-                const response = await axios.get(`${BASE_URL}/user/wishlist/view/${userId}`);
-                if (response.data && response.data.items) {
-                    setFavproduct(response?.data || []);
-                } else {
-                    console.warn("Wishlist is empty. Setting an empty array.");
-                    setFavproduct([]); // Ensure fav list is not undefined
-                }
-            } catch (error) {
-                if (error.response?.status === 404 && error.response.data?.message === "Wishlist not found") {
-                    console.warn("Wishlist not found, setting an empty array.");
-                    setFavproduct([]); // Handle empty wishlist without an error
-                } else {
-                    console.error("Error fetching wishlist:", error);
-                }
-            }
-        };
-
         fetchWishlistProducts();
-    }, [BASE_URL, userId]);
+    }, [userId]);
+
+    //fetch cart items
+    const fetchCartItems = async () => {
+        if (!userId || !token) {
+            handleOpenUserNotLogin();
+            return;
+        }
+        try {
+            if (token && userId) {
+                const response = await axios.get(`${BASE_URL}/user/cart/view-cart/${userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setViewCart(response.data);
+                setCartItems(response.data.items);
+                console.log(response.data.items);
+
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false)
+        }
+    };
+    useEffect(() => {
+        fetchCartItems();
+    }, [BASE_URL]);
 
 
     return (
@@ -97,15 +127,20 @@ const StoreContext = ({ children }) => {
                 openUserNotLogin,
                 setOpenUserNotLogin,
                 handleOpenUserNotLogin,
-                favProduct,
-                cart,
-                setCart,
-                fav,
-                setFav,
                 searchUser,
                 searchedProducts,
                 setSearchedProducts,
                 setSearchUser,
+                wishlist,
+                setWishlist,
+                fetchWishlistProducts,
+                isLoading,
+                setIsLoading,
+                fetchCartItems,
+                viewCart,
+                setViewCart,
+                cartItems,
+                setCartItems
             }}
         >
             {children}

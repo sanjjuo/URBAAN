@@ -16,7 +16,7 @@ import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 
 const FeaturedProducts = () => {
-    const { BASE_URL, setFav } = useContext(AppContext);
+    const { BASE_URL, setFav, fetchWishlistProducts, setWishlist } = useContext(AppContext);
     const [featuredProducts, setFeaturedProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [heartIcons, setHeartIcons] = useState({});
@@ -71,24 +71,15 @@ const FeaturedProducts = () => {
             if (response.data.isInWishlist) {
                 toast.success(`${productTitle} added to wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: true }));
+                fetchWishlistProducts();
+                // setWishlist(prevFav => [...prevFav, { productId }]);
             } else {
-                toast.success(`${productTitle} removed from wishlist`);
+                toast.error(`${productTitle} removed from wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: false }));
+                // setWishlist(prevFav => prevFav.filter(item => item.productId !== productId));
                 fetchFeaturedProducts();
+                fetchWishlistProducts();
             }
-
-
-            setFav((prevFav) => {
-                if (response.data.isInWishlist) {
-                    // Product added to wishlist
-                    return prevFav.some(item => item.productId === payload.productId)
-                        ? prevFav
-                        : [...prevFav, payload];
-                } else {
-                    // Product removed from wishlist
-                    return prevFav.filter(item => item.productId !== payload.productId);
-                }
-            });
 
         } catch (error) {
             throw new Error(error)

@@ -12,7 +12,7 @@ import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
 
 const LatestProducts = () => {
-  const { BASE_URL, setFav } = useContext(AppContext);
+  const { BASE_URL, setFav, fetchWishlistProducts, setWishlist } = useContext(AppContext);
   const [latestProducts, setLatestProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [heartIcons, setHeartIcons] = useState({}); // Store heart icon state for each product
@@ -34,18 +34,18 @@ const LatestProducts = () => {
     setZoomImage({ images: productImages, currentIndex: index });
   }
 
-// fetch latest products
-const fetchLatestProducts = async () => {
-  try {
-    const params = userId ? { userId } : {}; // Only include userId if it exists
-    const response = await axios.get(`${BASE_URL}/user/products/view-products`, { params });
-    const filteredProducts = response.data.filter(product => product.isLatestProduct);
-    setLatestProducts(filteredProducts);
-    setIsLoading(false);
-  } catch (error) {
-    console.error("Error fetching offer products:", error);
-  }
-};
+  // fetch latest products
+  const fetchLatestProducts = async () => {
+    try {
+      const params = userId ? { userId } : {}; // Only include userId if it exists
+      const response = await axios.get(`${BASE_URL}/user/products/view-products`, { params });
+      const filteredProducts = response.data.filter(product => product.isLatestProduct);
+      setLatestProducts(filteredProducts);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching offer products:", error);
+    }
+  };
   useEffect(() => {
     fetchLatestProducts();
   }, []);
@@ -65,24 +65,15 @@ const fetchLatestProducts = async () => {
       if (response.data.isInWishlist) {
         toast.success(`${productTitle} added to wishlist`);
         setHeartIcons(prev => ({ ...prev, [productId]: true }));
+        fetchWishlistProducts();
+        // setWishlist(prevFav => [...prevFav, { productId }]); 
       } else {
-        toast.success(`${productTitle} removed from wishlist`);
+        toast.error(`${productTitle} removed from wishlist`);
         setHeartIcons(prev => ({ ...prev, [productId]: false }));
+        // setWishlist(prevFav => prevFav.filter(item => item.productId !== productId));
         fetchLatestProducts();
+        fetchWishlistProducts();
       }
-
-
-      setFav((prevFav) => {
-        if (response.data.isInWishlist) {
-          // Product added to wishlist
-          return prevFav.some(item => item.productId === payload.productId)
-            ? prevFav
-            : [...prevFav, payload];
-        } else {
-          // Product removed from wishlist
-          return prevFav.filter(item => item.productId !== payload.productId);
-        }
-      });
 
     } catch (error) {
       throw new Error(error)

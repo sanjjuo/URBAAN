@@ -11,9 +11,7 @@ import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 const UserWishlist = () => {
     const navigate = useNavigate();
-    const { BASE_URL, setFav } = useContext(AppContext);
-    const [wishlist, setWishlist] = useState([])
-    const [isLoading, setIsLoading] = useState(true);
+    const { BASE_URL, wishlist, fetchWishlistProducts, isLoading, setIsLoading } = useContext(AppContext);
     const [zoomImage, setZoomImage] = useState(null);
     const [openImageModal, setOpenImageModal] = React.useState(false);
 
@@ -28,33 +26,23 @@ const UserWishlist = () => {
 
     // Fetch wishlist products
     useEffect(() => {
-        const fetchWishlistProducts = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/user/wishlist/view/${userId}`);
-                const items = response.data?.items || [];
-                setWishlist(items);
-                console.log(items)
-            } catch (error) {
-                console.error('Error fetching wishlist:', error);
-            } finally {
-                setIsLoading(false); // ✅ Ensure `isLoading` is false, even if an error occurs or wishlist is empty
-            }
-        };
-
-        fetchWishlistProducts();
+        if (userId) {
+            fetchWishlistProducts();
+        } else {
+            setIsLoading(false)
+        }
     }, [userId]);
 
     // Delete wishlist product
-    const handleWishlistDelete = async (productId) => {
+    const handleWishlistDelete = async (productId, productTitle) => {
         try {
             const response = await axios.delete(`${BASE_URL}/user/wishlist/remove`, {
                 data: { userId, productId },
             });
 
             if (response.status === 200) {
-                setWishlist((prev) => prev.filter((item) => item.productId._id !== productId));
-                setFav((prevFav) => prevFav.filter((item) => item.productId._id !== productId));
-                toast.success('Product removed from wishlist');
+                toast.success(`${productTitle} is removed from wishlist`);
+                fetchWishlistProducts();
             }
         } catch (error) {
             console.error('Error deleting wishlist item:', error);
@@ -66,8 +54,7 @@ const UserWishlist = () => {
     const handleWishlistClear = async () => {
         try {
             await axios.delete(`${BASE_URL}/user/wishlist/clear/${userId}`);
-            setWishlist([]); // ✅ Directly clear the wishlist
-            setFav([]);
+            fetchWishlistProducts();
             toast.success('Wishlist is cleared');
         } catch (error) {
             console.log(error);
@@ -109,7 +96,7 @@ const UserWishlist = () => {
                             product.productId && (
                                 <div key={product?.productId?._id} className='relative'>
                                     <RiDeleteBin5Line
-                                        onClick={() => handleWishlistDelete(product.productId._id)}
+                                        onClick={() => handleWishlistDelete(product.productId._id, product.productId?.title)}
                                         className='text-deleteBg absolute -top-5 right-1 cursor-pointer'
                                     />
                                     <Link

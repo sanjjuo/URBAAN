@@ -11,7 +11,7 @@ import { MdZoomOutMap } from 'react-icons/md'
 import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal'
 
 const SimilarProducts = ({ similarProducts, fetchSimilarProducts }) => {
-    const { BASE_URL, setFav } = useContext(AppContext)
+    const { BASE_URL, fetchWishlistProducts } = useContext(AppContext)
     const [heartIcons, setHeartIcons] = useState({});
     const [openImageModal, setOpenImageModal] = React.useState(false);
     const [zoomImage, setZoomImage] = useState(null);
@@ -48,23 +48,13 @@ const SimilarProducts = ({ similarProducts, fetchSimilarProducts }) => {
             if (response.data.isInWishlist) {
                 toast.success(`${productTitle} added to wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: true }));
+                fetchWishlistProducts();
             } else {
-                toast.success(`${productTitle} removed from wishlist`);
+                toast.error(`${productTitle} removed from wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: false }));
                 fetchSimilarProducts();
+                fetchWishlistProducts();
             }
-
-            setFav((prevFav) => {
-                if (response.data.isInWishlist) {
-                    // Product added to wishlist
-                    return prevFav.some(item => item.productId === payload.productId)
-                        ? prevFav
-                        : [...prevFav, payload];
-                } else {
-                    // Product removed from wishlist
-                    return prevFav.filter(item => item.productId !== payload.productId);
-                }
-            });
 
         } catch (error) {
             throw new Error(error)

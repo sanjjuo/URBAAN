@@ -21,7 +21,7 @@ const AllCategory = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const productsCategory = location.state?.category || [];
-    const { BASE_URL, setFav } = useContext(AppContext);
+    const { BASE_URL, fetchWishlistProducts } = useContext(AppContext);
 
     const [products, setProducts] = useState([]);
     const [allProducts, setAllProducts] = useState([]);
@@ -144,23 +144,13 @@ const AllCategory = () => {
             if (response.data.isInWishlist) {
                 toast.success(`${productTitle} added to wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: true }));
+                fetchWishlistProducts();
             } else {
-                toast.success(`${productTitle} removed from wishlist`);
+                toast.error(`${productTitle} removed from wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: false }));
                 fetchProducts();
+                fetchWishlistProducts();
             }
-
-            setFav((prevFav) => {
-                if (response.data.isInWishlist) {
-                    // Product added to wishlist
-                    return prevFav.some(item => item.productId === payload.productId)
-                        ? prevFav
-                        : [...prevFav, payload];
-                } else {
-                    // Product removed from wishlist
-                    return prevFav.filter(item => item.productId !== payload.productId);
-                }
-            });
 
         } catch (error) {
             throw new Error(error)

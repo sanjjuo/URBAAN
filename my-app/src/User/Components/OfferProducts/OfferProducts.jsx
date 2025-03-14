@@ -13,7 +13,7 @@ import { MdZoomOutMap } from 'react-icons/md';
 import { ImageZoomModal } from '../ImageZoomModal/ImageZoomModal';
 
 const OfferProducts = () => {
-    const { BASE_URL, setFav } = useContext(AppContext);
+    const { BASE_URL, fetchWishlistProducts, setWishlist } = useContext(AppContext);
     const [offerProducts, setOfferProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [heartIcons, setHeartIcons] = useState({});
@@ -68,25 +68,27 @@ const OfferProducts = () => {
             if (response.data.isInWishlist) {
                 toast.success(`${productTitle} added to wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: true }));
-                // setFav(prevFav => [...prevFav, { productId }]);
+                fetchWishlistProducts();
+                // setWishlist(prevFav => [...prevFav, { productId }]);
             } else {
-                toast.success(`${productTitle} removed from wishlist`);
+                toast.error(`${productTitle} removed from wishlist`);
                 setHeartIcons(prev => ({ ...prev, [productId]: false }));
-                // setFav(prevFav => prevFav.filter(item => item.productId !== productId)); 
+                // setWishlist(prevFav => prevFav.filter(item => item.productId !== productId)); 
                 fetchOfferProducts();
+                fetchWishlistProducts();
             }            
 
-            setFav((prevFav) => {
-                if (response.data.isInWishlist) {
-                    // Product added to wishlist
-                    return prevFav.some(item => item.productId === payload.productId)
-                        ? prevFav
-                        : [...prevFav, payload];
-                } else {
-                    // Product removed from wishlist
-                    return prevFav.filter(item => item.productId !== payload.productId);
-                }
-            });
+            // setFav((prevFav) => {
+            //     if (response.data.isInWishlist) {
+            //         // Product added to wishlist
+            //         return prevFav.some(item => item.productId === payload.productId)
+            //             ? prevFav
+            //             : [...prevFav, payload];
+            //     } else {
+            //         // Product removed from wishlist
+            //         return prevFav.filter(item => item.productId !== payload.productId);
+            //     }
+            // });
 
         } catch (error) {
             throw new Error(error)

@@ -1,20 +1,17 @@
 import { Button, Card } from '@material-tailwind/react';
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { RiDeleteBin5Line, RiHeart3Fill } from "react-icons/ri";
+import axios from 'axios';
+import namer from 'color-namer'; // Import the color-namer library
+import React, { useContext, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { BsPlusLg } from "react-icons/bs";
 import { HiMinus } from "react-icons/hi2";
-import axios from 'axios';
-import { useContext } from 'react';
-import { AppContext } from '../../../StoreContext/StoreContext';
+import { RiDeleteBin5Line, RiHeart3Fill } from "react-icons/ri";
+import { Link } from 'react-router-dom';
 import AppLoader from '../../../Loader';
-import namer from 'color-namer'; // Import the color-namer library
-import toast from 'react-hot-toast';
-import { HiOutlineXMark } from "react-icons/hi2";
+import { AppContext } from '../../../StoreContext/StoreContext';
 
-const CartItems = ({ cartItems, setCartItems, setViewCart }) => {
-    const { BASE_URL, setCart } = useContext(AppContext);
-    const [isLoading, setIsLoading] = useState(true);
+const CartItems = () => {
+    const { BASE_URL, setCart, fetchCartItems, isLoading, cartItems, setCartItems, setViewCart } = useContext(AppContext);
     const [isUpdating, setIsUpdating] = useState(false);
 
     // Function to get the nearest named color
@@ -32,28 +29,8 @@ const CartItems = ({ cartItems, setCartItems, setViewCart }) => {
     const token = localStorage.getItem('userToken');
 
     useEffect(() => {
-        const fetchCartItems = async () => {
-            try {
-                if (token && userId) {
-                    const response = await axios.get(`${BASE_URL}/user/cart/view-cart/${userId}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
-                    setViewCart(response.data);
-                    setCartItems(response.data.items);
-                    console.log(response.data.items);
-                    
-                }
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setIsLoading(false)
-            }
-        };
-
         fetchCartItems();
-    }, [BASE_URL]);
+    }, [])
 
 
     // handle update
@@ -135,8 +112,6 @@ const CartItems = ({ cartItems, setCartItems, setViewCart }) => {
                 // Remove item from local state
                 const updatedCartItems = cartItems.filter(cartItem => cartItem.productId._id !== itemId);
                 setCartItems(updatedCartItems);
-                setCart(updatedCartItems);
-
                 // Update global cart state
                 setViewCart(prevViewCart => {
                     // Calculate new total price
@@ -175,7 +150,7 @@ const CartItems = ({ cartItems, setCartItems, setViewCart }) => {
             console.log(response.data);
             setCartItems([]); // Clear the local cart items
             setViewCart({ items: [], totalPrice: 0 });
-            setCart([])
+            fetchCartItems();
             toast.success('Cart cleared successfully');
         } catch (error) {
             console.log(error);

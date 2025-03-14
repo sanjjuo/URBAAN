@@ -11,15 +11,14 @@ import ApplyCouponModal from './ApplyCouponModal';
 import AppLoader from '../../../Loader';
 import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
 
-const CartDetails = ({ viewCart, setCartItems, setViewCart }) => {
+const CartDetails = () => {
     const navigate = useNavigate();
     const location = useLocation()
     const { selectedAddress } = location.state || {};
-    const { BASE_URL, setOpenUserNotLogin } = useContext(AppContext);
+    const { BASE_URL, setOpenUserNotLogin, fetchCartItems, isLoading, setIsLoading, viewCart } = useContext(AppContext);
     const [checkoutId, setCheckoutId] = useState('')
     const [openCoupon, setOpenCoupon] = React.useState(false); // modal for coupon
     const [defaultAddress, setDefaultAddress] = useState([])
-    const [isLoading, setIsLoading] = useState(true)
 
     // handle Coupon modal
     const handleCouponModalOpen = () => setOpenCoupon(!openCoupon);
@@ -67,6 +66,9 @@ const CartDetails = ({ viewCart, setCartItems, setViewCart }) => {
     //handle address with defaultAddress true
     useEffect(() => {
         const fetchDefaultAddress = async () => {
+            if(!token || !userId){
+                return;
+            }
             try {
                 if (token && userId) {
                     const response = await axios.get(`${BASE_URL}/user/address/view/${userId}`, {
@@ -85,29 +87,9 @@ const CartDetails = ({ viewCart, setCartItems, setViewCart }) => {
         fetchDefaultAddress();
     }, []);
 
-    const fetchCartItems = async () => {
-        try {
-            if (token && userId) {
-                const response = await axios.get(`${BASE_URL}/user/cart/view-cart/${userId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setViewCart(response.data);
-                setCartItems(response.data.items);
-            }
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     useEffect(() => {
         fetchCartItems();
     }, [BASE_URL]);
-
-
 
 
     // Find the address with defaultAddress set to true

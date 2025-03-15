@@ -90,12 +90,12 @@ const Login = () => {
                                 <Typography variant="h6" className="-mb-3 font-custom text-sm font-medium">
                                     Password
                                 </Typography>
-                                <Typography
+                                {/* <Typography
                                     variant="h6"
                                     className="-mb-3 !font-custom text-sm font-medium cursor-pointer hover:text-buttonBg"
                                 >
                                     Forget Password ?
-                                </Typography>
+                                </Typography> */}
                             </div>
                             <div className="relative">
                                 <Input

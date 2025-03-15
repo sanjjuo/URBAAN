@@ -62,7 +62,6 @@ const StoreContext = ({ children }) => {
             const response = await axios.get(`${BASE_URL}/user/wishlist/view/${userId}`);
             const items = response.data?.items || [];
             setWishlist(items);
-            console.log(items)
         } catch (error) {
             console.error('Error fetching wishlist:', error);
         }
@@ -90,8 +89,6 @@ const StoreContext = ({ children }) => {
                 });
                 setViewCart(response.data);
                 setCartItems(response.data.items);
-                console.log(response.data.items);
-
             }
         } catch (error) {
             console.error(error);

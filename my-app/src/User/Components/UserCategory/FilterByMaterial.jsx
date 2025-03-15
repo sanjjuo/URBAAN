@@ -44,12 +44,12 @@ const FilterByMaterial = ({ handleMaterialFilter }) => {
         <Menu>
             <MenuHandler>
                 <Button variant="outlined" className="w-full shadow-none font-custom flex justify-between items-center py-2 px-3 
-                    border-gray-400 text-gray-600 font-medium rounded-3xl focus:outline-none">
+                    border-gray-800 text-gray-800 font-medium rounded-3xl focus:outline-none">
                     Filter by material
                     <span className="text-xs capitalize bg-primary ml-5 px-2 text-white rounded-md">
                         {selectedMaterial}
                     </span>
-                    <IoIosArrowDown className="text-lg text-gray-400" />
+                    <IoIosArrowDown className="text-lg text-gray-800" />
                 </Button>
             </MenuHandler>
             <MenuList className="w-72 max-h-64 rounded-xl hide-scrollbar">

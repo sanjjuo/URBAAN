@@ -48,4 +48,11 @@
   padding: 0 5px; /* Add horizontal padding */
 }
 
+/* floating-whatsapp */
+
+.styles-module_whatsappButton__tVits{
+  position: fixed;
+  bottom: 80px !important;
+}
+
 

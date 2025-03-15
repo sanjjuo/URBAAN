@@ -16,6 +16,7 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { SearchDesktopDrawer } from './SearchDesktopDrawer';
 import { UserNotLoginPopup } from '../UserNotLogin/UserNotLoginPopup';
+import MyWhatsapp from '../Whatsapp/Whatsapp';
 
 
 const NavList = () => {
@@ -189,6 +190,10 @@ const UserNavbar = () => {
                         </div>
                     </div>
                 </Navbar>
+
+                <div>
+                    <MyWhatsapp />
+                </div>
             </div>
 
             {/* mobile view */}
@@ -214,6 +219,9 @@ const UserNavbar = () => {
                         </li>
                     </Link>
                 </ul>
+                <div>
+                    <MyWhatsapp />
+                </div>
             </div>
 
             <BottomBar />

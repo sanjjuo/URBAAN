@@ -78,7 +78,7 @@ export default function MonthMenu({ setGraphData }) {
                     setGraphData([]);
                 }
             } catch (error) {
-                console.error(error);
+                console.error("Error fetching graph data:", error.response?.data || error.message);
             }
         };
 

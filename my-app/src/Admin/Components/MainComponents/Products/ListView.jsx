@@ -8,7 +8,7 @@ import { DeleteModal } from '../../DeleteModal/DeleteModal';
 import AppLoader from '../../../../Loader';
 import { useState } from 'react';
 
-const TABLE_HEAD = ["Product Name", "Description", "Stock", "Rate", "Price", "Orders", "Publish", "Action"];
+const TABLE_HEAD = ["Product Name", "Description", "Stock", "Price", "Orders", "Publish", "Action"];
 
 const ListView = ({ products, isLoading, selectedProductId, setSelectedProductId, handleDeleteProduct }) => {
     const { open, handleOpen, modalType } = useContext(AppContext);
@@ -110,14 +110,14 @@ const ListView = ({ products, isLoading, selectedProductId, setSelectedProductId
                                                                 {product.totalStock}
                                                             </Typography>
                                                         </td>
-                                                        <td className={classes}>
+                                                        {/* <td className={classes}>
                                                             <Typography
                                                                 variant="small"
                                                                 className="font-normal font-custom text-xs flex items-center gap-1"
                                                             >
                                                                 <FaStar className='text-ratingBg' />{product.rating}
                                                             </Typography>
-                                                        </td>
+                                                        </td> */}
                                                         <td className={classes}>
                                                             <Typography
                                                                 variant="small"

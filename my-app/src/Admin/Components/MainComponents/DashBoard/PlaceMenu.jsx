@@ -28,7 +28,7 @@ const places = [
     "Kasaragod"
 ];
 
-export function PlaceMenu({ setGraphData }) {
+const PlaceMenu = ({ setGraphData }) => {
     const [selectedPlace, setSelectedPlace] = useState("Place"); // Default to "All"
     const { BASE_URL } = useContext(AppContext);
 
@@ -99,3 +99,5 @@ export function PlaceMenu({ setGraphData }) {
         </Menu>
     );
 }
+
+export default PlaceMenu

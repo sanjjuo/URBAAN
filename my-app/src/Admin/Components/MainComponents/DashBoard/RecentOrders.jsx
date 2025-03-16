@@ -109,16 +109,17 @@ const RecentOrders = () => {
                                         <div className="flex flex-col items-center gap-2">
                                             <div className="w-[60px] h-[60px] rounded-md">
                                                 <img
-                                                    src={recentOrder.products[0].productId.images[0]}
-                                                    alt={recentOrder.products[0].productId.title}
+                                                    src={recentOrder.products[0]?.productId?.images[0]}
+                                                    alt={recentOrder.products[0]?.productId?.title}
                                                     className="w-full h-full object-cover rounded-md"
+                                                    onError={(e) => e.target.src = '/no-image.jpg'}
                                                 />
                                             </div>
                                             <Typography
                                                 variant="small"
                                                 className="font-normal capitalize font-custom text-sm"
                                             >
-                                                {recentOrder.products[0].productId.title}
+                                                {recentOrder.products[0]?.productId?.title || 'null'}
                                             </Typography>
                                         </div>
                                     </td>

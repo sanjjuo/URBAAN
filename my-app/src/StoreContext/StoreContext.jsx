@@ -92,6 +92,17 @@ const StoreContext = ({ children }) => {
             }
         } catch (error) {
             console.error(error);
+            if (error.response && error.response.status === 401) {
+                console.log("Authentication failed: Token invalid or expired");
+                // Clear the invalid credentials
+                localStorage.removeItem('userToken');
+                localStorage.removeItem('userId');
+                // Redirect to login or show login modal
+                handleOpenUserNotLogin();
+            } else {
+                // Handle other types of errors
+                console.error("Error fetching cart items:", error.message);
+            }
         } finally {
             setIsLoading(false)
         }

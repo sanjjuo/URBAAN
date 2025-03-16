@@ -42,8 +42,6 @@ const OfferProducts = () => {
             const response = await axios.get(`${BASE_URL}/user/products/view-products`, { params });
             const filteredProducts = response.data.filter(product => product.isOfferProduct);
             setOfferProducts(filteredProducts);
-            console.log(filteredProducts);
-
             setIsLoading(false);
         } catch (error) {
             console.error("Error fetching offer products:", error);

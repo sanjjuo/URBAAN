@@ -28,9 +28,10 @@ const months = [
     "December"
 ];
 
-export default function MonthMenu({ setGraphData }) {
+const MonthMenu = ({ setGraphData }) => {
     const [selectedMonth, setSelectedMonth] = useState("Month");
     const { BASE_URL } = useContext(AppContext)
+
 
     // Handle month selection
     const handleMonthSelect = (month) => {
@@ -51,16 +52,18 @@ export default function MonthMenu({ setGraphData }) {
                     return;
                 }
 
-                const startMonth =
-                    selectedMonth === "All"
-                        ? null
-                        : months.indexOf(selectedMonth); // Adjust to 1-based index
-                const endMonth = startMonth;
-
                 let url = `${BASE_URL}/admin/dashboard/view-graph`;
+
                 if (selectedMonth !== "All") {
-                    url += `?startMonth=${startMonth}&endMonth=${endMonth}`;
+                    const startMonth = months.indexOf(selectedMonth);
+                    if (selectedMonth === "All") {
+                        url = `${BASE_URL}/admin/dashboard/view-graph`; // No query params
+                    } else if (startMonth > 0) {
+                        url += `?startMonth=${startMonth}&endMonth=${startMonth}`;
+                    }
                 }
+
+                console.log("Fetching data from:", url);
 
                 const response = await axios.get(url, {
                     headers: {
@@ -79,10 +82,15 @@ export default function MonthMenu({ setGraphData }) {
                 }
             } catch (error) {
                 console.error("Error fetching graph data:", error.response?.data || error.message);
+                console.log(error);
+
             }
         };
 
-        fetchGraphMonth();
+        // Only fetch data if selectedMonth has changed from the default
+        if (selectedMonth !== "Month") {
+            fetchGraphMonth();
+        }
     }, [selectedMonth, BASE_URL, setGraphData]);
 
 
@@ -118,3 +126,5 @@ export default function MonthMenu({ setGraphData }) {
         </Menu>
     );
 }
+
+export default MonthMenu

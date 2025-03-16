@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { LineChart } from '@mui/x-charts/LineChart';
-import { PlaceMenu } from './PlaceMenu';
-import MonthMenu from './MonthMenu';
-import axios from 'axios';
-import { AppContext } from '../../../../StoreContext/StoreContext';
-import AppLoader from '../../../../Loader';
 import { BarChart } from '@mui/x-charts';
+import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
+import AppLoader from '../../../../Loader';
+import { AppContext } from '../../../../StoreContext/StoreContext';
+import PlaceMenu from "./PlaceMenu";
+import MonthMenu from "./MonthMenu";
 
 const SalesGraph = () => {
     const [graphData, setGraphData] = useState([]);
@@ -59,9 +58,7 @@ const SalesGraph = () => {
                 </div>
                 <ul className="flex items-center gap-2">
                     <li><PlaceMenu setGraphData={setGraphData} /></li>
-                    <li>
-                        <MonthMenu setGraphData={setGraphData} />
-                    </li>
+                    <li><MonthMenu setGraphData={setGraphData} /></li>
                 </ul>
             </div>
             {isLoading ? (

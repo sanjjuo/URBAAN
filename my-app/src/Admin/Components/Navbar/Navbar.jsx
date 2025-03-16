@@ -1,10 +1,8 @@
-import React from "react";
 import {
     Navbar,
 } from "@material-tailwind/react";
+import React from "react";
 import Profile from "./Profile";
-import { Notification } from "./Notification";
-import { RiSearch2Line } from "react-icons/ri";
 
 
 

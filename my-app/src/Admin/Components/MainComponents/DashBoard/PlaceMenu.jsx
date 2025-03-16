@@ -57,9 +57,10 @@ const PlaceMenu = ({ setGraphData }) => {
                         y: item?.totalRevenue || 0,
                     }));
                     setGraphData(formattedData);
-                } else {
-                    setGraphData([]); // Handle empty data
-                }
+                } 
+                // else {
+                //     setGraphData([]); // Handle empty data
+                // }
             } catch (error) {
                 console.error("Error fetching graph data:", error);
             }

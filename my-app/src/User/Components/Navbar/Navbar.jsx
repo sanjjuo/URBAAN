@@ -219,9 +219,9 @@ const UserNavbar = () => {
                         </li>
                     </Link>
                 </ul>
-                <div>
-                    <MyWhatsapp />
-                </div>
+            </div>
+            <div>
+                <MyWhatsapp />
             </div>
 
             <BottomBar />

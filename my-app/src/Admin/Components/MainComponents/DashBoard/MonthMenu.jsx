@@ -72,14 +72,15 @@ const MonthMenu = ({ setGraphData }) => {
                 });
 
                 if (response.data?.data?.length) {
-                    const formattedData = response.data.data.map((item) => ({
+                    const formattedDatas = response.data.data.map((item) => ({
                         x: item?.monthName,
                         y: item?.totalRevenue,
                     }));
-                    setGraphData(formattedData);
-                } else {
-                    setGraphData([]);
+                    setGraphData(formattedDatas);
                 }
+                //  else {
+                //     setGraphData([]);
+                // }
             } catch (error) {
                 console.error("Error fetching graph data:", error.response?.data || error.message);
                 console.log(error);

@@ -86,7 +86,7 @@ const SalesGraph = () => {
                             }]}
                             series={[{
                                 data: graphData.map(item => item?.y),
-                                curve: 'linear',
+                                // curve: 'linear',
                                 color: '#A3BDF5',
                             }]}
                             className="w-full"
